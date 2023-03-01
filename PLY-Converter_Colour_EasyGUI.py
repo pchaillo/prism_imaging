@@ -1,10 +1,8 @@
 import pandas
 import numpy
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 from coloraide import Color
-Tk().withdraw()
-filename = askopenfilename() #Opens file selection
+from easygui import *
+filename = fileopenbox("Please open the biomap file of interest", title="Biomap to PLY converter", filetypes=["*.biomap"])
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X','Y','Z','Time','N.A']) #Reads the opened biomap
 
 #Header Generation
@@ -31,9 +29,15 @@ itstlst = []
 for i in intensities:
     itstlst.append(int(i)) #Creates a list of intensities converted to integers
 
-########################## Colours with ColorAide
-c1 = Color("srgb", [0,1,0])
-c2 = Color("srgb",[1,0,0])
+#Colours with ColorAide
+r1 = integerbox("Pick a low-intensity color RED value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+g1 = integerbox("Pick a low-intensity color GREEN value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+b1 = integerbox("Pick a low-intensity color BLUE value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+r2 = integerbox("Pick a high-intensity color RED value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+g2 = integerbox("Pick a high-intensity color GREEN value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+b2 = integerbox("Pick a high-intensity color BLUE value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
+c1 = Color("srgb", [r1/255,g1/255,b1/255])
+c2 = Color("srgb",[r2/255,g2/255,b2/255])
 col = Color.interpolate([c1,c2],space="srgb")
 colours = numpy.zeros(shape=(vertices,3))
 rank=0
