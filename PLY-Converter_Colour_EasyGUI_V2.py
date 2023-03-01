@@ -1,3 +1,4 @@
+#V2 of the easygui implementation, now with 66% fewer windows!
 import pandas
 import numpy
 from coloraide import Color
@@ -30,18 +31,21 @@ for i in intensities:
     itstlst.append(int(i)) #Creates a list of intensities converted to integers
 
 #Colours with ColorAide
-r1 = integerbox("Pick a low-intensity color RED value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-g1 = integerbox("Pick a low-intensity color GREEN value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-b1 = integerbox("Pick a low-intensity color BLUE value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-r2 = integerbox("Pick a high-intensity color RED value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-g2 = integerbox("Pick a high-intensity color GREEN value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-b2 = integerbox("Pick a high-intensity color BLUE value between 0 and 255", title="Biomap to PLY converter", lowerbound=0, upperbound=255)
-c1 = Color("srgb", [r1/255,g1/255,b1/255])
-c2 = Color("srgb",[r2/255,g2/255,b2/255])
+col1 = multenterbox("Pick Red, Green, and Blue values between 0 and 255 for the low-intensity colour", title="Biomap to PLY converter", fields=["Red", "Green", "Blue"],
+                    values=[0, 255, 0])
+col2 = multenterbox("Pick Red, Green, and Blue values between 0 and 255 for the high-intensity colour", title="Biomap to PLY converter", fields=["Red", "Green", "Blue"],
+                    values=[255, 0, 0])
+r1 = int(col1[0])
+g1 = int(col1[1])
+b1 = int(col1[2])
+r2 = int(col2[0])
+g2 = int(col2[1])
+b2 = int(col2[2])
+c1 = Color("srgb", [r1/255, g1/255, b1/255])
+c2 = Color("srgb", [r2/255, g2/255, b2/255])
 col = Color.interpolate([c1,c2],space="srgb")
 colours = numpy.zeros(shape=(vertices,3))
 rank=0
-
 for i in itstlst:
     hue=col(i/imax)
     colours[rank] = ([hue['r']*255, hue['g']*255, hue['b']*255])
