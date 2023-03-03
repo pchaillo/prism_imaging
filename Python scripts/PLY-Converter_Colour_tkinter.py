@@ -42,36 +42,41 @@ def fetch_colours():
 
 
 gui = tkinter.Tk()
-frm = ttk.Frame(gui, padding=10)
+gui.title("Biomap to PLY converter")
+gui.resizable(False,False)
+frm = ttk.Frame(gui, padding=10, height=300, width=300)
 frm.grid()
-ttk.Label(frm, text="Biomap to PLY converter").grid(column=0, row=0)  # Title
-ttk.Button(frm, text="Target", command=uploadaction).grid(column=0, row=1)  # Fetches the biomap of interest
+ttk.Button(frm, text="Target", command=uploadaction).place(x=100, y=0)  # Fetches the biomap of interest
+ttk.Label(frm, text="Load a biomap: ").place(x=0, y=3)
 
-ttk.Label(frm, text="Low intensity").grid(column=1, row=2)  # Column headers
-ttk.Label(frm, text="High intensity").grid(column=2, row=2)
+separator = ttk.Separator(gui, orient="horizontal")
+separator.place(x=0, y=40, relwidth=3)
 
-ttk.Label(frm, text="Red").grid(column=0, row=3)
+ttk.Label(frm, text="Low intensity").place(x=50, y=40)  # Column headers
+ttk.Label(frm, text="High intensity").place(x=170, y=40)
+
+ttk.Label(frm, text="Red").place(x=0, y=80)
 sldr1 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr1.grid(column=1, row=3)
+sldr1.place(x=35, y=60)
 sldr1.set(255)
 sldr2 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr2.grid(column=2, row=3)
+sldr2.place(x=155, y=60)
 
-ttk.Label(frm, text="Green").grid(column=0, row=4)
+ttk.Label(frm, text="Green").place(x=0, y=130)
 sldr3 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr3.grid(column=1, row=4)
+sldr3.place(x=35, y=110)
 sldr4 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr4.grid(column=2, row=4)
+sldr4.place(x=155, y=110)
 sldr4.set(255)
 
-ttk.Label(frm, text="Blue").grid(column=0, row=5)
+ttk.Label(frm, text="Blue").place(x=0, y=180)
 sldr5 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr5.grid(column=1, row=5)
+sldr5.place(x=35, y=160)
 sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr6.grid(column=2, row=5)
+sldr6.place(x=155, y=160)
 
-ttk.Button(frm, text="Apply", command=fetch_colours).grid(column=4, row=8)
-ttk.Button(frm, text="Quit", command=gui.destroy).grid(column=4, row=10)
+ttk.Button(frm, text="Apply", command=fetch_colours).place(x=90, y=220)
+ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=220)
 gui.mainloop()
 
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X', 'Y', 'Z', 'Time', 'N.A'])  # Reads the opened biomap
