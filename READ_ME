@@ -1,8 +1,13 @@
+
 Attention, penser à créer les répertoires "csv files", "map files", "mat files", "mzXML files", and "rgb map files" to use the interface.
 
 Launch the file mapping_APP_7.mlapp trough matlab to launch the interface.
 
-Version Prism
+Recquirement : 
+Matlab Toolbox : Bioinformatics Toolbox (To use the .mzXML file format)
+
+
+Version Prism 
 
 Crée par Paul Chaillou - 2021 / 2022
 
