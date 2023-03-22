@@ -5,9 +5,10 @@
 # _Verify that the Matlab version is compatible with Python 3.8
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.8). If not, set it up.
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
-# Oversampling not fully implemented yet. Only works when set to 2x.
+# Linear interpolation works, but cosine is scuffed
 
 import pandas
+import math
 import numpy
 import tkinter
 from tkinter import ttk
@@ -18,6 +19,10 @@ from coloraide import Color
 filename = None
 colour1 = None
 colour2 = None
+
+def cosine_itp(obj1, obj2, rate=0.5):
+    obj3 = (1 - math.cos(rate * 3.1415927)) / 2
+    return obj1 + (obj2 - obj1) * obj3
 
 
 def linear_itp(obj1, obj2, rate=0.5):
@@ -54,7 +59,7 @@ def set_interpol():
 gui = tkinter.Tk()
 gui.title("Biomap to PLY converter - Now with point interpolation!")
 gui.resizable(False, False)
-frm = ttk.Frame(gui, padding=10, height=350, width=300)
+frm = ttk.Frame(gui, padding=10, height=360, width=300)
 frm.grid()
 ttk.Button(frm, text="Target", command=uploadaction).place(x=100, y=0)  # Fetches the biomap of interest
 ttk.Label(frm, text="Load a biomap: ").place(x=0, y=3)
@@ -95,9 +100,23 @@ sldr7 = tkinter.Scale(frm, from_=2, to=10, orient=tkinter.HORIZONTAL)
 sldr7.place(x=35, y=260)
 sldr7.set(2)
 
-ttk.Button(frm, text="Set", command=set_interpol).place(x=180, y=260)
+itp_type = tkinter.StringVar()  # I hate this box, but it works, so I'm not touching it
+cb1 = ttk.Combobox(frm, state='readonly', textvariable=itp_type, values=('Linear', 'Cosine'), width=13)
+cb1.place(x=157, y=278)
+cb1.set('Linear')
 
-ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=290)
+
+def set_interpol_type():
+    global itp_type
+    itp_type = cb1.get()
+
+
+cb1.bind('<<ComboboxSelected>>', set_interpol_type)
+
+ttk.Button(frm, text="Set", command=set_interpol).place(x=35, y=310)
+
+ttk.Button(frm, text="Quit", command=lambda: [fetch_colours(), set_interpol(), set_interpol_type(), gui.destroy()]).\
+    place(x=180, y=310)
 gui.mainloop()
 
 biomap = pandas.read_csv(filename, sep=' ', header=None)  # Reads the opened biomap
@@ -127,6 +146,12 @@ header = ""
 header = header.join(map(str, headertp))
 
 # Vertices recovery and upscaling
+
+if itp_type == 'Linear':
+    itp_type = linear_itp
+elif itp_type == 'Cosine':
+    itp_type = cosine_itp
+
 coords = biomap.iloc[:, 0:4]
 coordsfinal = coords.drop(0)  # Grabs vertices coordinates without the header
 coordsfinal[numpy.isnan(coordsfinal)] = 0
@@ -142,12 +167,12 @@ for i in coordsrnk:
     elif vertices - dimX + 1 <= rank < vertices:  # Checks if we are on the last line
         ovspcoords[rank - 1] = coordsfinal.iloc[i - 1]
         for n in interpol_range:
-            ovspcoords[rank - 1 + n] = linear_itp(coordsfinal.iloc[i - 1], coordsfinal.iloc[i], rate=1 - (n / interpol))
+            ovspcoords[rank - 1 + n] = itp_type(coordsfinal.iloc[i - 1], coordsfinal.iloc[i], rate=1 - (n / interpol))
         rank = rank + interpol
     elif i % (int(oldimX)) == 0:  # Checks if we are in the last column
         ovspcoords[rank - 1] = coordsfinal.iloc[i - 1]
         for n in interpol_range:
-            ovspcoords[rank - 1 + n * int(dimX)] = linear_itp(coordsfinal.iloc[i - 1],
+            ovspcoords[rank - 1 + n * int(dimX)] = itp_type(coordsfinal.iloc[i - 1],
                                                               coordsfinal.iloc[i + int(oldimX) - 1],
                                                               rate=1 - (n / interpol))
         rank = rank + (interpol - 1) * int(dimX) + 1
@@ -157,17 +182,17 @@ for i in coordsrnk:
         ovspcoords[rank - 1 + interpol * int(dimX)] = coordsfinal.iloc[i - 1 + int(oldimX)]
         ovspcoords[rank - 1 + interpol * int(dimX) + interpol] = coordsfinal.iloc[i + int(oldimX)]
         for n in interpol_range:
-            ovspcoords[rank - 1 + n] = linear_itp(coordsfinal.iloc[i - 1], coordsfinal.iloc[i], rate=1 - (n / interpol))
-            ovspcoords[rank - 1 + n * int(dimX)] = linear_itp(coordsfinal.iloc[i - 1],
+            ovspcoords[rank - 1 + n] = itp_type(coordsfinal.iloc[i - 1], coordsfinal.iloc[i], rate=1 - (n / interpol))
+            ovspcoords[rank - 1 + n * int(dimX)] = itp_type(coordsfinal.iloc[i - 1],
                                                               coordsfinal.iloc[i + int(oldimX) - 1],
                                                               rate=1 - (n / interpol))
-            ovspcoords[rank - 1 + interpol + n * int(dimX)] = linear_itp(coordsfinal.iloc[i],
+            ovspcoords[rank - 1 + interpol + n * int(dimX)] = itp_type(coordsfinal.iloc[i],
                                                                          coordsfinal.iloc[i + int(oldimX)],
                                                                          rate=1 - (n / interpol))
         interpol_range2 = interpol_range
         for n in interpol_range:
             for m in interpol_range2:
-                ovspcoords[rank - 1 + n * int(dimX) + m] = linear_itp(ovspcoords[rank - 1 + n * int(dimX)],
+                ovspcoords[rank - 1 + n * int(dimX) + m] = itp_type(ovspcoords[rank - 1 + n * int(dimX)],
                                                                       ovspcoords[rank - 1 + interpol + n * int(dimX)],
                                                                       rate=1 - (m / interpol))
         rank = rank + interpol
