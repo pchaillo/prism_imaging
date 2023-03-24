@@ -1,4 +1,4 @@
-function real_time_mapping_scanning_2(t,ard,new_tab,opotek,t_b,nb_shot,time_ref)
+function real_time_mapping_scanning_2(t,ard,new_tab,laser,t_b,nb_shot,time_ref)
 
 % with spectro time_ref
 
@@ -8,7 +8,7 @@ function real_time_mapping_scanning_2(t,ard,new_tab,opotek,t_b,nb_shot,time_ref)
 % cartographie la zone et non l'objet
 % avec enregistrement des temps
 
-global carte
+global carte % essayer de reduire ses dependances non explicites
 global robot
 global scan
 global zone
@@ -65,7 +65,8 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             if robot.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 set_pos(a,t);
-                tir_opotek(opotek,nb_shot);
+%                 tir_opotek(opotek,nb_shot);
+                laser.class.tir(laser.connexion,nb_shot)
 %                 if first_point == 1
 %                     first_point = 0;
 %                     tic;
@@ -100,7 +101,8 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             if robot.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 set_pos(a,t);
-                tir_opotek(opotek,nb_shot);
+%                 tir_opotek(opotek,nb_shot);
+                laser.class.tir(laser.connexion,nb_shot)
                 carte.time(v,u) = toc(time_ref);
                 pause(t_b);
             end

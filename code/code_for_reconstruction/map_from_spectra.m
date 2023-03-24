@@ -1,3 +1,4 @@
+
 function map_from_spectra(bio_dat,carte)
 
 plot_all_spectra(bio_dat);
@@ -28,13 +29,8 @@ else
     time_flag = 0;
     %[ bio_ind ,bio_map ] = mzXML_on_map_norm8_4(bio_dat,carte_z,limits,seuil); % put the information on the map
 end
-
-<<<<<<< HEAD
 %[ bio_ind, bio_num, bio_map, deiso_tab] = mzXML_on_map_norm17(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag);
 [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
-=======
-[ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag); 
->>>>>>> prism_copy_for_tests
 
 [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 

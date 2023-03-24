@@ -22,11 +22,6 @@ function [ bio_ind, bio_map ] = mzXML_on_map_norm13(bio_dat,map,limits,carte_tim
 
 si = size(map);
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> prism_copy_for_tests
 %Extraction des données utiles
 id = 0;
 for i = 1:length(bio_dat)

@@ -110,7 +110,11 @@ for i = carte.x(1 , 1 ) : scan_pas/scan_pre: carte.x( si(1) , 1 )% + scan.pas/sc
     for j = carte.y(1,1) : scan_pas/scan_pre : carte.y(1,si(2))% + scan.pas/scan.pre
         y = y + 1;
         if carte_o(x,y) == 0
+<<<<<<< HEAD
+           carte_o(x,y) = carte_o2(x,y);
+=======
             carte_o(x,y) = carte_o2(x,y);
+>>>>>>> prism_copy_for_tests
         end
         carte_x_o(x,y) = i;
         carte_y_o(x,y) = j;

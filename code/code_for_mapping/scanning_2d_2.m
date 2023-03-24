@@ -1,5 +1,5 @@
 
-function scanning_2d_2(t,opotek,nb_shot,t_b,time_ref)
+function scanning_2d_2(t,laser,nb_shot,t_b,time_ref)
 
 %with spectro time_ref
 
@@ -35,7 +35,9 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
 %                 first_point = 0;
 %                 tic;
 %             end
-            tir_opotek(opotek,nb_shot)
+
+%             tir_opotek(opotek,nb_shot)
+            laser.class.tir(laser.connexion,nb_shot)
             pause(t_b);
             carte.time(v,u) = toc(time_ref);
         end
@@ -52,7 +54,10 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.y(v,u) = j;
             carte.i(v,u) =  0 ;
             %rl_time_display()
-            tir_opotek(opotek,nb_shot)
+
+%             tir_opotek(opotek,nb_shot)
+            laser.class.tir(laser.connexion,nb_shot)
+
             pause(t_b);
             
             carte.time(v,u) = toc(time_ref);
