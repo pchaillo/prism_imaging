@@ -43,7 +43,7 @@ def fetch_colours():
 
 gui = tkinter.Tk()
 gui.title("Biomap to PLY converter")
-gui.resizable(False, False)
+gui.resizable(False,False)
 frm = ttk.Frame(gui, padding=10, height=300, width=300)
 frm.grid()
 ttk.Button(frm, text="Target", command=uploadaction).place(x=100, y=0)  # Fetches the biomap of interest
