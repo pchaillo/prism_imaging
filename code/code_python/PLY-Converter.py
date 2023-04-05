@@ -202,16 +202,6 @@ coords = biomap.iloc[:, 0:4]
 coordsfinal = coords.drop(0)  # Grabs vertices coordinates without the header
 coordsfinal[numpy.isnan(coordsfinal)] = 0
 
-# 'Normalization' of coordinates as integers, avoids float-related shenanigans down the line
-#norm_X = numpy.arange(coordsfinal.iloc[0][0], coordsfinal.iloc[0][0] + oldimX, 1)
-#norm_Y = numpy.arange(coordsfinal.iloc[0][1], coordsfinal.iloc[0][1] + oldimY, 1)
-#xx, yy = numpy.meshgrid(norm_Y, norm_X)
-#norm_coords = numpy.vstack([yy.ravel(), xx.ravel()])
-#coordsfinal_array = numpy.vstack([norm_coords[0], norm_coords[1], coordsfinal[2], coordsfinal[3]])
-#coordsfinal_array = coordsfinal_array.transpose()
-#coordsfinal = coordsfinal_array
-#coordsfinal = pandas.DataFrame(coordsfinal)
-
 # Data must be mapped in a grid for 2D interpolation. For 2D, we can only implement one dataset at a time. Z heights
 # and intensities therefore get their individual arrays
 biomap_z = coordsfinal.pivot_table(index=[0], columns=[1], values=[2])
@@ -223,14 +213,10 @@ biomap_int_np = biomap_int.to_numpy(dtype=float)
 orderX = numpy.arange(coordsfinal.iloc[0][0],
                       max(coordsfinal[0]) + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
                       coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])
-#orderX = orderX[orderX <= max(coordsfinal[0])]
 
 orderY = numpy.arange(coordsfinal.iloc[0][1],
                       coordsfinal.iloc[int(oldimX)-1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
                       coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])
-#orderY = orderY[orderY <= coordsfinal.iloc[int(oldimX)-1][1]]
-#orderX = numpy.arange(coordsfinal.iloc[0][0], coordsfinal.iloc[0][0] + oldimX, 1)
-#orderY = numpy.arange(coordsfinal.iloc[0][1], coordsfinal.iloc[0][1] + oldimY, 1)
 
 # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
 interp_grid_z = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_z_np, method=itp_type)
@@ -245,11 +231,9 @@ neworderX = neworderX[neworderX <= max(coordsfinal[0])]
 
 neworderY = numpy.arange(coordsfinal.iloc[0][1],
                       coordsfinal.iloc[int(oldimX)-1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
-                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])/interpol) # Should work in theory, but floats are garbage
+                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])/interpol)  # Should work in theory, but floats are garbage
 neworderY = neworderY.round(5)
 neworderY = neworderY[neworderY <= coordsfinal.iloc[int(oldimX)-1][1]]
-#neworderX = numpy.arange(coordsfinal.iloc[0][0], coordsfinal.iloc[0][0] + oldimX - 1/interpol, 1/interpol)
-#neworderY = numpy.arange(coordsfinal.iloc[0][1], coordsfinal.iloc[0][1] + oldimY - 1/interpol, 1/interpol)
 yy2, xx2 = numpy.meshgrid(neworderY, neworderX)
 
 # Creates a flattened array of X and Y couples, akin to an interpolated version of columns 1 and 2 of the biomap
@@ -296,7 +280,7 @@ coloursdf = coloursdf.astype(int)
 file_name_recovery(filepath=filename)
 if coreg_img is None:
     colours_int = colours.astype(int)
-    colours_export = colours_int.reshape((int(dimX), int(dimY), 3))
+    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
     coreg_target.save(tgtnamefin + '.png')
 

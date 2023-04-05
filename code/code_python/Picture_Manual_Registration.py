@@ -19,6 +19,7 @@ from tkinter.filedialog import askopenfilename
 # Creation of global variables
 image_1 = None
 image_2 = None
+merge = None
 
 
 # Define the name fetching function
@@ -92,8 +93,19 @@ def matrix_removal():
 ttk.Label(frm, text="New manual coregistration").place(x=0, y=60)
 bt3 = ttk.Button(frm, text="Start", command=lambda: [matrix_removal(), gui.destroy()])
 bt3.place(x=0, y=80)
-bt_quit = ttk.Button(frm, text="Quit", command=gui.destroy)
-bt_quit.place(x=120, y=100)
+
+
+def set_merge():
+    global merge
+    merge = (sldr1.get())/100
+
+ttk.Label(frm, text="Optical image opacity").place(x=0, y=105)
+sldr1 = tkinter.Scale(frm, from_=0, to=100, orient=tkinter.HORIZONTAL)
+sldr1.place(x=0, y=125)
+sldr1.set(70)
+
+bt_quit = ttk.Button(frm, text="Quit", command=lambda: [set_merge(), gui.destroy()])
+bt_quit.place(x=120, y=140)
 
 gui.mainloop()
 
@@ -200,7 +212,7 @@ if M is None:
 img1_display = img1.copy()
 img2_warped = cv2.warpPerspective(src=img2, M=M, dsize=(img1.shape[1], img1.shape[0]))
 # cv2.imshow("Warped", img2_warped)
-merged_img = cv2.addWeighted(img1_display, 0.7, img2_warped, 0.3, 0)
+merged_img = cv2.addWeighted(img1_display, merge, img2_warped, 1-merge, 0)
 # cv2.imshow('Merge', merged_img)  # Kept for debugging/verbose behaviour
 
 # Save the matrix
