@@ -59,7 +59,7 @@ def file_name_recovery(filepath):
 
 
 gui = tkinter.Tk()
-gui.title("Manual Picture Coregister")
+gui.title("Manual Picture Coregistration")
 gui.resizable(False, False)
 frm = ttk.Frame(gui, padding=10, height=180, width=220)
 frm.grid()
@@ -91,18 +91,19 @@ def matrix_removal():
 
 
 ttk.Label(frm, text="New manual coregistration").place(x=0, y=60)
-bt3 = ttk.Button(frm, text="Start", command=lambda: [matrix_removal(), gui.destroy()])
+bt3 = ttk.Button(frm, text="Start", command=lambda: [matrix_removal(), set_merge(), gui.destroy()])
 bt3.place(x=0, y=80)
 
 
 def set_merge():
     global merge
     merge = (sldr1.get())/100
+    merge = float(merge)
 
 ttk.Label(frm, text="Optical image opacity").place(x=0, y=105)
 sldr1 = tkinter.Scale(frm, from_=0, to=100, orient=tkinter.HORIZONTAL)
 sldr1.place(x=0, y=125)
-sldr1.set(70)
+sldr1.set(50)
 
 bt_quit = ttk.Button(frm, text="Quit", command=lambda: [set_merge(), gui.destroy()])
 bt_quit.place(x=120, y=140)
