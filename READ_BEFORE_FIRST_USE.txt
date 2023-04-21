@@ -1,0 +1,19 @@
+Prerequisites:
+_ Matlab v.2022b (A list of needed modules will be provided at a later date)
+
+For first use : 
+_ Launch the 'LAUNCH_FOR_FIRST_USE.bat' file included at the root of the source code. 
+It will install every required python library, and Python 3.8 
+
+To start the program : 
+_ Launch Matlab v.2022b
+_ On the MatLab Command Window, in the middle of the screen, write the following:
+pyenv('Version','%Your Python installation directory%\python.exe')
+
+If you have not modified the installation location of Python 3.8, it should look like this:	
+pyenv('Version','C:\Users\Adel GUIOT\AppData\Local\Programs\Python\Python38\python.exe')
+
+_ Navigate to the prism_imaging file on the left of the screen
+_ Double click mapping_APP_7.mlapp
+_ Click run in the top left of the screen once the option becomes available. Do NOT 
+change anything in the app designer tool.
