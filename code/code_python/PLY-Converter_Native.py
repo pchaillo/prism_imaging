@@ -12,6 +12,7 @@ import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from coloraide import Color
+import time
 
 # GUI Goodness
 # Creation of global variables
@@ -79,6 +80,9 @@ ttk.Button(frm, text="Apply", command=fetch_colours).place(x=90, y=220)
 ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=220)
 gui.mainloop()
 
+# Starts CPU execution time
+start_time = time.process_time()
+
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X', 'Y', 'Z', 'Time', 'N.A'])  # Reads the opened biomap
 
 # Header Generation
@@ -142,22 +146,23 @@ for i in reversed(rvstgtname):
 tgtname = tgtname.replace("biomap", "ply")
 with open(tgtname, "w") as plyfile:
     plyfile.write(header)
-counter = numpy.arange(1, (vertices+0.5)*2)
-countervtx = 0
-countercol = 0
-for i in counter:  # Fills a buffer with either vertices or colours and writes it to target file. Necessary AFAIK to alternate between float/int in the PLY file
-    if i % 2 != 0:
-        buffertp = (coordsfinal.iloc[countervtx, 0], " ", coordsfinal.iloc[countervtx, 1], " ", coordsfinal.iloc[countervtx, 2], " \n")
-        buffer = ""
-        buffer = buffer.join(map(str, buffertp))
-        with open(tgtname, "a") as plyfile:
-            plyfile.write(buffer)
-        countervtx = countervtx + 1
-    else:
-        buffertp = (coloursdf.iloc[countercol, 0], " ", coloursdf.iloc[countercol, 1], " ", coloursdf.iloc[countercol, 2], " \n")
-        buffer = ""
-        buffer = buffer.join(map(str, buffertp))
-        with open(tgtname, "a") as plyfile:
-            plyfile.write(buffer)
-        countercol = countercol + 1
+
+counter = numpy.arange(0, vertices)
+rank = 0
+fusion = pandas.DataFrame(index=range(vertices*2), columns=range(3))
+
+for i in counter:
+    fusion.iloc[rank] = coordsfinal.iloc[i]
+    fusion.iloc[rank + 1] = coloursdf.iloc[i]
+    rank = rank + 2
+
+fusion.assign(line_return='\n')
+fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
 fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+
+# Time-related code, grabs the end time
+end_time = time.process_time()
+
+# Time-related code, calculates the elapsed time
+cpu_time = end_time - start_time
+print('CPU Runtime = ', cpu_time)

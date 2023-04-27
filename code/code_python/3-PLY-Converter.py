@@ -16,6 +16,7 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from PIL import Image
 from coloraide import Color
+import time
 
 # Creation of global variables
 filename = None
@@ -302,24 +303,16 @@ else:
     tgtname = tgtname.replace(".biomap", str(interpol) + "x_coreg" + ".ply")
 with open(tgtname, "w") as plyfile:
     plyfile.write(header)
-counter = numpy.arange(1, (vertices + 0.5) * 2)
-countervtx = 0
-countercol = 0
-for i in counter:  # Fills a buffer with either vertices or colours and writes it to target file. Necessary AFAIK.
-    if i % 2 != 0:
-        buffertp = (ovspcoords[countervtx, 0], " ", ovspcoords[countervtx, 1], " ", ovspcoords[countervtx, 2], " \n")
-        buffer = ""
-        buffer = buffer.join(map(str, buffertp))
-        with open(tgtname, "a") as plyfile:
-            plyfile.write(buffer)
-        countervtx = countervtx + 1
-    else:
-        buffertp = (
-            coloursdf.iloc[countercol, 0], " ", coloursdf.iloc[countercol, 1], " ", coloursdf.iloc[countercol, 2],
-            " \n")
-        buffer = ""
-        buffer = buffer.join(map(str, buffertp))
-        with open(tgtname, "a") as plyfile:
-            plyfile.write(buffer)
-        countercol = countercol + 1
+
+counter = numpy.arange(0, vertices)
+rank = 0
+fusion = pandas.DataFrame(index=range(vertices*2), columns=range(3))
+
+for i in counter:
+    fusion.iloc[rank] = ovspcoords[i]
+    fusion.iloc[rank + 1] = coloursdf.iloc[i]
+    rank = rank + 2
+
+fusion.assign(line_return='\n')
+fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
 fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
