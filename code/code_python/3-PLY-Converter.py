@@ -316,3 +316,5 @@ for i in counter:
 fusion.assign(line_return='\n')
 fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
 fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+
+print(tgtname, 'was properly saved')

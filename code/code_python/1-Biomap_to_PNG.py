@@ -271,3 +271,5 @@ if coreg_img is None:
     colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
     coreg_target.save(tgtnamefin + '.png')
+
+print(tgtnamefin, '.png', 'was properly saved.')

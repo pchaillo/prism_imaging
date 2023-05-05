@@ -234,3 +234,5 @@ cv2.imwrite(tgtnamefin + '-coreg.png', img2_reconstructed)
 
 # Destroy all windows
 cv2.destroyAllWindows()
+
+print(tgtnamefin, '-coreg.png', 'was properly saved.')

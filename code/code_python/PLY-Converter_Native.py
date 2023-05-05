@@ -12,7 +12,6 @@ import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from coloraide import Color
-import time
 
 # GUI Goodness
 # Creation of global variables
@@ -80,9 +79,6 @@ ttk.Button(frm, text="Apply", command=fetch_colours).place(x=90, y=220)
 ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=220)
 gui.mainloop()
 
-# Starts CPU execution time
-start_time = time.process_time()
-
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X', 'Y', 'Z', 'Time', 'N.A'])  # Reads the opened biomap
 
 # Header Generation
@@ -92,7 +88,10 @@ dimY = biomap.iloc[0][0]
 edges = 2*dimX*dimY-dimX-dimY  # See Grid Graphs properties, seems wrong
 faces = (dimX-1)*(dimY-1)
 faces = int(faces)  # Conversion to integer is necessary for PLY files
-headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 y\nproperty float64 z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nelement face ", faces, "\nproperty list uchar int vertex_indices""\nend_header\n"
+headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 y\nproperty " \
+                                                               "float64 z\nproperty uchar red\nproperty uchar green\n" \
+                                                               "property uchar blue\nelement face ", faces, "\n" \
+                                                               "property list uchar int vertex_indices""\nend_header\n"
 header = ""
 header = header.join(map(str, headertp))
 
@@ -160,9 +159,4 @@ fusion.assign(line_return='\n')
 fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
 fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
 
-# Time-related code, grabs the end time
-end_time = time.process_time()
-
-# Time-related code, calculates the elapsed time
-cpu_time = end_time - start_time
-print('CPU Runtime = ', cpu_time)
+print(tgtname, 'was properly saved.')
