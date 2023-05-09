@@ -1,0 +1,1 @@
+This folder will store the user's preferences for the interface (comming soon), as well as a transformation matrix

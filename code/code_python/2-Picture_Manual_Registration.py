@@ -87,8 +87,10 @@ ttk.Label(frm, text="Molecular 2D image").place(x=0, y=30)
 
 def matrix_removal():
     file_name_recovery(image_1)
-    os.remove(tgtnamefin + '-matrix.txt')
-
+    try:
+        os.remove('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt')
+    except FileNotFoundError:
+        print('No transformation matrix was found. Initiating manual coregistration.')
 
 ttk.Label(frm, text="New manual coregistration").place(x=0, y=60)
 bt3 = ttk.Button(frm, text="Start", command=lambda: [matrix_removal(), set_merge(), gui.destroy()])
@@ -178,7 +180,7 @@ tgtname = tgtnamefin + '-coreg.' + tgtext
 
 # Matrix recovery
 try:
-    M = pandas.read_csv(tgtnamefin + '-matrix.txt', sep=' ', header=None)
+    M = pandas.read_csv('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt', sep=' ', header=None)
     M = M.to_numpy()
     M = M.reshape((3, 3))
 except:
@@ -217,7 +219,7 @@ merged_img = cv2.addWeighted(img1_display, merge, img2_warped, 1-merge, 0)
 # cv2.imshow('Merge', merged_img)  # Kept for debugging/verbose behaviour
 
 # Save the matrix
-matrix = open(tgtnamefin + '-matrix.txt', 'w')
+matrix = open('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt', 'w')
 M.tofile(matrix, sep=' ')
 
 # Create a mask of the pixels that originally belonged to Image 2 in the merge
@@ -230,9 +232,9 @@ img2_reconstructed = cv2.warpPerspective(img2_merged, M_inv, (img2.shape[1], img
 
 # Save the reconstructed Image 2
 file_name_recovery(image_2)
-cv2.imwrite(tgtnamefin + '-coreg.png', img2_reconstructed)
+cv2.imwrite('3d_export\\coregistered_images\\' + tgtnamefin + '-coreg.png', img2_reconstructed)
 
 # Destroy all windows
 cv2.destroyAllWindows()
 
-print(tgtnamefin, '-coreg.png', 'was properly saved.')
+print(tgtnamefin, '-coreg.png', 'was properly saved in 3d_export/coregistered_images/')

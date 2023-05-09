@@ -203,7 +203,7 @@ orderX = numpy.arange(coordsfinal.iloc[0][0],
                       coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])
 
 orderY = numpy.arange(coordsfinal.iloc[0][1],
-                      coordsfinal.iloc[int(oldimX)-1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
+                      coordsfinal.iloc[int(oldimX) - 1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
                       coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])
 
 # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
@@ -212,16 +212,17 @@ interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), bi
 
 # Computes every position in X and Y for which we want interpolated data
 neworderX = numpy.arange(coordsfinal.iloc[0][0],
-                      max(coordsfinal[0]) + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
-                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])/interpol)
+                         max(coordsfinal[0]) + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
+                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]) / interpol)
 neworderX = neworderX.round(5)
 neworderX = neworderX[neworderX <= max(coordsfinal[0])]
 
 neworderY = numpy.arange(coordsfinal.iloc[0][1],
-                      coordsfinal.iloc[int(oldimX)-1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
-                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1])/interpol)  # Should work in theory, but floats are garbage
+                         coordsfinal.iloc[int(oldimX) - 1][1] + (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][1]),
+                         (coordsfinal.iloc[1][1] - coordsfinal.iloc[0][
+                             1]) / interpol)  # Should work in theory, but floats are garbage
 neworderY = neworderY.round(5)
-neworderY = neworderY[neworderY <= coordsfinal.iloc[int(oldimX)-1][1]]
+neworderY = neworderY[neworderY <= coordsfinal.iloc[int(oldimX) - 1][1]]
 yy2, xx2 = numpy.meshgrid(neworderY, neworderX)
 
 # Creates a flattened array of X and Y couples, akin to an interpolated version of columns 1 and 2 of the biomap
@@ -270,6 +271,6 @@ if coreg_img is None:
     colours_int = colours.astype(int)
     colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save(tgtnamefin + '.png')
+    coreg_target.save('3d_export/molecular_png/' + tgtnamefin + '.png')
 
-print(tgtnamefin, '.png', 'was properly saved.')
+print(tgtnamefin, '.png', 'was properly saved in 3d_export/molecular_png/')

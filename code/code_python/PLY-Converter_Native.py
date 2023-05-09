@@ -6,6 +6,7 @@
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.8). If not, set it up.
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
 
+import os
 import pandas
 import numpy
 import tkinter
@@ -143,7 +144,8 @@ for i in reversed(filename):
 for i in reversed(rvstgtname):
     tgtname = tgtname + i
 tgtname = tgtname.replace("biomap", "ply")
-with open(tgtname, "w") as plyfile:
+savedir_ply = os.getcwd().replace('code\\code_python', '3d_export\\ply_files\\raw\\')
+with open(savedir_ply + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -156,7 +158,7 @@ for i in counter:
     rank = rank + 2
 
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+fusion.to_csv(path_or_buf=savedir_ply + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf=savedir_ply + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
 
-print(tgtname, 'was properly saved.')
+print(tgtname, 'was properly saved in 3d_export/ply_files/raw/')
