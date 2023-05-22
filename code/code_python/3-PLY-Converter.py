@@ -279,11 +279,11 @@ coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 file_name_recovery(filepath=filename)
-if coreg_img is None:
-    colours_int = colours.astype(int)
-    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
-    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save(tgtnamefin + '.png')
+#if coreg_img is None:
+#    colours_int = colours.astype(int)
+#    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
+#    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
+#    coreg_target.save(tgtnamefin + '.png')
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
@@ -298,10 +298,10 @@ fcsdf = fcsdf[fcsdf[0] != 0]
 # Export file name recovery
 tgtname = tgtnamefin + '.' + tgtext
 if coreg_img is None:
-    tgtname = tgtname.replace(".biomap", str(interpol) + "x" + ".ply")
+    tgtname = tgtname.replace(".biomap", "-" + str(interpol) + "x" + ".ply")
 else:
-    tgtname = tgtname.replace(".biomap", str(interpol) + "x_coreg" + ".ply")
-with open(tgtname, "w") as plyfile:
+    tgtname = tgtname.replace(".biomap", "-" + str(interpol) + "x_coreg" + ".ply")
+with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -314,7 +314,7 @@ for i in counter:
     rank = rank + 2
 
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
 
 print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')
