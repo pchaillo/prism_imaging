@@ -144,7 +144,7 @@ for i in reversed(filename):
 for i in reversed(rvstgtname):
     tgtname = tgtname + i
 tgtname = tgtname.replace("biomap", "ply")
-savedir_ply = os.getcwd().replace('code\\code_python', '3d_export\\ply_files\\raw\\')
+savedir_ply = os.getcwd().replace('code\\code_python\\', '3d_export\\ply_files\\raw\\')
 with open(savedir_ply + tgtname, "w") as plyfile:
     plyfile.write(header)
 
