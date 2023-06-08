@@ -76,8 +76,7 @@ sldr5.place(x=35, y=160)
 sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr6.place(x=155, y=160)
 
-ttk.Button(frm, text="Apply", command=fetch_colours).place(x=90, y=220)
-ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=220)
+ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), gui.destroy()]).place(x=180, y=220)
 gui.mainloop()
 
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X', 'Y', 'Z', 'Time', 'N.A'])  # Reads the opened biomap
@@ -144,8 +143,8 @@ for i in reversed(filename):
 for i in reversed(rvstgtname):
     tgtname = tgtname + i
 tgtname = tgtname.replace("biomap", "ply")
-savedir_ply = os.getcwd().replace('code\\code_python\\', '3d_export\\ply_files\\raw\\')
-with open(savedir_ply + tgtname, "w") as plyfile:
+#savedir_ply = os.getcwd().replace('code\\code_python\\', '3d_export\\ply_files\\raw\\')
+with open('3D_export/ply_files/raw/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -158,7 +157,7 @@ for i in counter:
     rank = rank + 2
 
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf=savedir_ply + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf=savedir_ply + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+fusion.to_csv(path_or_buf='3D_export/ply_files/raw/'  + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='3D_export/ply_files/raw/'  + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
 
 print(tgtname, 'was properly saved in 3d_export/ply_files/raw/')
