@@ -92,7 +92,6 @@ def set_interpol():
     global interpol
     interpol = sldr7.get()
 
-
 gui = tkinter.Tk()
 gui.title("Biomap to PLY converter - I'm tired...")
 gui.resizable(False, False)
@@ -140,24 +139,29 @@ sldr7.set(2)
 itp_type = tkinter.StringVar()  # I hate this box, but it works, so I'm not touching it
 cb1 = ttk.Combobox(frm, state='readonly', textvariable=itp_type, values=('Linear', 'Nearest', 'SLinear', 'Cubic',
                                                                          'Quintic', 'PChip'), width=13)
-cb1.place(x=157, y=278)
+cb1.place(x=157, y=279)
 cb1.set('Linear')
-
 
 def set_interpol_type():
     global itp_type
     itp_type = cb1.get()
 
-
 cb1.bind('<<ComboboxSelected>>', set_interpol_type)
 
-ttk.Button(frm, text="Set", command=set_interpol).place(x=35, y=310)
+is_segmentation = tkinter.IntVar(value=0)
+def set_profiling():
+    global is_segmentation
+    is_segmentation = is_segmentation.get()
+
+
+profiling_chk = ttk.Checkbutton(frm, text='Segmentation', variable=is_segmentation, onvalue=1, offvalue=0)
+profiling_chk.place(x=155, y=313)
 
 bt2 = ttk.Button(frm, text="Image", command=set_coreg)
-bt2.place(x=180, y=310)
+bt2.place(x=35, y=310)
 
-ttk.Button(frm, text="Quit", command=lambda: [fetch_colours(), set_interpol(), set_interpol_type(), gui.destroy()]). \
-    place(x=180, y=340)
+ttk.Button(frm, text="Proceed", command=lambda:[fetch_colours(), set_interpol(), set_interpol_type(), set_profiling(),
+                                                gui.destroy()]).place(x=180, y=340)
 gui.mainloop()
 
 biomap = pandas.read_csv(filename, sep=' ', header=None)  # Reads the opened biomap
@@ -221,7 +225,10 @@ orderY = numpy.arange(coordsfinal.iloc[0][1],
 
 # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
 interp_grid_z = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_z_np, method=itp_type)
-interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_int_np, method=itp_type)
+if is_segmentation == 0:
+    interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_int_np, method=itp_type)
+elif is_segmentation == 1:
+    interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_int_np, method='nearest')
 
 # Computes every position in X and Y for which we want interpolated data
 neworderX = numpy.arange(coordsfinal.iloc[0][0],
@@ -279,11 +286,11 @@ coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 file_name_recovery(filepath=filename)
-if coreg_img is None:
-    colours_int = colours.astype(int)
-    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
-    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save(tgtnamefin + '.png')
+#if coreg_img is None:
+#    colours_int = colours.astype(int)
+#    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
+#    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
+#    coreg_target.save(tgtnamefin + '.png')
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
@@ -298,10 +305,10 @@ fcsdf = fcsdf[fcsdf[0] != 0]
 # Export file name recovery
 tgtname = tgtnamefin + '.' + tgtext
 if coreg_img is None:
-    tgtname = tgtname.replace(".biomap", str(interpol) + "x" + ".ply")
+    tgtname = tgtname.replace(".biomap", "-" + str(interpol) + "x" + ".ply")
 else:
-    tgtname = tgtname.replace(".biomap", str(interpol) + "x_coreg" + ".ply")
-with open(tgtname, "w") as plyfile:
+    tgtname = tgtname.replace(".biomap", "-" + str(interpol) + "x_coreg" + ".ply")
+with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -314,5 +321,7 @@ for i in counter:
     rank = rank + 2
 
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+
+print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')

@@ -1,7 +1,8 @@
 
-function map_from_spectra(bio_dat,carte)
+function map_from_spectra(bio_dat,carte,compute_flag)
 
-plot_all_spectra(bio_dat);
+% compute_flag : booleen qui détermine s'il faut recalculer un spectre
+% global. 0 => rien en mémoire / 1 => reprendre le tableau en mémoire
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);

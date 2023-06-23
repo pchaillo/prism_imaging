@@ -6,13 +6,13 @@
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.8). If not, set it up.
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
 
+import os
 import pandas
 import numpy
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from coloraide import Color
-import time
 
 # GUI Goodness
 # Creation of global variables
@@ -76,12 +76,8 @@ sldr5.place(x=35, y=160)
 sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr6.place(x=155, y=160)
 
-ttk.Button(frm, text="Apply", command=fetch_colours).place(x=90, y=220)
-ttk.Button(frm, text="Quit", command=gui.destroy).place(x=180, y=220)
+ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), gui.destroy()]).place(x=180, y=220)
 gui.mainloop()
-
-# Starts CPU execution time
-start_time = time.process_time()
 
 biomap = pandas.read_csv(filename, sep=' ', header=None, names=['X', 'Y', 'Z', 'Time', 'N.A'])  # Reads the opened biomap
 
@@ -92,7 +88,10 @@ dimY = biomap.iloc[0][0]
 edges = 2*dimX*dimY-dimX-dimY  # See Grid Graphs properties, seems wrong
 faces = (dimX-1)*(dimY-1)
 faces = int(faces)  # Conversion to integer is necessary for PLY files
-headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 y\nproperty float64 z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nelement face ", faces, "\nproperty list uchar int vertex_indices""\nend_header\n"
+headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 y\nproperty " \
+                                                               "float64 z\nproperty uchar red\nproperty uchar green\n" \
+                                                               "property uchar blue\nelement face ", faces, "\n" \
+                                                               "property list uchar int vertex_indices""\nend_header\n"
 header = ""
 header = header.join(map(str, headertp))
 
@@ -144,7 +143,8 @@ for i in reversed(filename):
 for i in reversed(rvstgtname):
     tgtname = tgtname + i
 tgtname = tgtname.replace("biomap", "ply")
-with open(tgtname, "w") as plyfile:
+#savedir_ply = os.getcwd().replace('code\\code_python\\', '3d_export\\ply_files\\raw\\')
+with open('3D_export/ply_files/raw/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -157,12 +157,7 @@ for i in counter:
     rank = rank + 2
 
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf=tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
+fusion.to_csv(path_or_buf='3D_export/ply_files/raw/'  + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='3D_export/ply_files/raw/'  + tgtname, sep=" ", header=False, index=False, mode="a")  # Write faces to target file
 
-# Time-related code, grabs the end time
-end_time = time.process_time()
-
-# Time-related code, calculates the elapsed time
-cpu_time = end_time - start_time
-print('CPU Runtime = ', cpu_time)
+print(tgtname, 'was properly saved in 3d_export/ply_files/raw/')

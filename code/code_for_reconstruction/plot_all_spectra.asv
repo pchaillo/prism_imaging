@@ -1,0 +1,13 @@
+function plot_all_spectra(bio_dat,compute_flag)
+
+% compute_flag : booleen qui détermine s'il faut recalculer un spectre
+% global
+
+if compute_flag == 0 
+    all_peaks = compute_all_spectra(bio_dat);
+    compute_flag = 1;
+
+figure()
+plot(peaks(:,1),peaks(:,2));
+xlabel('Mass/Charge (M/Z)')
+ylabel('Relative Intensity')
