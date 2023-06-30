@@ -25,7 +25,7 @@ si = size(map);
 %Extraction des données utiles
 id = 0;
 for i = 1:length(bio_dat)
-    if bio_dat(i).num ~= 2 %to delete useless empty point
+%     if bio_dat(i).num ~= 2 %to delete useless empty point
         id = id +1 ;
         ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
         if bio_dat(i).num > 0
@@ -34,7 +34,7 @@ for i = 1:length(bio_dat)
             value(id) = 0;
         end
     end
-end
+% end
 
 %med = median(totIonCurrent,'all'); %% be carefull change to median
 med = good_med_for_norm2(bio_dat);
