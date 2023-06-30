@@ -10,7 +10,7 @@ classdef RobotMeca500
 
         function robot_co = connect(robot)   % init_tcp for MECA500
            % Connexion
-            t = tcpip('192.168.0.100',10000,'NetworkRole','client');
+            t = tcpip(robot.IP_adress,10000,'NetworkRole','client');
             fopen(t);
             pause(0.1);
 
@@ -70,7 +70,7 @@ classdef RobotMeca500
             data = ['SetJointVel(15)' char(0)]; % set the percentage of maximum velocity, at 25% by default.
             fwrite(t,data)
 
-            data = ['SetBlending(90)' char(0)]; % désactive l'optimisation de trajectoire
+            data = ['SetBlending(90)' char(0)]; % deactivate trajectory optimisation
             fwrite(t,data)
 
              %%% Vide le buffer %%%
