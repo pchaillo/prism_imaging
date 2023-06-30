@@ -30,6 +30,7 @@ else
     time_flag = 0;
     %[ bio_ind ,bio_map ] = mzXML_on_map_norm8_4(bio_dat,carte_z,limits,seuil); % put the information on the map
 end
+
 %[ bio_ind, bio_num, bio_map, deiso_tab] = mzXML_on_map_norm17(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag);
 [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
 

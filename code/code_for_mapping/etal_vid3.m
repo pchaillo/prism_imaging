@@ -1,10 +1,11 @@
-function new_tab = etal_vid3(t,ard)
+function new_tab = etal_vid3(robot,ard)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % with better taking in care of the criticals values
 
 global scan
 global zone
+global robot
 
 disp('Etallonage en cours')
 
@@ -30,15 +31,15 @@ pos_x = zone.dec - 10;
 pos_y = 0;
 
 a = [pos_x pos_y i 180 0 180 ];
-set_pos(a,t);
+robot.class.set_position(robot.connexion,a);
 pause(7)
 
 while u == 0
-    
+
     k = k + 1;
-    
+
     tension = lecture_capteur(ard);
-    
+
     if f == 0 % pour déterminer si on monte ou si on descend
         i = i + pas;
         if i == i_f % si la hauteur finale est atteinte, on commence à redescendre
@@ -50,29 +51,29 @@ while u == 0
             u = 1;
         end
     end
-    
+
     if i < 50 % i étant la hauteur de l'effecteur, il s'agit d'une sécurité pour arrêter la calibration si le robot s'approche trop près du sol
         u = 1;
         disp('arret de l etalonnage par securite')
     end
-    
+
     a = [pos_x pos_y i 180 0 180 ];
-    set_pos(a,t);
-    
+    robot.class.set_position(robot.connexion,a);
+
     d = d + 1;
     tab(:,d) = [i ; tension];
-    
-%     if tension < 1.2 || tension > 4.65 % pour augmenter la precision des extremes, pas encore teste
-%         pas = init_pas/2;
-%     else
-%         pas = init_pas;
-%     end
-    
+
+    %     if tension < 1.2 || tension > 4.65 % pour augmenter la precision des extremes, pas encore teste
+    %         pas = init_pas/2;
+    %     else
+    %         pas = init_pas;
+    %     end
+
     if i == i_f % pour avoir un beau tableau bien symetrique
         d = d+1;
         tab(:,d) = [i ; tension];
     end
-    
+
 end
 
 taille_i = (i_f - i_d)/pas ; % récupération de la taille attendue du tableau

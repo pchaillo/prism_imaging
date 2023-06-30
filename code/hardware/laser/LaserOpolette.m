@@ -2,7 +2,7 @@ classdef LaserOpolette < LaserBase
     
     properties
 %         USB_port = "/dev/ttyUSB0" % for linux
-        USB_port = "COM9" % for windows
+        USB_port = "COM5" % for windows
         Baudrate = 9600
         Temp_limit = 38
     end
@@ -90,7 +90,7 @@ classdef LaserOpolette < LaserBase
             elseif n == "fire auto qs"
                 state_text = 'The flashlamp is firing in Internal sync and the Q-Switch is operating in Internal sync. ';
                 state_double = 2;
-            elseif n == "fire ext qs" emergency p-b
+            elseif n == "fire ext qs" % emergency p-b
                 state_text = 'The flashlamp is firing in External sync and the Q-Switch is operating in Internal sync.';
                 state_double = 2;
             elseif n == "emergency p-b"
@@ -103,6 +103,25 @@ classdef LaserOpolette < LaserBase
             end
 
             state_text = strcat('State : ',state_text);
+        end
+
+        function tir_continu_ON(laser,laser_co)
+            % insert code to open the mirror that let the laser get out
+            
+            writeline(laser_co, "CC")
+            state_string = read(laser_co,15,'string');
+
+            disp('Ouverture du miroir => ATTENTION TIR LASER EN CONTINU !');
+        end
+
+        function tir_continu_OFF(laser,laser_co)
+            % insert code to close the mirror, to stop continue laser shooting
+            
+            writeline(laser_co, "CS") % ferme le laser
+            tab_qsw_0 = readline(laser_co)
+
+            disp('Fermeture du miroir, fin du tir laser en continu.');
+        
         end
         
     end

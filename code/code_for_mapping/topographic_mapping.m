@@ -1,4 +1,4 @@
-function topographic_mapping(t,ard,new_tab)
+function topographic_mapping(robot,ard,new_tab)
 
 % with time recording
 % mono_carto_topo3
@@ -6,7 +6,6 @@ function topographic_mapping(t,ard,new_tab)
 % cartographie la zone et non l'objet
 
 global carte
-global robot
 global scan
 global zone
 
@@ -46,7 +45,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             a = [k  j  scan.dh+delta 180 0 180];
             if robot.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
-                set_pos(a,t);
+                robot.class.set_position(robot.connexion,a);
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
@@ -81,7 +80,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             a = [k  j  scan.dh+delta 180 0 180];
             if robot.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
-                set_pos(a,t);
+                robot.class.set_position(robot.connexion,a);
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;

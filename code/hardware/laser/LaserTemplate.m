@@ -50,5 +50,13 @@ classdef LaserTemplate
             % insert code to choose the state text
         end
 
+        function tir_continu_ON(laser,laser_co)
+            % insert code to open the mirror that let the laser get out
+        end
+
+        function tir_continu_OFF(laser,laser_co)
+            % insert code to close the mirror, to stop continue laser shooting
+        end
+
    end
 end

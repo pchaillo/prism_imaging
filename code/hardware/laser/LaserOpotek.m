@@ -230,6 +230,27 @@ classdef LaserOpotek < LaserBase
             state_text = strcat('State : ',state_text);
         end
 
+        function tir_continu_ON(laser,laser_co)
+            % insert code to open the mirror that let the laser get out
+            opotek = laser_co;
+            
+            writeline(opotek, "QSW 1")  % ouvre le laser
+            tab_qsw_1 = readline(opotek)
+            
+
+            disp('Ouverture du miroir => ATTENTION TIR LASER EN CONTINU !');
+        end
+
+        function tir_continu_OFF(laser,laser_co)
+            % insert code to close the mirror, to stop continue laser shooting
+            
+            writeline(opotek, "QSW 0") % ferme le laser
+            tab_qsw_0 = readline(opotek)
+
+            disp('Fermeture du miroir, fin du tir laser en continu.');
+        
+        end
+
 
     end
 end
