@@ -1,5 +1,7 @@
 # Validated on Python 3.8.10
-# To run through MatLab: pyrunfile('PLY-Converter_Colour_tkinter.py')
+# To run manually through MatLab:
+#   path(path, 'code/code_python')
+#   pyrunfile('#FILE_NAME#.py')
 # If not working:
 # _Make sure that Python 3.8 is installed properly
 # _Verify that the Matlab version is compatible with Python 3.8
@@ -21,7 +23,6 @@ import time
 # Creation of global variables
 filename = None
 data_list = None
-# biomap = None
 colour1 = None
 colour2 = None
 coreg_img = None
@@ -74,6 +75,12 @@ def uploadaction():
     data['values'] = data_list
 
 
+def on_combobox_change(*args):
+    query = data_type.get()
+    filtered_data_list = [option for option in data_list if query.lower() in option.lower()]
+    data['values'] = filtered_data_list
+
+
 def set_coreg():
     global coreg_img
     coreg_img = askopenfilename()
@@ -98,6 +105,7 @@ def set_interpol():
     global interpol
     interpol = sldr7.get()
 
+
 gui = tkinter.Tk()
 gui.title("CSV to PLY converter - The big one")
 gui.resizable(False, False)
@@ -119,6 +127,8 @@ def set_data_type():
 data_list = []
 data['values'] = data_list
 data.bind('<<ComboboxSelected>>', set_data_type)
+
+data_type.trace('w', on_combobox_change)
 
 separator = ttk.Separator(gui, orient="horizontal")
 separator.place(x=0, y=40, relwidth=3)
@@ -161,6 +171,7 @@ cb1 = ttk.Combobox(frm, state='readonly', textvariable=itp_type, values=('Linear
                                                                          'Quintic', 'PChip'), width=13)
 cb1.place(x=157, y=279)
 cb1.set('Linear')
+
 
 def set_interpol_type():
     global itp_type
@@ -300,13 +311,16 @@ for i in intensities:
 # Colouring of vertices with ColorAide
 if coreg_img is None:
     c1 = Color("srgb", [r1 / 255, g1 / 255, b1 / 255])
+    c1 = Color.convert(c1, "oklab")  # Converts values from srgb to the perceptually linear oklab colour space
     c2 = Color("srgb", [r2 / 255, g2 / 255, b2 / 255])
-    col = Color.interpolate([c1, c2], space="srgb")
+    c2 = Color.convert(c2, "oklab")
+    col = Color.interpolate([c1, c2], space="oklab")
     colours = numpy.zeros(shape=(vertices, 3))
     rank = 0
 
     for i in itstlst:
         hue = col(i / imax)
+        hue = Color.convert(hue, "srgb")
         colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
         rank = rank + 1
     coloursdf = pandas.DataFrame(colours)
@@ -318,11 +332,6 @@ coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 file_name_recovery(filepath=filename)
-#if coreg_img is None:
-#    colours_int = colours.astype(int)
-#    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
-#    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-#    coreg_target.save(tgtnamefin + '.png')
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices

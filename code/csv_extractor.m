@@ -1,4 +1,4 @@
-% Version avec le bining
+% Version avec le binning
 
 % function csv = binned_to_csv(csv_map, csv_mat)
 
