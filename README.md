@@ -5,13 +5,12 @@ Attention, penser à créer les répertoires "csv files", "map files", "mat file
 
 Launch the file mapping_APP_7.mlapp trough matlab to launch the interface.
 
-Recquirement : 
+Requirements: 
 Matlab Toolbox : Bioinformatics Toolbox (To use the .mzXML file format)
-
 
 Version Prism 
 
-Crée par Paul Chaillou - 2021 / 2022
+Created by Paul Chaillou - 2021 / 2023
 
 pchaillo - paul.chaillou@inria.fr
 
