@@ -1,0 +1,88 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration file="C:\Users\guiot\Documents\PRISM\prism_imaging\SpiderMass Imaging Software.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="SpiderMass Imaging Software" target="target.mlapps" target-name="Package App">
+    <param.appname>SpiderMass Imaging Software</param.appname>
+    <param.authnamewatermark>Paul CHAILLOU - Yanis ZIREM - Adel GUIOT</param.authnamewatermark>
+    <param.email />
+    <param.company />
+    <param.icon />
+    <param.icons />
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.version>0.5</param.version>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.output>C:\Users\guiot\Downloads</param.output>
+    <param.guid>5fd21e10-0be9-4753-88e7-8a71daf77ae4</param.guid>
+    <unset>
+      <param.email />
+      <param.company />
+      <param.icon />
+      <param.icons />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\mapping_APP_7.mlapp</file>
+    </fileset.main>
+    <fileset.depfun />
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\3d_export</file>
+      <file>${PROJECT_ROOT}\BIOmap files</file>
+      <file>${PROJECT_ROOT}\code</file>
+      <file>${PROJECT_ROOT}\csv files</file>
+      <file>${PROJECT_ROOT}\etal files</file>
+      <file>${PROJECT_ROOT}\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat - Raccourci.lnk</file>
+      <file>${PROJECT_ROOT}\load_BIOmap.m</file>
+      <file>${PROJECT_ROOT}\load_etal.m</file>
+      <file>${PROJECT_ROOT}\load_map4.m</file>
+      <file>${PROJECT_ROOT}\load_rgbmap.m</file>
+      <file>${PROJECT_ROOT}\map files</file>
+      <file>${PROJECT_ROOT}\mat files</file>
+      <file>${PROJECT_ROOT}\mzXML files</file>
+      <file>${PROJECT_ROOT}\READ_BEFORE_FIRST_USE.txt</file>
+      <file>${PROJECT_ROOT}\rgb map files</file>
+      <file>${PROJECT_ROOT}\test_mzXML_file.m</file>
+      <file>${PROJECT_ROOT}\to add</file>
+      <file>${PROJECT_ROOT}\txt files</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\guiot" name="Downloads" optional="false">C:\Users\guiot\Downloads</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2022b</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
