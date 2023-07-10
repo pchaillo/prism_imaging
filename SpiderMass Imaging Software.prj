@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration file="C:\Users\guiot\Documents\PRISM\prism_imaging\SpiderMass Imaging Software.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="SpiderMass Imaging Software" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="3752476782" file="C:\Users\guiot\Documents\PRISM\prism_imaging\SpiderMass Imaging Software.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="SpiderMass Imaging Software" target="target.mlapps" target-name="Package App">
     <param.appname>SpiderMass Imaging Software</param.appname>
     <param.authnamewatermark>Paul CHAILLOU - Yanis ZIREM - Adel GUIOT</param.authnamewatermark>
     <param.email />
@@ -45,6 +45,7 @@
       <file>${PROJECT_ROOT}\load_map4.m</file>
       <file>${PROJECT_ROOT}\load_rgbmap.m</file>
       <file>${PROJECT_ROOT}\map files</file>
+      <file>${PROJECT_ROOT}\mapping_APP_7.mlapp</file>
       <file>${PROJECT_ROOT}\mat files</file>
       <file>${PROJECT_ROOT}\mzXML files</file>
       <file>${PROJECT_ROOT}\READ_BEFORE_FIRST_USE.txt</file>

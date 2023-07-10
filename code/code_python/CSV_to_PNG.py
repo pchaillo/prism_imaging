@@ -107,7 +107,7 @@ def set_interpol():
 
 
 gui = tkinter.Tk()
-gui.title("CSV to PLY converter - The big one")
+gui.title("CSV to PNG converter - The small one")
 gui.resizable(False, False)
 frm = ttk.Frame(gui, padding=10, height=360, width=280)
 frm.grid()
@@ -157,17 +157,17 @@ sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr6.place(x=155, y=160)
 
 separator = ttk.Separator(gui, orient="horizontal")
-separator.place(x=0, y=230, relwidth=3)
+separator.place(x=0, y=220, relwidth=3)
 
-ttk.Label(frm, text="Interpolation").place(x=0, y=225)
+ttk.Label(frm, text="Interpolation").place(x=0, y=215)
 sldr7 = tkinter.Scale(frm, from_=1, to=10, orient=tkinter.HORIZONTAL)
-sldr7.place(x=35, y=240)
+sldr7.place(x=35, y=230)
 sldr7.set(1)
 
 itp_type = tkinter.StringVar()  # I hate this box, but it works, so I'm not touching it
 cb1 = ttk.Combobox(frm, state='readonly', textvariable=itp_type, values=('Linear', 'Nearest', 'SLinear', 'Cubic',
                                                                          'Quintic', 'PChip'), width=13)
-cb1.place(x=157, y=259)
+cb1.place(x=157, y=249)
 cb1.set('Linear')
 
 
@@ -187,13 +187,10 @@ def set_profiling():
 
 
 profiling_chk = ttk.Checkbutton(frm, text='Segmentation', variable=is_segmentation, onvalue=1, offvalue=0)
-profiling_chk.place(x=155, y=293)
-
-bt2 = ttk.Button(frm, text="Image", command=set_coreg)
-bt2.place(x=35, y=290)
+profiling_chk.place(x=155, y=283)
 
 ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), set_data_type(), set_interpol(), set_interpol_type(), set_profiling(),
-                                                 gui.destroy()]).place(x=180, y=320)
+                                                 gui.destroy()]).place(x=180, y=310)
 gui.mainloop()
 
 biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, deprecated
@@ -339,37 +336,10 @@ coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 file_name_recovery(filepath=filename)
-
-# Faces calculation
-vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
-fcs = numpy.zeros(shape=(vertices, 5))
-for i in vtx:
-    if (i % dimX) != 0 and i + dimX <= vertices and ((i + dimX) % dimX) != 0 and i + dimX + 1 <= vertices:
-        fcs[i - 1] = ([4, i + dimX - 1, i + dimX, i, i - 1])
-fcsdf = pandas.DataFrame(fcs)
-fcsdf = fcsdf.astype(int)
-fcsdf = fcsdf[fcsdf[0] != 0]
-
-# Export file name recovery
-tgtname = tgtnamefin + '.' + tgtext
 if coreg_img is None:
-    tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
-else:
-    tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
-with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
-    plyfile.write(header)
+    colours_int = colours.astype(int)
+    colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
+    coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
+    coreg_target.save('3d_export/molecular_png/' + tgtnamefin + '.png')
 
-counter = numpy.arange(0, vertices)
-rank = 0
-fusion = pandas.DataFrame(index=range(vertices*2), columns=range(3))
-
-for i in counter:
-    fusion.iloc[rank] = ovspcoords[i]
-    fusion.iloc[rank + 1] = coloursdf.iloc[i]
-    rank = rank + 2
-
-fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
-
-print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')
+print(tgtnamefin, '.png', 'was properly saved in 3d_export/molecular_png/')
