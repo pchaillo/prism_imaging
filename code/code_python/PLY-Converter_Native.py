@@ -59,7 +59,7 @@ ttk.Label(frm, text="High intensity").place(x=170, y=40)
 ttk.Label(frm, text="Red").place(x=0, y=80)
 sldr1 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr1.place(x=35, y=60)
-sldr1.set(255)
+sldr1.set(0)
 sldr2 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr2.place(x=155, y=60)
 
@@ -73,8 +73,10 @@ sldr4.set(255)
 ttk.Label(frm, text="Blue").place(x=0, y=180)
 sldr5 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr5.place(x=35, y=160)
+sldr5.set(255)
 sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
 sldr6.place(x=155, y=160)
+sldr6.set(255)
 
 ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), gui.destroy()]).place(x=180, y=220)
 gui.mainloop()
@@ -109,15 +111,18 @@ for i in intensities:
     itstlst.append(int(i))  # Creates a list of intensities converted to integers
 
 # Colouring of vertices with ColorAide
-c1 = Color("srgb", [r1/255, g1/255, b1/255])
-c2 = Color("srgb", [r2/255, g2/255, b2/255])
-col = Color.interpolate([c1, c2], space="srgb")
+c1 = Color("srgb", [r1 / 255, g1 / 255, b1 / 255])
+c1 = Color.convert(c1, "oklab")  # Converts values from srgb to the perceptually linear oklab colour space
+c2 = Color("srgb", [r2 / 255, g2 / 255, b2 / 255])
+c2 = Color.convert(c2, "oklab")
+col = Color.interpolate([c1, c2], space="oklab")
 colours = numpy.zeros(shape=(vertices, 3))
 rank = 0
 
 for i in itstlst:
-    hue = col(i/imax)
-    colours[rank] = ([hue['r']*255, hue['g']*255, hue['b']*255])
+    hue = col(i / imax)
+    hue = Color.convert(hue, "srgb")
+    colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
     rank = rank + 1
 coloursdf = pandas.DataFrame(colours)
 coloursdf = coloursdf.astype(int)
