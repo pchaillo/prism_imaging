@@ -13,7 +13,7 @@ load(csv_mat);
 l = length(bio_dat); % useless
 
 win = win_size
-band = [mass_min mass_max]
+band = [mass_min, mass_max]
 
 peak_tab = bio_dat(1).peaks.mz;
 peak_tab_clean = bining_2(peak_tab,win,band);
