@@ -66,13 +66,14 @@ def file_name_recovery(filepath):
 
 # GUI Goodness
 def uploadaction():
-    global filename, data_list  # , biomap
+    global filename, data_list, binning_win
     filename = askopenfilename(
         defaultextension='.csv')  # Global allows for modification of a variable out of the function
     biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
     data_list = biomap.index
     data_list = data_list.to_list()
     data['values'] = data_list
+    binning_win = round((float(data_list[12]) - float(data_list[11])), 5)  # Recovers the CSV binning
 
 
 def on_combobox_change(*args):
@@ -109,7 +110,7 @@ def set_interpol():
 gui = tkinter.Tk()
 gui.title("CSV to PNG converter - The small one")
 gui.resizable(False, False)
-frm = ttk.Frame(gui, padding=10, height=360, width=280)
+frm = ttk.Frame(gui, padding=10, height=390, width=290)
 frm.grid()
 ttk.Button(frm, text="Load a CSV", command=uploadaction).place(x=0, y=0)  # Fetches the biomap of interest
 ttk.Label(frm, text="Data:").place(x=85, y=3)
@@ -130,46 +131,78 @@ data.bind('<<ComboboxSelected>>', set_data_type)
 
 data_type.trace('w', on_combobox_change)
 
+ttk.Label(frm, text='M/z +/-').place(x=160, y=30)
+img_win = tkinter.StringVar(value= "0")
+img_win_input = tkinter.Entry(frm, textvariable=img_win, width=7).place(x=208, y=30)
+
+
+def windowmaker(resolution, indices=data_type):
+    # Function that returns each index of interest in a given window, and then parses the full index list to retain the
+    # ones of interest
+    window = img_win.get()
+    centroid = float(indices.get())
+    win_max = centroid + float(window)
+    win_min = centroid - float(window)
+    cursor = win_min
+    target_indices = [win_min]
+    while cursor <= win_max:
+        cursor = cursor + resolution
+        target_indices.append(cursor)
+    target_indices_str = []
+    for index in target_indices:
+        target_indices_str.append(str(index))
+    target_indices = []
+    for index in target_indices_str:
+        if index.endswith('.0'):
+            index = index.replace('.0', '')
+        target_indices.append(index)
+    global data_window
+    data_window = []
+    for index in target_indices:
+        if index in data_list:
+            data_window.append(index)
+    return data_window
+
 separator = ttk.Separator(gui, orient="horizontal")
-separator.place(x=0, y=40, relwidth=3)
+separator.place(x=0, y=65, relwidth=3)
 
-ttk.Label(frm, text="Low intensity").place(x=50, y=40)  # Column headers
-ttk.Label(frm, text="High intensity").place(x=170, y=40)
+ttk.Label(frm, text="Low intensity").place(x=50, y=60)  # Column headers
+ttk.Label(frm, text="High intensity").place(x=170, y=60)
 
-ttk.Label(frm, text="Red").place(x=0, y=80)
+ttk.Label(frm, text="Red").place(x=0, y=100)
 sldr1 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr1.place(x=35, y=60)
+sldr1.place(x=35, y=80)
 sldr1.set(0)
 sldr2 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr2.place(x=155, y=60)
+sldr2.place(x=155, y=80)
 
-ttk.Label(frm, text="Green").place(x=0, y=130)
+ttk.Label(frm, text="Green").place(x=0, y=150)
 sldr3 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr3.place(x=35, y=110)
+sldr3.place(x=35, y=130)
 sldr4 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr4.place(x=155, y=110)
+sldr4.place(x=155, y=130)
 sldr4.set(255)
 
-ttk.Label(frm, text="Blue").place(x=0, y=180)
+ttk.Label(frm, text="Blue").place(x=0, y=200)
 sldr5 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr5.place(x=35, y=160)
+sldr5.place(x=35, y=180)
 sldr5.set(255)
 sldr6 = tkinter.Scale(frm, from_=0, to=255, orient=tkinter.HORIZONTAL)
-sldr6.place(x=155, y=160)
+sldr6.place(x=155, y=180)
 sldr6.set(255)
 
 separator = ttk.Separator(gui, orient="horizontal")
-separator.place(x=0, y=220, relwidth=3)
+separator.place(x=0, y=240, relwidth=3)
 
-ttk.Label(frm, text="Interpolation").place(x=0, y=215)
+ttk.Label(frm, text="Interpolation").place(x=0, y=235)
 sldr7 = tkinter.Scale(frm, from_=1, to=10, orient=tkinter.HORIZONTAL)
-sldr7.place(x=35, y=230)
+sldr7.place(x=35, y=250)
 sldr7.set(1)
 
-itp_type = tkinter.StringVar()  # I hate this box, but it works, so I'm not touching it
+itp_type = tkinter.StringVar()
 cb1 = ttk.Combobox(frm, state='readonly', textvariable=itp_type, values=('Linear', 'Nearest', 'SLinear', 'Cubic',
                                                                          'Quintic', 'PChip'), width=13)
-cb1.place(x=157, y=249)
+cb1.place(x=157, y=269)
 cb1.set('Linear')
 
 
@@ -189,13 +222,16 @@ def set_profiling():
 
 
 profiling_chk = ttk.Checkbutton(frm, text='Segmentation', variable=is_segmentation, onvalue=1, offvalue=0)
-profiling_chk.place(x=155, y=283)
+profiling_chk.place(x=155, y=303)
 
-ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), set_data_type(), set_interpol(), set_interpol_type(), set_profiling(),
-                                                 gui.destroy()]).place(x=180, y=310)
+ttk.Button(frm, text="Proceed", command=lambda: [fetch_colours(), set_data_type(), set_interpol(), set_interpol_type(),
+                                                 set_profiling(), windowmaker(resolution=binning_win), gui.destroy()])\
+                                                .place(x=180, y=330)
 gui.mainloop()
 
-biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, deprecated
+# End of the GUI loop
+
+biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
 if coreg_img is not None:
@@ -252,7 +288,11 @@ else:
 
 coordsfinal = biomap.iloc[:, 0:3]
 coordsfinal[numpy.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
-coordsfinal[data_type] = biomap[data_type]
+if len(data_window) == 1:
+    data_type = data_window
+    coordsfinal[data_type] = biomap[data_type]
+else:
+    coordsfinal[data_type] = biomap[data_window].sum(1)
 coordsfinal = coordsfinal.rename(columns={'x': 0, 'y': 1, 'z': 2, data_type: 3})
 
 if interpol != 1:
