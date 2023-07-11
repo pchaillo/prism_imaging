@@ -151,7 +151,8 @@ def windowmaker(resolution, indices=data_type):
     target_indices_str = []
     for index in target_indices:
         target_indices_str.append(str(index))
-    target_indices = []
+    target_indices = [round(index, 5) for index in target_indices]  # Workaround float-related shenanigans
+    target_indices_str = []
     for index in target_indices_str:
         if index.endswith('.0'):
             index = index.replace('.0', '')

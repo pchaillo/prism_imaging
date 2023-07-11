@@ -147,6 +147,7 @@ def windowmaker(resolution, indices=data_type):
     while cursor <= win_max:
         cursor = cursor + resolution
         target_indices.append(cursor)
+    target_indices = [round(index, 5) for index in target_indices]  # Workaround float-related shenanigans
     target_indices_str = []
     for index in target_indices:
         target_indices_str.append(str(index))
