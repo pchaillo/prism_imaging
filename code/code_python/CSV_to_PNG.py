@@ -140,6 +140,10 @@ def windowmaker(resolution, indices=data_type):
     # Function that returns each index of interest in a given window, and then parses the full index list to retain the
     # ones of interest
     window = img_win.get()
+    global data_window
+    if window == '0':  # Fixes an edge case where a null window causes data_window to be empty
+        data_window = [data.get()]
+        return data_window
     centroid = float(indices.get())
     win_max = centroid + float(window)
     win_min = centroid - float(window)
@@ -157,7 +161,6 @@ def windowmaker(resolution, indices=data_type):
         if index.endswith('.0'):
             index = index.replace('.0', '')
         target_indices.append(index)
-    global data_window
     data_window = []
     for index in target_indices:
         if index in data_list:
@@ -290,7 +293,6 @@ else:
 coordsfinal = biomap.iloc[:, 0:3]
 coordsfinal[numpy.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
 if len(data_window) == 1:
-    data_type = data_window
     coordsfinal[data_type] = biomap[data_type]
 else:
     coordsfinal[data_type] = biomap[data_window].sum(1)
