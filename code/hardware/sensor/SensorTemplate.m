@@ -1,6 +1,8 @@
 classdef SensorTemplate
 
     % ILD1320-25 renvoie la tension lu sur l'Arduino, qd le VL6180x renvoie directement la distance => comment combiner les deux ?
+    % => Mettre la conversion tension / distance dans le code orienté
+    % objet
 
     % voir les fonctions etal_vid3() et mesure9()
    

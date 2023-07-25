@@ -6,6 +6,8 @@ classdef SensorBase
     end
 
     methods
-
-    end
+        function laser_co = sensor_reading(laser) 
+           % insert laser connexion and return connection object variable
+        end
+   end
 end
