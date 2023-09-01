@@ -1,0 +1,15 @@
+function csv_image_recorder(peak_tab,csv_name)
+
+si = size(peak_tab)
+for u = 2 : si(1)
+    peak_tab = bio_dat(u-1).peaks.mz;
+    peak_tab_clean = bining_2(peak_tab,win,band);
+    tab(u,1:2) = peak_tab_clean(:,2)';
+end
+
+cell = num2cell(tab');
+cell{1,1} = "";
+
+
+T = cell2table(cell);
+writetable(T,csv_name)

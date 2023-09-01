@@ -8,7 +8,7 @@ path(path,"code/code_for_analysing");
 path(path,"code/code_for_recording");
 path(path,"mat files");
 
-carte = load_map4_fcn("m_b.map");
+carte = load_map_fcn("m_b.map");
 
 load("m_b.mat");
 
