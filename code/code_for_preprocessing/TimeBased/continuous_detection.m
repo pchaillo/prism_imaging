@@ -25,20 +25,6 @@ l = length(file);
 time_res = 0.5 ;
 aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
 
-%            %
-
-% %% Détection du premier pic
-% 
-% ok = 0; %% trouve le 1er point pour supprimer les valuers nulles qui sont avant
-% i = 0;
-% while ok == 0
-%     i = i + 1;
-%     if file(i).totIonCurrent > threshold_begin
-%         ind_debut = i;
-%         ok = 1;
-%     end
-% end
-
 %% Récupération des informations
 
 for i = 1: length(file) % récupère les datas

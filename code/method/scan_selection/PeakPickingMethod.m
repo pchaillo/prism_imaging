@@ -10,7 +10,7 @@ classdef PeakPickingMethod < handle
 
     methods
         function init(method,app)
-            method.threshold_begin = app.BeginThresholdEditField.Value; % put here data you need for you scan selection method !
+            method.threshold_begin = app.BeginThresholdEditField.Value; % update them here with data from interface !
             method.t_b = app.Timebetween2lasershotsecondEditField.Value;
             method.min_threshold = app.LoudthresholdEditField.Value;
             method.tolerance = app.FusionpercentSlider.Value;
@@ -30,6 +30,8 @@ classdef PeakPickingMethod < handle
             disp(method.min_threshold)
             disp(method.tolerance)
             disp(method.intern_trig)
+
+            path(path,'code/code_for_preprocessing/PeakPicking')
 
             [bio_dat ,time,g] = peak_detection_pt_par_pt_8(mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.tolerance,carte_time); % take only the usefull informations
 
