@@ -6,7 +6,7 @@ clc
 
 path(path,'BIOmap files')
 
-out = load('finger_03_9_699.biomap');
+out = load('20211026_oc_47-1_neg2_744.biomap');
 
 si = size(out);
 

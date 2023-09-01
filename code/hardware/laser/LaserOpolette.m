@@ -2,7 +2,7 @@ classdef LaserOpolette < LaserBase
     
     properties
 %         USB_port = "/dev/ttyUSB0" % for linux
-        USB_port = "COM9" % for windows
+        USB_port = "COM10" % for windows
         Baudrate = 9600
         Temp_limit = 38
     end

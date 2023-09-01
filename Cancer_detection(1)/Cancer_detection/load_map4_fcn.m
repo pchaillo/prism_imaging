@@ -1,14 +1,6 @@
-% Pour charger la carte (.map) avec le seuil
-% avec les temps de tir enregistrés !
-
-clc
-clear all
-
-close all
+function carte = load_map4_fcn(nom)
 
 path(path,'map files')
-
-nom = 'M15_T3.map';
 
 out = load(nom);
 
@@ -44,12 +36,18 @@ else
     end
 end
 
-figure()
-%surf(carte_x,carte_y,carte_z);
-mesh(carte_x,carte_y,carte_z);
-title(['topographic map : ',nom]);
-% colormap(autumn);
-axis equal
-grid off
-axis off
+% figure()
+% %surf(carte_x,carte_y,carte_z);
+% mesh(carte_x,carte_y,carte_z);
+% % colormap(autumn);
+% axis equal
+% grid off
+% axis off
 
+carte.x = carte_x;
+carte.y = carte_y;
+carte.z = carte_z;
+
+if exist('carte_time')
+    carte.time = carte_time;
+end
