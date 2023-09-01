@@ -5,7 +5,7 @@ function new_tab = etal_vid3(robot,ard)
 
 global scan
 global zone
-global robot
+% global robot % passe en argument
 
 disp('Etallonage en cours')
 
