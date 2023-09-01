@@ -22,19 +22,18 @@ file = clean_deiso2(file);
 l = length(file);
 
 % VARIABLES  %
-time_res = 0.5 ;
+time_res = 0.5 ; % Faire remonter en argument de la fonction ?
 aspiration_time = 0.35;
 
 %            %
 
 %% Détection du premier pic
-
-ok = 0; %% trouve le 1er point pour supprimer les valuers nulles qui sont avant
+ok = 0; %% trouve le 1er point pour supprimer les valeurs nulles qui sont avant
 i = 0;
 while ok == 0
     i = i + 1;
     if file(i).totIonCurrent > threshold_begin
-        ind_debut = i;
+        begin_index = i;
         ok = 1;
     end
 end
@@ -48,28 +47,25 @@ end
 
 %% Détection de peaks matlab
 
-[pk loc w pw] = findpeaks(ion,t_i); %trouve les peaks et leurs localisation
+[pk loc w pw] = findpeaks(ion,t_i); % trouve les peaks et leurs localisation
 
 for i = 2 : length(loc) % crée un tableau des ecarts temporels
     tab_loc(i) = loc(i) - loc(i-1) ;
 end
 
-for i = 1 : length(loc) % récupère les indices des peaks
+for i = 1 : length(loc) % Get peaks index, relatively to time !
     ind_peaks(i) = find( t_i == loc(i) );
 end
 
-tab(1,:) = ind_peaks; % mise des valeurs dans le tableau
+tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair !
 tab(2,:) = loc;
 tab(3,:) = tab_loc;
 tab(4,:) = pk;
 
-deb_sup = find(tab(1,:) == ind_debut); % supprime les points intuiles
+deb_sup = find(tab(1,:) == begin_index); % Suppress all points before the 1st one
 tab(:,1:deb_sup-1) = [];
 
-% tab_i = tab; % on enregistre le tableau initial avant suppression/ajout de points/retrait du bruit
-
 time = time_from_peaks_fcn(tab,min_threshold);
-%time = time_estimation;
 
 %% Application du filtrage min par threshold de bruit
 
@@ -113,7 +109,7 @@ end
 
 %% Ajout des points dans les espaces
 
-new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,ind_debut);
+new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
 
 
 %% Génération des bon indices
@@ -148,7 +144,7 @@ trop_long = find(tab_final(3,:) > t_step + t_step/5);
 %ind_deb = tab(1,1); % existe dejà, ind_debut
 ind_fin = tab_peaks(1,end);
 
-file = collateral_fusion2(file,ind_debut,ind_fin,min_threshold,ind_peaks2,ind_fusion,t_step,ind_peaks_supp);
+file = collateral_fusion2(file,begin_index,ind_fin,min_threshold,ind_peaks2,ind_fusion,t_step,ind_peaks_supp);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
 

@@ -1,4 +1,10 @@
-function carte = load_map4_fcn(nom)
+function carte = load_map_fcn(nom)
+
+% suffix = nom(end-3:end); % je suis idiot c'est abuse
+% disp(suffix)
+% if suffix == '.map'
+%     disp("Empty map file name => not able to find the data") % ERROR_MESSAGE
+% end
 
 path(path,'map files')
 

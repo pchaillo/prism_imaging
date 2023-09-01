@@ -1,6 +1,6 @@
-function file = collateral_fusion2(file,ind_debut,ind_fin,min_threshold,ind_peaks2,ind_fusion,t_step,ind_peaks_supp)
+function file = collateral_fusion2(file,begin_index,ind_fin,min_threshold,ind_peaks2,ind_fusion,t_step,ind_peaks_supp)
 
-a_file = file(ind_debut:ind_fin);
+a_file = file(begin_index:ind_fin);
 for i = 1 : length(a_file)
     a_int_tab(i) = a_file(i).totIonCurrent;
     a_ind(i) = a_file(i).num;

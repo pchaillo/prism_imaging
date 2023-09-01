@@ -1,4 +1,4 @@
-function new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,ind_debut)
+function new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index)
 
 %% Ajout de points dans les grands espaces, pour permettre la bonne reconstruction de l'image
 ind_add =  find(tab_peaks(3,:) > 2*t_step - t_step/10); % ajoute un point dans les grands espaces
@@ -49,7 +49,7 @@ if intern_flag == 1
     %% Ajout de points AVANT les peaks, pour qu'il ne manque pas de points AVANT que l'analyse ai été effectuée
     % ajout de points a la fin, apres le sample
     ind_deb_peaks = tab_peaks(1,end);
-    ind_deb = ind_debut;
+    ind_deb = begin_index;
     time_01_2 = file(1).retentionTime ;
     time_02_2 = tab_peaks(2,1);
     nb_pt = ceil(( time_02_2 - time_01_2 ) / t_step) - 1 ; %deuxième - 1 ?
