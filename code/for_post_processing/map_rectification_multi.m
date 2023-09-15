@@ -1,4 +1,4 @@
-function [carte_f, nb_err ]= map_rectification_multi(map,min_threshold,max_threshold,x_tab,y_tab)
+function [carte_f, nb_err ]= map_rectification_multi(carte_i,seuil_min,seuil_max,x_tab,y_tab)
 
 % x_d et y_d coordonnées des points à déturire
 
@@ -8,15 +8,15 @@ function [carte_f, nb_err ]= map_rectification_multi(map,min_threshold,max_thres
 
 % prise en compte des voisins en croix (plus) pas en carré
 
-si = size(map);
+si = size(carte_i);
 
-carte_f = map;
+carte_f = carte_i;
 
 nb_err = 0;
 
 s_n = seuil_min ;%+ scan.s_offset; % seuil négatif de valeur considérée comme fausse / negative threshold, under it, the value is consider as false
 
-surf_max = max_threshold;% + scan.s_offset;
+surf_max = seuil_max;% + scan.s_offset;
 
 %%
 % i = x_d;
@@ -55,25 +55,25 @@ for w = 1 : l
     end
     
     %%% détection des voisins faux eux aussi %%%
-    if carte_f(i-i_m,j) < s_n || carte_f(i-i_m,j) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
+    if carte_f(i-i_m,j) < s_n || carte_f(i-i_m,j) > surf_max || carte_i(i,j) == 0.01 || carte_i(i,j) == 0.02
         a = 0;
     else
         a = 1;
     end
     
-    if carte_f(i+i_p,j) < s_n || carte_f(i+i_p,j) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
+    if carte_f(i+i_p,j) < s_n || carte_f(i+i_p,j) > surf_max || carte_i(i,j) == 0.01 || carte_i(i,j) == 0.02
         b = 0;
     else
         b = 1;
     end
     
-    if carte_f(i,j-j_m) < s_n ||  carte_f(i,j-j_m) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
+    if carte_f(i,j-j_m) < s_n ||  carte_f(i,j-j_m) > surf_max || carte_i(i,j) == 0.01 || carte_i(i,j) == 0.02
         c = 0;
     else
         c = 1;
     end
     
-    if carte_f(i,j+j_p) < s_n || carte_f(i,j+j_p) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
+    if carte_f(i,j+j_p) < s_n || carte_f(i,j+j_p) > surf_max || carte_i(i,j) == 0.01 || carte_i(i,j) == 0.02
         d = 0;
     else
         d = 1;

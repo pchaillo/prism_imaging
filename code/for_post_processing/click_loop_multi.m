@@ -1,5 +1,8 @@
 function carte_f = click_loop_multi(carte,carte_z,seuil_min,seuil_max)
 
+% Recursive function to select, step by step, all the points that the users
+% wants to rectify
+
 fig = figure();
 mesh(carte.x,carte.y,carte_z)
 axis equal
