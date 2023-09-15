@@ -1,4 +1,4 @@
-function time_diff_med = record_map4(carte_x,carte_y,carte_z,nom,seuil,carte_time)
+function time_diff_med = record_map(carte_x,carte_y,carte_z,name,seuil,carte_time)
 
 % Pour enregistrer la carte .map dans le fichier correspondant
 % record the threshold
@@ -8,17 +8,9 @@ objet.x = carte_x;
 objet.y = carte_y;
 objet.z = carte_z;
 objet.time = carte_time;
-
-
-% écart temporel entre les points !
 size_time = size(carte_time);
 u = 0;
-% for i = 1 : size_time(1)
-%     for j = 1 : size_time(2)
-%         u = u + 1;
-%         tab_time(u) = carte_time(i,j) ;
-%     end
-% end
+
 for i = 1 : size_time(1)
     if ( mod(i,2) ~= 0 )
         for j = 1 : size_time(2)
@@ -41,21 +33,20 @@ time_diff_moy = mean(tab_time_diff);
 
 figure()
 mesh(objet.x,objet.y,objet.z)
+title(name)
 axis equal
-
-% file_name = 'a_test.map';
 
 folder_name = 'map files';
 
-chemin = choix_chemin(folder_name,nom);
+chemin = choix_chemin(folder_name,name);
 
 punto = fopen(chemin,'w');
 
-%%% On rentre les dimensions pour la reconstruction %%%
+%%% We set the size of the map on the top of the file for reconstruction %%%
 si = size(objet.z);
 fprintf(punto,'%f %f %f %f \n', si(1), si(2),seuil,time_diff_med );
 
-%%% On rentre les données dans le document %%%
+%%% We store the data in the file %%%
 for i = 1 : si(1)
     for j = 1 : si(2)
         fprintf(punto,'%f %f %f %f \n',objet.x(i,j), objet.y(i,j), objet.z(i,j),objet.time(i,j) );
