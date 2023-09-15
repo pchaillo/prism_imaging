@@ -12,7 +12,8 @@ else
     time_flag = 0;
 end
 
- [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag); 
+loud_flag = 0;
+ [ bio_ind ,bio_map ] = mzXML_on_map_norm17(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag); 
 
 [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 

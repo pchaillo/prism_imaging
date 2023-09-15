@@ -11,7 +11,7 @@ resolution = 10000;
 figure()
 % plot3(peaks(:,1),times, peaks(:,2));
 [MZ,Y] = msppresample(peaks,resolution);
-h = length(bio_ind_tab);
+h = length(selected_ind_tab);
 % subplot(1,2,1); % pour mettre a coté de la carte
  plot3(repmat(MZ,1,h),repmat(times',resolution,1),Y) % a terminer, mais fonctionne bien
 % PLOT A RESOUDRE
