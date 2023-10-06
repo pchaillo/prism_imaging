@@ -10,7 +10,6 @@ end
 peaks = peaks';
 times = times';
 resolution = 10000;
-resolution = 10000;
 figure()
 % plot3(peaks(:,1),times, peaks(:,2));
 [MZ,Y] = msppresample(peaks,resolution);
