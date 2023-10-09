@@ -1,26 +1,27 @@
 % Version avec le binning
 
-% function csv = binned_to_csv(csv_map, csv_mat)
+function csv = csv_extractor(csv_map, csv_mat, band, win)
 
 path(path,"code/code_for_analysing");
 path(path,"code/code_for_recording");
 path(path,"mat files");
+path(path,"map files")
 
-carte = load_map4_fcn(csv_map);
+carte = load_map_fcn(csv_map);
 
 load(csv_mat);
 
-l = length(bio_dat); % useless
-
-win = win_size
-band = [mass_min, mass_max]
+% l = length(bio_dat); % useless
+% 
+% win = win_size
+% band = [mass_min, mass_max]
 
 peak_tab = bio_dat(1).peaks.mz;
 peak_tab_clean = bining_2(peak_tab,win,band);
 mz_ind_tab = peak_tab_clean(:,1)';
 l = length(mz_ind_tab);
 
-tab(1,6:6+l-1) = mz_ind_tab;
+tab(1,12:12+l-1) = mz_ind_tab; % Always modify accordingly when adding/subtracting information from bio_dat
 
 dim = size(carte.x);
 u = 1;
@@ -58,15 +59,15 @@ for j = 1: 1 : dim(1)
 end
 
 cell = num2cell(tab');
-cell{1,1} = "x";
-cell{2,1} = "y";
-cell{3,1} = "z";
-cell{4,1} = "time";
-cell{5,1} = "Cluster ind";
-cell{6,1} = "totIonCurrent";
-cell{7,1} = "retentionTime";
-cell{8,1} = "Start Scan";
-cell{9,1} = "End Scan";
+cell{1,1} = "X";
+cell{2,1} = "Y";
+cell{3,1} = "Z";
+cell{4,1} = "Time";
+cell{5,1} = "Cluster index";
+cell{6,1} = "TIC";
+cell{7,1} = "Retention Time";
+cell{8,1} = "Scan Start";
+cell{9,1} = "Scan End";
 cell{10,1} = "Base Peak Mz";
 cell{11,1} = "Base Peak Intensity";
 
@@ -79,5 +80,5 @@ writetable(T,export_name)
 
 movefile(export_name,"csv files")
 % csvwrite("msi_data_test4_last.csv",tab')
-
-% end
+disp('Successfuly exported data to a CSV file')
+end
