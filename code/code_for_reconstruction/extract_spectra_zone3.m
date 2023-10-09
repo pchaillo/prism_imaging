@@ -1,5 +1,3 @@
-
-
 function extract_spectra_zone3(bio_dat,carte,limits)
 
 carte_x = carte.x;
@@ -10,15 +8,14 @@ seuil = -1;
 if isfield(carte,'time')
     carte_time = carte.time;
     time_flag = 1;
-   % [ bio_ind ,bio_map ] = mzXML_on_map_norm12(bio_dat,carte_z,limits,carte_time); % put the information on the map
 else
     time_flag = 0;
-    %[ bio_ind ,bio_map ] = mzXML_on_map_norm8_4(bio_dat,carte_z,limits,seuil); % put the information on the map
 end
 
- [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag); 
+loud_flag = 0;
+ [ bio_ind ,bio_map ] = mzXML_on_map_norm17(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag); 
 
-[ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
+[ carte_x,carte_y,carte_z,bio_map ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 
 figure()
 hold on
@@ -32,11 +29,6 @@ axis equal
 axis off
 view(2)
 hold off
-
-% figure()
-% I = mesh(carte_x,carte_y,carte_z);
-% view(2)
-% axis equal
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
@@ -69,23 +61,6 @@ else
     min_y = ind_y1;
 end
 
-% % [p1,m1] = find( carte_x > x1 );
-% % [p2,m2] = find( carte_x < x2 );
-% % 
-% % [p3,m3] = find( carte_y > y1 );
-% % [p4,m4] = find( carte_y < y2 );
-% % 
-% % pos1 = [p1,m1]; % ne sert à rien
-% % pos2 = [p2,m2];
-% % pos3 = [p3,m3];
-% % pos4 = [p4,m4];
-% % 
-% % min_x = min(p1);
-% % max_x = max(p2);
-% % min_y = min(m3);
-% % max_y = max(m4); % ça à l'air de bien fonctionner
-
-
 max_int_value = max(max(bio_map));
  [I,J] = find(bio_map == max_int_value) ;
 
@@ -99,6 +74,10 @@ for x_ind = min_x : max_x % récupère les indices
         map_color(x_ind,y_ind) = max_int_value;
     end
 end
+
+%% Plot multiple spectra
+plot_multiple_spectra(bio_dat,bio_ind_tab)
+
 ind_peaks = 0;
 for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
@@ -107,21 +86,22 @@ for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés
 end
 peaks = peaks';
 times = times';
+% 
+% resolution = 10000;
+% 
+%  figure()
+% % plot3(peaks(:,1),times, peaks(:,2));
+% [MZ,Y] = msppresample(peaks,resolution);
+% h = length(bio_ind_tab);
+% % subplot(1,2,1); % pour mettre a coté de la carte
+%  plot3(repmat(MZ,1,h),repmat(times',resolution,1),Y) % a terminer, mais fonctionne bien
+% % PLOT A RESOUDRE
+% xlabel('Mass/Charge (M/Z)')
+% ylabel('Retention Time')
+% zlabel('Relative Intensity')
+% %subplot(1,2,2);  % pour mettre a coté de la carte
 
-resolution = 10000;
-
- figure()
-% plot3(peaks(:,1),times, peaks(:,2));
-[MZ,Y] = msppresample(peaks,resolution);
-h = length(bio_ind_tab);
-% subplot(1,2,1); % pour mettre a coté de la carte
- plot3(repmat(MZ,1,h),repmat(times',resolution,1),Y) % a terminer, mais fonctionne bien
-% PLOT A RESOUDRE
-xlabel('Mass/Charge (M/Z)')
-ylabel('Retention Time')
-zlabel('Relative Intensity')
-%subplot(1,2,2);  % pour mettre a coté de la carte
-
+%% Fin de la fonction
 figure()
 s = surf(carte_x,carte_y,carte_z,map_color);
 s.FaceAlpha=0.9; % niveau de tranparence
@@ -149,13 +129,13 @@ for i = 2 : si_p(1)
     norm_peak_struct(i) = {peak_tab3};
     peak_tab_norm_sum(:,2) = peak_tab_norm_sum(:,2) + peak_tab3(:,2);
 end
-    
+
 figure()
 plot(peak_tab_norm_sum(:,1),peak_tab_norm_sum(:,2));
 xlabel('Mass/Charge (M/Z)')
 ylabel('Relative Intensity')
 title('Sum of all the spectra of the zone');
 
-
+csv_spectra_recorder(peak_tab_norm_sum,"Test_sauv_somme.csv")
 
 

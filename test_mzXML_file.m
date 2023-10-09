@@ -1,8 +1,10 @@
-nom = '2021_15_09_m_b';
+path(path,'mzXML files')
+
+nom = '08_09_2023_tir_freq_max_doigt_serie2_01';
 nom_mzXML = strcat(nom,'.mzXML');
 mzXMLStruct = mzxmlread(nom_mzXML);
-figure()
 
+figure()
 % plot_chromatogram(mzXML.Struct)
 
 file = mzXMLStruct.scan ;

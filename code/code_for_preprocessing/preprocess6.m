@@ -40,10 +40,10 @@ peak_tab2(e_tab,:) = [];
 %end
 
 % bining
-peak_tab3 = bining(peak_tab2,win);
+% peak_tab3 = bining(peak_tab2,win);
 
 bio_line_out = bio_line;
-bio_line_out.peaks.mz = peak_tab3;
+bio_line_out.peaks.mz = peak_tab2;
 
 %pause()
 

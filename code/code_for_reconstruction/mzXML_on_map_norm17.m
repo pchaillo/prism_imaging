@@ -30,9 +30,15 @@ end
 %Extraction des données utiles
 id = 0;
 for i = 1:length(bio_dat)
+<<<<<<< HEAD
       if bio_dat(i).num ~= 2 %to delete useless empty point
          id = id +1 ;
          ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
+=======
+   % if bio_dat(i).num ~= 2 %to delete useless empty point
+        id = id +1 ;
+        ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
+>>>>>>> cleaning
         if loud_flag == 0
             if bio_dat(i).num > 0
                 value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
@@ -47,7 +53,7 @@ for i = 1:length(bio_dat)
                 value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
             end
         end
-    end
+  %  end
 end
 
 %med = median(totIonCurrent,'all'); %% be carefull change to median

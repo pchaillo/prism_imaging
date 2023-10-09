@@ -8,7 +8,7 @@ close all
 
 path(path,'map files')
 
-nom = '20211022_mouse1_tumour2.map';
+nom = '01sponge_c88.map';
 
 out = load(nom);
 

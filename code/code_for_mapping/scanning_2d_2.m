@@ -1,5 +1,5 @@
 
-function scanning_2d_2(t,laser,nb_shot,t_b,time_ref)
+function scanning_2d_2(robot,laser,nb_shot,t_b,time_ref)
 
 %with spectro time_ref
 
@@ -7,14 +7,19 @@ function scanning_2d_2(t,laser,nb_shot,t_b,time_ref)
 
 disp('scan biométrique')
 
+% global robot
 global carte
 global scan
-global robot
+global state
 global zone
 
 v = 0;
 
 %first_point = 1;
+
+if laser.continuous_flag == 1
+    laser.class.tir_continu_ON(laser.connexion)
+end
 
 for k = zone.dec : scan.pas : zone.dim_x+zone.dec
     v = v + 1 ;
@@ -23,9 +28,9 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
         for j = 2 : scan.pas : zone.dim_y +2
             u = u +1;
             a = [k  j  scan.dh 180 0 180];
-            if robot.arret == 0
+            if state.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
-                set_pos(a,t);
+                robot.class.set_position(robot.connexion,a);
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
@@ -37,7 +42,10 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
 %             end
 
 %             tir_opotek(opotek,nb_shot)
-            laser.class.tir(laser.connexion,nb_shot)
+            if laser.continuous_flag == 0
+                laser.class.tir(laser.connexion,nb_shot)
+            end
+
             pause(t_b);
             carte.time(v,u) = toc(time_ref);
         end
@@ -46,9 +54,9 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
         for j = zone.dim_y+2 : -scan.pas : 2 % décalage de deux millimètres pour éviter les bloquages
             u = u - 1;
             a = [k  j  scan.dh 180 0 180];
-            if robot.arret == 0
+            if state.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
-                set_pos(a,t);
+                robot.class.set_position(robot.connexion,a);
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
@@ -56,13 +64,19 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             %rl_time_display()
 
 %             tir_opotek(opotek,nb_shot)
-            laser.class.tir(laser.connexion,nb_shot)
-
+            if laser.continuous_flag == 0
+                laser.class.tir(laser.connexion,nb_shot)
+            end
+            
             pause(t_b);
             
             carte.time(v,u) = toc(time_ref);
         end
     end
+end
+
+if laser.continuous_flag == 1
+    laser.class.tir_continu_OFF(laser.connexion)
 end
 
 end
