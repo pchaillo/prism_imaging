@@ -85,7 +85,7 @@ separator.place(x=0, y=40, relwidth=3)
 
 ttk.Label(frm, text="Colour Gradient:").place(x=0, y=45)
 col_box = ttk.Combobox(frm, state='readonly',
-                   values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Viridian'),
+                   values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian'),
                    width=13)
 col_box.place(x=100, y=45)
 col_box.set('Viridian')
@@ -260,13 +260,21 @@ colours_dict = {"Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7,
                 "Fusion": [Color("srgb", [1, 1, 0]), Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0, 0]), "linear"],
                 "Halloween": [Color("srgb", [1, 0.4, 0]), Color("srgb", [0.2, 0.1, 0.8]), Color("srgb", [0.3, 1, 0.2]), "linear"],
                 "Easter": [Color("srgb", [0, 0, 1]), Color("srgb", [1, 0.6, 0.8]), Color("srgb", [1, 0.6, 0]), "linear"],
-                "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"]}
+                "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"],
+                "Rainbow": [Color("srgb", [0, 0, 0]), Color("srgb", [0.9, 0, 0.9]), Color("srgb", [0, 0, 1]),
+                            Color("srgb", [1, 0, 0]), Color("srgb", [0, 1, 0]), Color("srgb", [0.8, 0.8, 1]), "linear"]
+                }
 gradient_base = colours_dict.get(gradient_type)
 
 if coreg_img is None:
-    col = Color.interpolate([gradient_base[0], gradient_base[1], gradient_base[2]],
-                            space="oklab",
-                            method=gradient_base[3])
+    if gradient_type == 'Rainbow':  # Should find a cleaner way to implement those more complex scales
+        col = Color.interpolate(gradient_base[0:6],
+                                space="oklab",
+                                method=gradient_base[6])
+    else:
+        col = Color.interpolate([gradient_base[0], gradient_base[1], gradient_base[2]],
+                                space="oklab",
+                                method=gradient_base[3])
     colours = numpy.zeros(shape=(vertices, 3))
     rank = 0
 

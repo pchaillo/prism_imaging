@@ -13,8 +13,8 @@ classdef TimeBasedMethod
         function [bio_dat ,time,g] = selection(method,mzXML_data , carte_time)
 
             path(path,'code/code_for_preprocessing/TimeBased')
-            % insert laser connexion and return connection object variable
-            [bio_dat ,time,g] = continuous_detection(mzXML_data,carte_time); % take only the usefull informations
+            % Insert laser connexion and return connection object variable
+            [bio_dat ,time,g] = continuous_detection(mzXML_data,carte_time); % take only the useful informations
 
         end
     end

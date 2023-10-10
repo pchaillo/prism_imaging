@@ -71,7 +71,7 @@ def bt1_upload():
 
 
 bt1 = ttk.Button(frm, text="Target", command=bt1_upload)
-bt1.place(x=120, y=0)  # Fetches the biomap of interest
+bt1.place(x=120, y=0)
 ttk.Label(frm, text="Optical image").place(x=0, y=3)
 
 
@@ -81,7 +81,7 @@ def bt2_upload():
 
 
 bt2 = ttk.Button(frm, text="Target", command=bt2_upload)
-bt2.place(x=120, y=27)  # Fetches the biomap of interest
+bt2.place(x=120, y=27)
 ttk.Label(frm, text="Molecular 2D image").place(x=0, y=30)
 
 
