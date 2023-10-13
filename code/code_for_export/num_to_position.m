@@ -1,5 +1,5 @@
 %  Creates a table that links spatial data to temporal data
-function num_order_table = num_to_position(map_name, mat) 
+function index = num_to_position(map_name, mat) 
 path(path, 'mat files')
 path(path, 'map files')
 
@@ -28,7 +28,7 @@ for position = 1:pixels_number
     end
 end
 
-num_rank = 1:pixels_number;
-num_order_table = [num_rank; num_order];
+[~, index] = sort(abs(num_order)); % Order in which to pick molecular data sorted time-wise to reconstruct
+                                   % spatial sorting
 
 end

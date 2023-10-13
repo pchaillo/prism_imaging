@@ -3,11 +3,6 @@
 % Win = Binning window in M/z
 function csv = csv_extractor(csv_map, csv_mat, band, win)
 
-csv_map = "M15_T2_corrected.map";
-csv_mat = 'M15_T2.mat';
-band = [800, 900];
-win = 0.1;
-
 path(path,"code/code_for_analysing");
 path(path,"code/code_for_recording");
 path(path,"code/code_for_export");
