@@ -1,1 +1,0 @@
-This folder will store all 2D images obtained from biomaps

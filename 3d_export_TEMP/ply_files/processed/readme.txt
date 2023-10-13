@@ -1,1 +1,0 @@
-This folder will store all processed PLY files
