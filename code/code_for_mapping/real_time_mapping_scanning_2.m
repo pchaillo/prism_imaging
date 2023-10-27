@@ -53,7 +53,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
-            h_m = mesure_9(ard,new_tab,robot.connexion,k,j,delta,opo_flag);
+            h_m = mesure_9(ard,new_tab,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog
@@ -90,7 +90,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
-            h_m = mesure_9(ard,new_tab,robot.connexion,k,j,delta,opo_flag);
+            h_m = mesure_9(ard,new_tab,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog
