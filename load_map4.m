@@ -8,7 +8,7 @@ close all
 
 path(path,'map files')
 
-nom = 'M15_T3.map';
+nom = 'M15_T2_corr.map';
 
 out = load(nom);
 
