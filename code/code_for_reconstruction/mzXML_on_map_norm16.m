@@ -19,6 +19,9 @@ function [ bio_ind, bio_num, bio_map, deiso_tab] = mzXML_on_map_norm16(bio_dat,m
 
 % for main_reconstruct
 
+% deiso_tab contient les indices de toutes les lignes fusionnees => mettre
+% un nom plus clair
+
 si = size(map);
 
 if isempty(bio_dat(1).ionisationEnergy) % pour pouvoir utiliser les vieux mat files

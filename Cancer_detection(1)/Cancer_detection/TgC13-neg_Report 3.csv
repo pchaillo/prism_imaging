@@ -1,0 +1,510 @@
+Group,Number of spectra,Number of passes,Number of failures,Number of outliers,Correct Classification Rate (Exluding outliers),Correct Classification Rate (Including outliers)
+Total,500,438,62,0,87.60%,87.60%
+
+
+,peritumoral region,tumor,Total
+peritumoral region,207,44,251
+tumor,18,231,249
+Total,225,275,500
+
+Sample,Start scan,End scan,True class,Predicted class
+M13_T1.raw,48,52,Tumor,Tumor
+M13_T1.raw,53,56,Tumor,Tumor
+M13_T1.raw,58,60,Tumor,Tumor
+M13_T1.raw,71,73,Tumor,Tumor
+M13_T1.raw,74,75,Tumor,Tumor
+M13_T1.raw,78,80,Tumor,Tumor
+M13_T1.raw,82,84,Tumor,Tumor
+M13_T1.raw,90,92,Tumor,Tumor
+M13_T1.raw,94,97,Tumor,Tumor
+M13_T1.raw,98,100,Tumor,Tumor
+M13_T1.raw,102,104,Tumor,Tumor
+M13_T1.raw,110,112,Tumor,Tumor
+M13_T1.raw,114,116,Tumor,Tumor
+M13_T1.raw,118,120,Tumor,Tumor
+M13_T1.raw,122,124,Tumor,Tumor
+M13_T1.raw,127,129,Tumor,Tumor
+M13_T1.raw,135,137,Tumor,Tumor
+M13_T1.raw,143,145,Tumor,Tumor
+M13_T1.raw,147,149,Tumor,Tumor
+M13_T1.raw,151,153,Tumor,Tumor
+M13_T1.raw,155,157,Tumor,Tumor
+M13_T1.raw,159,161,Tumor,Tumor
+M13_T1.raw,163,166,Tumor,Tumor
+M13_T1.raw,167,169,Tumor,Tumor
+M13_T1.raw,171,173,Tumor,Tumor
+M13_T1.raw,175,177,Tumor,Tumor
+M13_T1.raw,195,198,Tumor,Tumor
+M13_T1.raw,199,202,Tumor,Tumor
+M13_T1.raw,211,214,Tumor,Tumor
+M13_T1.raw,219,222,Tumor,Tumor
+M13_T1.raw,224,226,Tumor,Tumor
+M13_T1.raw,236,239,Tumor,Tumor
+M13_T1.raw,240,242,Tumor,Tumor
+M13_T1.raw,244,246,Tumor,Tumor
+M13_T1.raw,248,250,Tumor,Tumor
+M13_T1.raw,256,259,Tumor,Tumor
+M13_T1.raw,260,262,Tumor,Tumor
+M13_T1.raw,264,267,Tumor,Tumor
+M13_T1.raw,281,283,Tumor,Tumor
+M13_T1.raw,285,287,Tumor,Tumor
+M13_T1.raw,289,291,Tumor,Tumor
+M13_T1.raw,301,304,Tumor,Tumor
+M13_T1.raw,305,308,Tumor,Tumor
+M13_T1.raw,314,316,Tumor,Tumor
+M13_T1.raw,318,320,Tumor,Tumor
+M13_T1.raw,326,328,Tumor,Tumor
+M13_T1.raw,330,333,Tumor,Tumor
+M13_T1.raw,334,337,Tumor,Tumor
+M13_T1.raw,338,341,Tumor,Tumor
+M13_T1.raw,343,345,Tumor,Tumor
+M13_T1.raw,347,349,Tumor,Tumor
+M13_T1.raw,350,352,Tumor,Tumor
+M13_T1.raw,358,361,Tumor,Tumor
+M13_T1.raw,362,364,Tumor,Tumor
+M13_T1.raw,366,369,Tumor,Tumor
+M13_T1.raw,370,373,Tumor,Tumor
+M13_T1.raw,375,377,Tumor,Tumor
+M13_T1.raw,379,381,Tumor,Tumor
+M13_T1.raw,383,385,Tumor,Tumor
+M13_T1.raw,387,389,Tumor,Tumor
+M13_T1.raw,391,393,Tumor,Tumor
+M13_T1.raw,395,397,Tumor,Tumor
+M13_T1.raw,399,401,Tumor,Tumor
+M13_T1.raw,403,405,Tumor,Tumor
+M13_T1.raw,408,410,Tumor,Tumor
+M13_T1.raw,411,414,Tumor,Tumor
+M13_T1.raw,415,418,Tumor,Tumor
+M13_T1.raw,420,422,Tumor,Tumor
+M13_T1.raw,423,426,Tumor,Tumor
+M13_T1.raw,427,431,Tumor,Tumor
+M13_T1.raw,432,434,Tumor,Tumor
+M13_T1.raw,436,438,Tumor,Tumor
+M13_T1.raw,440,443,Tumor,Tumor
+M13_T1.raw,444,447,Tumor,Tumor
+M13_T1.raw,448,451,Tumor,Tumor
+M13_T1.raw,457,459,Tumor,Tumor
+M13_T1.raw,461,463,Tumor,Tumor
+M13_T1.raw,465,468,Tumor,Tumor
+M13_T1.raw,473,475,Tumor,Tumor
+M13_T1.raw,477,479,Tumor,Tumor
+M13_T1.raw,485,487,Tumor,Tumor
+M13_T1.raw,489,492,Tumor,Tumor
+M13_T1.raw,494,496,Tumor,Tumor
+M13_T1.raw,502,504,Tumor,Tumor
+M13_T1.raw,506,508,Tumor,Tumor
+M13_T1.raw,510,512,Tumor,Tumor
+M13_T1.raw,514,516,Tumor,Tumor
+M13_T1.raw,518,520,Tumor,Tumor
+M13_T1.raw,522,525,Tumor,Tumor
+M13_T1.raw,538,541,Tumor,Tumor
+M13_T1.raw,542,544,Tumor,Tumor
+M13_T1.raw,546,549,Tumor,Tumor
+M13_T1.raw,559,561,Tumor,Tumor
+M13_T1.raw,563,565,Tumor,Tumor
+M13_T1.raw,567,569,Tumor,Tumor
+M13_T1.raw,571,573,Tumor,Tumor
+M13_T1.raw,579,583,Tumor,Tumor
+M13_T1.raw,592,594,Tumor,Tumor
+M13_T1.raw,596,598,Tumor,Tumor
+M13_T1.raw,600,602,Tumor,Tumor
+M13_T1.raw,604,607,Tumor,Tumor
+M13_T1.raw,608,611,Tumor,Tumor
+M13_T1.raw,612,615,Tumor,Tumor
+M13_T1.raw,617,619,Tumor,Tumor
+M13_T1.raw,620,623,Tumor,Tumor
+M13_T1.raw,624,627,Tumor,Tumor
+M13_T1.raw,629,631,Tumor,Tumor
+M13_T1.raw,633,635,Tumor,Tumor
+M13_T1.raw,641,643,Tumor,Tumor
+M13_T1.raw,645,647,Tumor,Tumor
+M13_T1.raw,649,651,Tumor,Tumor
+M13_T1.raw,653,655,Tumor,Tumor
+M13_T1.raw,657,659,Tumor,Tumor
+M13_T1.raw,662,664,Tumor,Tumor
+M13_T1.raw,666,668,Tumor,Tumor
+M13_T1.raw,669,672,Tumor,Tumor
+M13_T1.raw,674,676,Tumor,Tumor
+M13_T1.raw,682,684,Tumor,Tumor
+M13_T1.raw,690,692,Tumor,Tumor
+M13_T1.raw,694,696,Tumor,Tumor
+M13_T1.raw,698,701,Tumor,Tumor
+M13_T1.raw,702,705,Tumor,Tumor
+M13_T1.raw,713,717,Tumor,Tumor
+M13_T1.raw,719,721,Tumor,Tumor
+M13_T1.raw,727,729,Tumor,Tumor
+M13_T1.raw,739,741,Tumor,Tumor
+M13_T1.raw,743,746,Tumor,Tumor
+M13_T1.raw,747,750,Tumor,Tumor
+M13_T1.raw,755,758,Tumor,Tumor
+M13_T1.raw,760,762,Tumor,Peritumoral region
+M13_T1.raw,768,770,Tumor,Tumor
+M13_T1.raw,772,774,Tumor,Tumor
+M13_T1.raw,780,783,Tumor,Tumor
+M13_T1.raw,793,795,Tumor,Tumor
+M13_T1.raw,797,799,Tumor,Tumor
+M13_T1.raw,813,816,Tumor,Tumor
+M13_T1.raw,822,824,Tumor,Tumor
+M13_T1.raw,825,828,Tumor,Tumor
+M13_T1.raw,830,832,Tumor,Tumor
+M13_T1.raw,834,836,Tumor,Tumor
+M13_T1.raw,842,844,Tumor,Tumor
+M13_T1.raw,846,848,Tumor,Tumor
+M13_T1.raw,854,856,Tumor,Peritumoral region
+M13_T1.raw,858,860,Tumor,Tumor
+M13_T1.raw,865,869,Tumor,Tumor
+M13_T1.raw,870,873,Tumor,Peritumoral region
+M13_T1.raw,874,876,Tumor,Tumor
+M13_T1.raw,881,885,Tumor,Tumor
+M13_T1.raw,890,894,Tumor,Tumor
+M13_T1.raw,895,897,Tumor,Tumor
+M13_T1.raw,899,901,Tumor,Tumor
+M13_T1.raw,903,905,Tumor,Tumor
+M13_T1.raw,911,913,Tumor,Tumor
+M13_T1.raw,915,917,Tumor,Tumor
+M13_T1.raw,919,921,Tumor,Tumor
+M13_T1.raw,923,925,Tumor,Tumor
+M13_T1.raw,928,930,Tumor,Tumor
+M13_T1.raw,932,934,Tumor,Tumor
+M13_T1.raw,935,937,Tumor,Tumor
+M13_T1.raw,939,942,Tumor,Tumor
+M13_T1.raw,943,946,Tumor,Tumor
+M13_T1.raw,947,950,Tumor,Tumor
+M13_T1.raw,977,978,Tumor,Tumor
+M13_T1.raw,979,984,Tumor,Tumor
+M13_T1.raw,984,986,Tumor,Tumor
+M13_T1.raw,988,990,Tumor,Tumor
+M13_T1.raw,996,999,Tumor,Tumor
+M13_T1.raw,1000,1002,Tumor,Tumor
+M13_T1.raw,1004,1006,Tumor,Tumor
+M13_T1.raw,1008,1010,Tumor,Peritumoral region
+M13_T1.raw,1012,1015,Tumor,Tumor
+M13_T1.raw,1016,1019,Tumor,Tumor
+M13_T1.raw,1021,1023,Tumor,Peritumoral region
+M13_T1.raw,1024,1027,Tumor,Tumor
+M13_T1.raw,1029,1031,Tumor,Tumor
+M13_T1.raw,1033,1035,Tumor,Tumor
+M13_T1.raw,1037,1039,Tumor,Tumor
+M13_T1.raw,1041,1043,Tumor,Tumor
+M13_T1.raw,1045,1048,Tumor,Tumor
+M13_T1.raw,1049,1053,Tumor,Tumor
+M13_T1.raw,1070,1072,Tumor,Tumor
+M13_T1.raw,1073,1076,Tumor,Tumor
+M13_T1.raw,1078,1080,Tumor,Tumor
+M13_T1.raw,1082,1084,Tumor,Tumor
+M13_T1.raw,1086,1088,Tumor,Tumor
+M13_T1.raw,1090,1092,Tumor,Tumor
+M13_T1.raw,1094,1097,Tumor,Tumor
+M13_T1.raw,1098,1101,Tumor,Tumor
+M13_T1.raw,1102,1104,Tumor,Tumor
+M13_T1.raw,1111,1113,Tumor,Tumor
+M13_T1.raw,1115,1117,Tumor,Peritumoral region
+M13_T1.raw,1119,1121,Tumor,Tumor
+M13_T1.raw,1131,1133,Tumor,Tumor
+M13_T1.raw,1135,1137,Tumor,Tumor
+M13_T1.raw,1147,1150,Tumor,Tumor
+M13_T1.raw,1155,1157,Tumor,Tumor
+M13_T1.raw,1160,1162,Tumor,Tumor
+M13_T1.raw,1176,1178,Tumor,Tumor
+M13_T1.raw,1184,1186,Tumor,Tumor
+M13_T1.raw,1192,1194,Tumor,Tumor
+M13_T1.raw,1196,1198,Tumor,Tumor
+M13_T1.raw,1200,1202,Tumor,Tumor
+M13_T1.raw,1224,1227,Tumor,Tumor
+M13_T1.raw,1229,1231,Tumor,Peritumoral region
+M13_T1.raw,1233,1235,Tumor,Peritumoral region
+M13_T1.raw,1237,1239,Tumor,Tumor
+M13_T1.raw,1241,1244,Tumor,Tumor
+M13_T1.raw,1245,1247,Tumor,Tumor
+M13_T1.raw,1249,1252,Tumor,Tumor
+M13_T1.raw,1254,1256,Tumor,Tumor
+M13_T1.raw,1257,1260,Tumor,Tumor
+M13_T1.raw,1261,1264,Tumor,Peritumoral region
+M13_T1.raw,1266,1268,Tumor,Peritumoral region
+M13_T1.raw,1274,1276,Tumor,Tumor
+M13_T1.raw,1278,1280,Tumor,Tumor
+M13_T1.raw,1282,1284,Tumor,Tumor
+M13_T1.raw,1286,1288,Tumor,Tumor
+M13_T1.raw,1290,1292,Tumor,Peritumoral region
+M13_T1.raw,1294,1296,Tumor,Tumor
+M13_T1.raw,1298,1300,Tumor,Peritumoral region
+M13_T1.raw,1302,1304,Tumor,Peritumoral region
+M13_T1.raw,1330,1332,Tumor,Tumor
+M13_T1.raw,1348,1353,Tumor,Tumor
+M13_T1.raw,1355,1357,Tumor,Tumor
+M13_T1.raw,1370,1373,Tumor,Tumor
+M13_T1.raw,1375,1377,Tumor,Tumor
+M13_T1.raw,1377,1382,Tumor,Tumor
+M13_T1.raw,1383,1385,Tumor,Tumor
+M13_T1.raw,1391,1393,Tumor,Tumor
+M13_T1.raw,1399,1402,Tumor,Tumor
+M13_T1.raw,1407,1410,Tumor,Tumor
+M13_T1.raw,1412,1414,Tumor,Peritumoral region
+M13_T1.raw,1416,1418,Tumor,Tumor
+M13_T1.raw,1428,1431,Tumor,Tumor
+M13_T1.raw,1431,1436,Tumor,Tumor
+M13_T1.raw,1449,1451,Tumor,Tumor
+M13_T1.raw,1457,1460,Tumor,Peritumoral region
+M13_T1.raw,1473,1476,Tumor,Peritumoral region
+M13_T1.raw,1477,1480,Tumor,Tumor
+M13_T1.raw,1486,1489,Tumor,Tumor
+M13_T1.raw,1494,1496,Tumor,Peritumoral region
+M13_T1.raw,1498,1500,Tumor,Tumor
+M13_T1.raw,1502,1505,Tumor,Tumor
+M13_T1.raw,1511,1513,Tumor,Tumor
+M13_T1.raw,1527,1529,Tumor,Tumor
+M13_T1.raw,1543,1545,Tumor,Tumor
+M13_T1.raw,1559,1561,Tumor,Peritumoral region
+M13_T1.raw,1563,1565,Tumor,Tumor
+M13_T1.raw,1600,1602,Tumor,Tumor
+M13_T1-2.raw,1711,1713,Peritumoral region,Tumor
+M13_T1-2.raw,1715,1717,Peritumoral region,Tumor
+M13_T1-2.raw,1731,1733,Peritumoral region,Tumor
+M13_T1-2.raw,1735,1737,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1744,1746,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1751,1754,Peritumoral region,Tumor
+M13_T1-2.raw,1755,1758,Peritumoral region,Tumor
+M13_T1-2.raw,1759,1762,Peritumoral region,Tumor
+M13_T1-2.raw,1764,1766,Peritumoral region,Tumor
+M13_T1-2.raw,1776,1778,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1780,1782,Peritumoral region,Tumor
+M13_T1-2.raw,1784,1787,Peritumoral region,Tumor
+M13_T1-2.raw,1788,1791,Peritumoral region,Tumor
+M13_T1-2.raw,1792,1795,Peritumoral region,Tumor
+M13_T1-2.raw,1796,1799,Peritumoral region,Tumor
+M13_T1-2.raw,1801,1803,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1805,1807,Peritumoral region,Tumor
+M13_T1-2.raw,1809,1811,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1813,1815,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1817,1819,Peritumoral region,Tumor
+M13_T1-2.raw,1821,1824,Peritumoral region,Tumor
+M13_T1-2.raw,1834,1837,Peritumoral region,Tumor
+M13_T1-2.raw,1842,1845,Peritumoral region,Tumor
+M13_T1-2.raw,1857,1861,Peritumoral region,Tumor
+M13_T1-2.raw,1870,1872,Peritumoral region,Tumor
+M13_T1-2.raw,1877,1882,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1903,1905,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1919,1921,Peritumoral region,Tumor
+M13_T1-2.raw,1923,1925,Peritumoral region,Tumor
+M13_T1-2.raw,1940,1942,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1952,1954,Peritumoral region,Tumor
+M13_T1-2.raw,1964,1967,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1972,1974,Peritumoral region,Tumor
+M13_T1-2.raw,1980,1983,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1984,1987,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1993,1995,Peritumoral region,Peritumoral region
+M13_T1-2.raw,1997,1999,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2001,2003,Peritumoral region,Tumor
+M13_T1-2.raw,2005,2007,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2009,2011,Peritumoral region,Tumor
+M13_T1-2.raw,2017,2019,Peritumoral region,Tumor
+M13_T1-2.raw,2021,2023,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2025,2027,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2029,2031,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2037,2039,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2041,2043,Peritumoral region,Tumor
+M13_T1-2.raw,2045,2047,Peritumoral region,Tumor
+M13_T1-2.raw,2049,2051,Peritumoral region,Tumor
+M13_T1-2.raw,2053,2055,Peritumoral region,Tumor
+M13_T1-2.raw,2058,2060,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2062,2064,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2066,2068,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2070,2072,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2074,2076,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2078,2080,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2082,2084,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2086,2088,Peritumoral region,Tumor
+M13_T1-2.raw,2091,2094,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2095,2097,Peritumoral region,Tumor
+M13_T1-2.raw,2102,2104,Peritumoral region,Tumor
+M13_T1-2.raw,2123,2125,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2131,2133,Peritumoral region,Tumor
+M13_T1-2.raw,2135,2137,Peritumoral region,Tumor
+M13_T1-2.raw,2151,2154,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2159,2163,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2168,2170,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2176,2178,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2189,2191,Peritumoral region,Tumor
+M13_T1-2.raw,2201,2203,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2230,2232,Peritumoral region,Tumor
+M13_T1-2.raw,2246,2248,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2250,2253,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2254,2257,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2271,2273,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2283,2285,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2307,2309,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2311,2314,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2316,2318,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2328,2330,Peritumoral region,Tumor
+M13_T1-2.raw,2333,2335,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2336,2338,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2373,2376,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2389,2391,Peritumoral region,Tumor
+M13_T1-2.raw,2401,2404,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2413,2416,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2430,2432,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2454,2458,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2467,2469,Peritumoral region,Tumor
+M13_T1-2.raw,2492,2494,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2496,2498,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2500,2502,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2504,2506,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2517,2519,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2529,2531,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2533,2535,Peritumoral region,Tumor
+M13_T1-2.raw,2553,2555,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2562,2564,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2566,2568,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2574,2576,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2578,2580,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2615,2617,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2644,2646,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2648,2650,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2652,2654,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2656,2658,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2672,2674,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2676,2678,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2680,2682,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2717,2719,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2725,2727,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2729,2731,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2762,2764,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2766,2768,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2789,2793,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2797,2802,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2807,2810,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2815,2817,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2852,2854,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2864,2866,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2881,2882,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2894,2899,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2917,2920,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2925,2927,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2942,2944,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2968,2972,Peritumoral region,Peritumoral region
+M13_T1-2.raw,2981,2986,Peritumoral region,Tumor
+M13_T1-2.raw,2997,3001,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3026,3028,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3030,3032,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3031,3031,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3034,3036,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3043,3045,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3063,3066,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3079,3082,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3084,3086,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3089,3090,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3109,3111,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3128,3132,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3137,3140,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3142,3144,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3145,3148,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3149,3151,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3158,3160,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3162,3164,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3169,3171,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3174,3176,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3184,3189,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3194,3196,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3206,3209,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3211,3213,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3215,3217,Peritumoral region,Tumor
+M13_T1-2.raw,3235,3237,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3240,3242,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3252,3254,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3256,3259,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3264,3267,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3275,3279,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3284,3286,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3292,3295,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3305,3307,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3309,3311,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3315,3321,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3329,3332,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3337,3340,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3345,3349,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3354,3355,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3362,3364,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3366,3368,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3370,3373,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3374,3377,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3382,3384,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3407,3410,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3411,3414,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3415,3417,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3422,3426,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3431,3433,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3434,3438,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3452,3455,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3460,3463,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3464,3466,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3484,3488,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3501,3504,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3505,3507,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3509,3512,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3518,3521,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3525,3529,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3536,3542,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3550,3553,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3555,3557,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3563,3566,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3567,3569,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3571,3573,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3575,3577,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3579,3581,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3583,3585,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3587,3589,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3595,3598,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3600,3602,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3604,3606,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3608,3611,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3611,3614,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3616,3618,Peritumoral region,Tumor
+M13_T1-2.raw,3623,3627,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3628,3631,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3648,3653,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3657,3660,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3661,3663,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3665,3667,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3669,3671,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3673,3676,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3685,3689,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3701,3705,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3714,3717,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3723,3725,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3730,3734,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3739,3742,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3747,3750,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3752,3754,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3763,3766,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3767,3770,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3775,3779,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3788,3790,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3792,3795,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3799,3804,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3809,3811,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3813,3815,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3817,3820,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3821,3823,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3824,3827,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3829,3832,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3833,3835,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3838,3839,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3842,3844,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3846,3848,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3849,3851,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3854,3856,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3858,3860,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3862,3864,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3866,3868,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3870,3872,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3874,3876,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3878,3881,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3882,3885,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3891,3893,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3895,3897,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3899,3901,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3903,3905,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3907,3909,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3911,3913,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3915,3918,Peritumoral region,Peritumoral region
+M13_T1-2.raw,3928,3930,Peritumoral region,Peritumoral region

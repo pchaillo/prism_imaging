@@ -49,9 +49,10 @@ t_ind = 0;
 for i = 1 : length(scan_list)
     % point collatéraux
     tab = find(scan_list(i,2) == deiso_list(:,1) );
-    if ~isempty(tab)
+%     if ~isempty(tab) % previous if
+    if length(tab) == 1
         i
-        if i == 756
+        if i == 50 % for debug %TODO - remove
             test = 0;
         end
         

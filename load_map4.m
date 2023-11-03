@@ -8,7 +8,7 @@ close all
 
 path(path,'map files')
 
-nom = '01sponge_c88.map';
+nom = 'M15_T2_corr.map';
 
 out = load(nom);
 
