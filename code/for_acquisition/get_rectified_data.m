@@ -1,4 +1,4 @@
-function hauteur = mesure_9(ard,new_tab,robot,k_pos,j,delta,opo_flag)
+function hauteur = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag)
 
 % Pour Mass spectro, with taking in care the opotek watchdog
 global opotek;
@@ -38,12 +38,14 @@ deca_hmax = 5;
 
 premier_passage = 1;
 
+new_tab = sensor.tab_etal;
+
 while u == 0  || mes_ok == 0
     k = k +1;
     %    if  mod(k,100) == 0 && k> 500
     if  k >= nb_boucle_mesure && mod(k,nb_boucle_repeat) == 0
         
-        d_y = lecture_capteur(ard); %tension renvoyee par le capteur
+        d_y = sensor.class.get_data(sensor.connexion); %tension renvoyee par le capteur
         
         si = size(new_tab);
         

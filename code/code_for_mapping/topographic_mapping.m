@@ -1,4 +1,4 @@
-function topographic_mapping(robot,ard,new_tab)
+function topographic_mapping(robot,sensor)
 
 % with time recording
 % mono_carto_topo3
@@ -50,7 +50,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
-            h_m = mesure_9(ard,new_tab,t,k,j,delta,opo_flag);
+            h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
             rl_time_display()
             
@@ -85,7 +85,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
-            h_m = mesure_9(ard,new_tab,t,k,j,delta,opo_flag);
+            h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
             rl_time_display()
             
