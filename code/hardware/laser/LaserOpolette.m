@@ -103,6 +103,10 @@ classdef LaserOpolette < LaserBase
             end
 
             state_text = strcat('State : ',state_text);
+
+            disp("Debug process : ")
+            disp(n)
+            disp(state_text);
         end
 
         function tir_continu_ON(laser,laser_co)

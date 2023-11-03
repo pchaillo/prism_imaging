@@ -1,6 +1,10 @@
 ﻿
 *.mzXML
 *.mat
+*.raw
+*.csv
+*.map
+*.txt
 
 
 # *.csv
