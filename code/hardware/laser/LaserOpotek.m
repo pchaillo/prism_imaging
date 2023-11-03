@@ -154,6 +154,9 @@ classdef LaserOpotek < LaserBase
 
         function disconnect(laser,laser_co)
             % insert code to turn the laser off
+            delete(laser_co);
+            clear laser;
+            disp("Laser Opotek Disconnected")
         end
 
         function set_voltage(laser,laser_co,voltage_value)

@@ -1,4 +1,4 @@
-function hauteur = mesure_9(ard,new_tab,t,k_pos,j,delta,opo_flag)
+function hauteur = mesure_9(ard,new_tab,robot,k_pos,j,delta,opo_flag)
 
 % Pour Mass spectro, with taking in care the opotek watchdog
 global opotek;
@@ -74,7 +74,8 @@ while u == 0  || mes_ok == 0
                 end
                                 
                 a = [k_pos j scan.dh+delta+deca 180 0 180];
-                set_pos(a,t);
+                robot.class.set_position(robot.connexion,a); 
+              %  set_pos(a,t);
                 if deca > deca_hmax
                     deca = 0;
                     hauteur = -2;
