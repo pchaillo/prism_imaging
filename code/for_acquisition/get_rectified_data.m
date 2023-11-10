@@ -20,10 +20,10 @@ mes_ok = 0 ;
 
 nb_trames_id = 5; %nombre de trames identiques avant repositionnemnt
 
-l = length(new_tab);
+l = length(sensor.tab_etal);
 
 %min = new_tab(1,1);
-max = new_tab(1,l);
+max = sensor.tab_etal(1,l);
 
 compt_def = 0;
 
