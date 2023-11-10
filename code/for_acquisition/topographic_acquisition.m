@@ -43,7 +43,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.y(v,u) = j;
             h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
-            rl_time_display()
+            real_time_topography_display()
             
             delta =  h_m;
             
@@ -67,7 +67,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.y(v,u) = j;
             h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
-            rl_time_display()
+            real_time_topography_display()
             
             delta = h_m;
             carte.time(v,u) = toc;

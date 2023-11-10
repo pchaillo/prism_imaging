@@ -15,8 +15,6 @@ global zone
 
 v = 0;
 
-%first_point = 1;
-
 if laser.continuous_flag == 1
     laser.class.tir_continu_ON(laser.connexion)
 end
@@ -35,13 +33,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             carte.i(v,u) =  0 ;
-            %rl_time_display()            
-%             if first_point == 1
-%                 first_point = 0;
-%                 tic;
-%             end
 
-%             tir_opotek(opotek,nb_shot)
             if laser.continuous_flag == 0
                 laser.class.tir(laser.connexion,nb_shot)
             end
@@ -61,9 +53,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
             carte.i(v,u) =  0 ;
-            %rl_time_display()
 
-%             tir_opotek(opotek,nb_shot)
             if laser.continuous_flag == 0
                 laser.class.tir(laser.connexion,nb_shot)
             end

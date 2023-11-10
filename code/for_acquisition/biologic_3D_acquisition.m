@@ -37,7 +37,6 @@ si_c = size(carte.x);
 carte.i = zeros(si_c(1),si_c(2));
 v = 0;
 delta = 0;
-%first_point = 1;
 
 for k = zone.dec : scan.pas : zone.dim_x + zone.dec
     v = v + 1 ;
@@ -52,13 +51,12 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
             h_m = get_rectified_data(sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog
 
-            rl_time_display()
+            real_time_topography_display()
 
             delta = h_m;
 
@@ -66,13 +64,9 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             if state.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
-                %                 tir_opotek(opotek,nb_shot);
                 if laser.continuous_flag == 0
                     laser.class.tir(laser.connexion,nb_shot)
-                end%                 if first_point == 1
-                %                     first_point = 0;
-                %                     tic;
-                %                 end
+                end
                 carte.time(v,u) = toc(time_ref);
                 pause(t_b);
             end
@@ -89,13 +83,12 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
             h_m = get_rectified_data(sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog
 
-            rl_time_display()
+            real_time_topography_display()
 
             delta = h_m;
 
@@ -103,7 +96,6 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             if state.arret == 0
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
-                %                 tir_opotek(opotek,nb_shot);
                 if laser.continuous_flag == 0
                     laser.class.tir(laser.connexion,nb_shot)
                 end                
