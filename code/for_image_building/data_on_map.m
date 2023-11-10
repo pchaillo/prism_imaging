@@ -45,8 +45,8 @@ for i = 1:length(bio_dat)
   %  end
 end
 
-%med = median(totIonCurrent,'all'); %% be carefull change to median
-med = good_med_for_norm2(bio_dat);
+% med = median(totIonCurrent,'all'); %% be carefull change to median
+med = get_median(bio_dat);
 
 % si le temps est enregistré, on l'utilise pour replacer les informations
 % sur la carte
@@ -74,55 +74,38 @@ else
     k = 0;
     for i =  1  :  si(1)
         v = v + 1;
-        % if mod(u,freq) == 0
-        if ( mod(v,2) ~= 0 ) % [ == ?]
+        if ( mod(v,2) ~= 0 )
             u = 0;
             for j = 1 : si(2)
                 u = u +1;
-                %     if map(v,u) > seuil
                 k = k+1;
                 bio_ind(v,u) = k;
                 bio_num(v,u) = bio_dat(k).num;
-                %    bio_map(v,u) = bio_dat(k).totIonCurrent;
-                
-                d_ind = d_ind + 1;% pareil que k ici ?
+                d_ind = d_ind + 1;
                 deiso_tab(d_ind) = {bio_dat(k).deisotoped};
-                
                 k
                 if ionisationEnergy(k) ~= 0
                     bio_map(v,u)= value(k)*med;
                 else
                     bio_map(v,u) = 0;
                 end
-                %                 else
-                %                     bio_map(v,u) = 0;
-                %                 end
             end
         else
-            %    u = ( objet.dim-1)/(scan.pas/scan.pre) +2;
             u = si(2)+1;
             for j = si(2) : -1  : 1
                 u = u - 1;
-                %                 if map(v,u) > seuil % à garder ????
                 k = k+1;
                 bio_ind(v,u) = k;
                 bio_num(v,u) = bio_dat(k).num;
-                
-                d_ind = d_ind + 1; % pareil que k ici ?
+                d_ind = d_ind + 1;
                 deiso_tab(d_ind) = {bio_dat(k).deisotoped};
-
-                %    bio_map(v,u) = bio_dat(k).totIonCurrent;
                 if ionisationEnergy(k) ~= 0
                     bio_map(v,u)= value(k)*med;
                 else
                     bio_map(v,u) = 0;
                 end
-                %                 else
-                %                     bio_map(v,u) = 0;
-                %                 end
             end
         end
-        % end
     end
     
 end

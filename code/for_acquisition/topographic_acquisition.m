@@ -1,21 +1,15 @@
-function topographic_mapping(robot,sensor)
-
+function topographic_acquisition(robot,sensor)
 % with time recording
-% mono_carto_topo3
-% un seul passage => nvx capteur
-% cartographie la zone et non l'objet
 
 global carte
 global scan
 global zone
 
-disp('Creating the map');
+disp('Creating the map...');
 
-opo_flag = 0 ; % sans message lors du repositionnement pour le watchdog
+opo_flag = 0 ; % sans message lors du repositionnement pour le watchdog % inutile = pas de laser ici !
 
-%%% tableau initial %%%
-% indispensable pour l'affichage temps réel (sinon les dimensions des
-% tableaux changent et cela génère des erreurs)
+% Initialisation of the variable => necessary for real time acquisition display
 v = 0;
 for k = zone.dec : scan.pas : zone.dim_x+zone.dec
     v = v + 1 ;
@@ -32,8 +26,6 @@ carte.i = zeros(si_c(1),si_c(2));
 v = 0;
 delta = 0;
 
-% t_b = 0.5; for tests
-
 first_point = 1;
 
 for k = zone.dec : scan.pas : zone.dim_x+zone.dec
@@ -49,7 +41,6 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
             h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
             rl_time_display()
@@ -61,17 +52,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
                 tic;
             end
             carte.time(v,u) = toc;
-            
-            %             a = [k  j  scan.dh+delta 180 0 180]; %replace le robot pour s'assurer d'etre a la distance scan.dh de la surface
-            %             if robot.arret == 0
-            %                 [k j ] % show the current position of the robot / may be useless ( comment it )
-            %                  set_pos(a,t);
-            % %                 disp('tir')
-            
-            % pause(t_b); % for tests
-            
-            %             end
-            
+                    
         end
     else
         u =  ( zone.dim_y  ) / scan.pas +2  ;
@@ -84,23 +65,12 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            % carte.r(v,u) = mesure_2(vid,new_tab,scan.h);
             h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
             rl_time_display()
             
             delta = h_m;
             carte.time(v,u) = toc;
-
-            %             a = [k  j  scan.dh+delta 180 0 180]; %replace le robot pour s'assurer d'etre a la distance scan.dh de la surface
-            %             if robot.arret == 0
-            %                 [k j ] % show the current position of the robot / may be useless ( comment it )
-            %                  set_pos(a,t);
-            % %                 disp('tir2')
-            
-            %  pause(t_b); % for tests
-              
-            %           end
         end
     end
 end

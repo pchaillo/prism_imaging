@@ -1,22 +1,21 @@
 
 
-function extract_one_spectra2(bio_dat,carte,limits)
+function extract_one_spectra(bio_dat,carte,limits)
 
 carte_x = carte.x;
 carte_y = carte.y;
 carte_z = carte.z;
-seuil = -1;
 
 if isfield(carte,'time')
     carte_time = carte.time;
     time_flag = 1;
-    %[ bio_ind ,bio_map ] = mzXML_on_map_norm11(bio_dat,carte_z,limits,carte_time); % put the information on the map
 else
     time_flag = 0;
-    %[ bio_ind ,bio_map ] = mzXML_on_map_norm8_3(bio_dat,carte_z,limits,seuil); % put the information on the map
 end
 
+loud_flag = 1;
 [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
+% [ bio_ind ,bio_map ] = data_on_map(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag);
 
 [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 

@@ -1,4 +1,4 @@
-function real_time_mapping_scanning_2(robot,sensor,laser,t_b,nb_shot,time_ref)
+function biologic_3D_acquisition(robot,sensor,laser,t_b,nb_shot,time_ref)
 
 % with spectro time_ref
 
