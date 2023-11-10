@@ -30,24 +30,24 @@ end
 %Extraction des données utiles
 id = 0;
 for i = 1:length(bio_dat)
-    if bio_dat(i).num ~= 2 %to delete useless empty point
-        id = id +1 ;
-        ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
-        if loud_flag == 0
-            if bio_dat(i).num > 0
-                value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
-            else
-                value(id) = 0;
-            end
+    % if bio_dat(i).num ~= 2 %to delete useless empty point
+    id = id +1 ;
+    ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
+    if loud_flag == 0
+        if bio_dat(i).num > 0
+            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
         else
-            if ionisationEnergy(id) == 0
-                value(id) = 0;
-            else
-                
-                value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
-            end
+            value(id) = 0;
+        end
+    else
+        if ionisationEnergy(id) == 0
+            value(id) = 0;
+        else
+
+            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
         end
     end
+    % end
 end
 
 %med = median(totIonCurrent,'all'); %% be carefull change to median
@@ -56,11 +56,11 @@ med = good_med_for_norm2(bio_dat);
 % si le temps est enregistré, on l'utilise pour replacer les informations
 % sur la carte
 if time_flag == 1
-    
+
     carte_ind = time_to_indice_3(carte_time);
-    
+
     d_ind = 0    ;
-    
+
     for i =  1  :  si(1)
         for j = 1 : si(2)
             d_ind = d_ind + 1;
@@ -70,9 +70,9 @@ if time_flag == 1
             deiso_tab(d_ind) = {bio_dat(carte_ind(i,j)).deisotoped};
         end
     end
-    
+
     bio_ind = carte_ind ;
-    
+
     % sinon on suit le pattern classique
 else
     v = 0;
@@ -89,10 +89,10 @@ else
                 bio_ind(v,u) = k;
                 bio_num(v,u) = bio_dat(k).num;
                 %    bio_map(v,u) = bio_dat(k).totIonCurrent;
-                
+
                 d_ind = d_ind + 1;% pareil que k ici ?
                 deiso_tab(d_ind) = {bio_dat(k).deisotoped};
-                
+
                 k
                 if ionisationEnergy(k) ~= 0
                     bio_map(v,u)= value(k)*med;
@@ -112,7 +112,7 @@ else
                 k = k+1;
                 bio_ind(v,u) = k;
                 bio_num(v,u) = bio_dat(k).num;
-                
+
                 d_ind = d_ind + 1; % pareil que k ici ?
                 deiso_tab(d_ind) = {bio_dat(k).deisotoped};
 
@@ -129,6 +129,6 @@ else
         end
         % end
     end
-    
+
 end
 
