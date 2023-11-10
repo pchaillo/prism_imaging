@@ -1,18 +1,9 @@
-% Permet d'isoler la valeur utiles entre les bornes de masses d'ionisation
-% qui ont été fixées
+% FR : Permet d'isoler la valeur utiles entre les bornes de masses d'ionisation qui ont été fixées
+% ENG : Function to select the maximal intensity between the choosen limits values
 
-% system('set username');
-function value = set_peaks_norm4(limits,bio_line)
-
-% mxXML_on_map_norm7
-%main_reconstruct
-
-% bio_line = bio_dat(1);
+function value = peak_selection(limits,bio_line)
 
 peak_tab = bio_line.peaks.mz;
-
-% e_tab = find(peak_tab(:,2) == 0); %already done 
-% peak_tab(e_tab,:) = [];
 
 v = 0;
 l = length(peak_tab);

@@ -29,7 +29,7 @@ for i = 1:length(bio_dat)
         id = id +1 ;
         ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
         if bio_dat(i).num > 0
-            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+            value(id) = peak_selection( limits,bio_dat(i) )/ionisationEnergy(id);
         else
             value(id) = 0;
         end

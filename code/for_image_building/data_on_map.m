@@ -5,19 +5,14 @@
 
 % indépendant du pattern, se base sur carte_time
 
-% avec une médiane pkus juste pour la normalisation (ne prend en compte que
+% avec une médiane plus juste pour la normalisation (ne prend en compte que
 % les totIonCurrent des peaks) + totIonCurrent additionné pour avoir une
 % valeur plus juste
 
 % ne crée pas de valeur pour les points ajoutés
 
-function [ bio_ind, bio_num, bio_map, deiso_tab] = mzXML_on_map_norm17(bio_dat,map,limits,carte_time,time_flag,loud_flag)
-
-
-%fonctionne pour toutes cartes
-% using median
-
-% for main_reconstruct
+function [ bio_ind, bio_num, bio_map, deiso_tab] = data_on_map(bio_dat,map,limits,carte_time,time_flag,loud_flag)
+% anciennement mzXML_on_map17.m
 
 si = size(map);
 
@@ -35,7 +30,7 @@ for i = 1:length(bio_dat)
         ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
         if loud_flag == 0
             if bio_dat(i).num > 0
-                value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+                value(id) = peak_selection( limits,bio_dat(i) )/ionisationEnergy(id);
             else
                 value(id) = 0;
             end
@@ -44,7 +39,7 @@ for i = 1:length(bio_dat)
                 value(id) = 0;
             else
                 
-                value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+                value(id) = peak_selection( limits,bio_dat(i) )/ionisationEnergy(id);
             end
         end
   %  end
