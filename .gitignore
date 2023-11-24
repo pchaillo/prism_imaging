@@ -5,6 +5,8 @@
 *.csv
 *.map
 *.txt
+*.ply
+*.biomap
 
 
 # *.csv
