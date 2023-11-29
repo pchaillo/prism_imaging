@@ -47,7 +47,7 @@ end
 %% Matlab function peak detection
 [pk loc w pw] = findpeaks(ion,t_i); % trouve les peaks et leurs localisation
 
-for i = 2 : length(loc) % crée un tableau des ecarts temporels
+for i = 2 : length(loc) % create a time gap table % crée un tableau des ecarts temporels
     tab_loc(i) = loc(i) - loc(i-1) ;
 end
 
@@ -55,7 +55,7 @@ for i = 1 : length(loc) % Get peaks index, relatively to time !
     ind_peaks(i) = find( t_i == loc(i) );
 end
 
-tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair !
+tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair ! #TODO
 tab(2,:) = loc;
 tab(3,:) = tab_loc;
 tab(4,:) = pk;
@@ -78,7 +78,7 @@ ind_peaks2 = tab_peaks(1,:); % indices des peaks detectés
 
 psi = size(tab_peaks);
 if psi(2) == 0
-    disp('----- Attention to high minimum threshold, no peaks detected -------');
+    disp('----- Attention : too high minimum threshold, no peaks detected -------');
     %quit(1)
     return
 end
@@ -164,11 +164,12 @@ if si_time(1) ~= 1
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('ATTENTION, coefficient de fusion trop important, moins des peaks detectés que de points sur la carte');
+        disp('=> ajout de pt faux pour compenser');
+        disp('ATTENTION, fusion coefficient too high, less detected peaks thans points/pixels on the image');
+        disp('=> add empty points to compensate');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
-        disp('ajout de pt faux pour compenser');
-
     end
     
     for i = 1 : length( time_tab_map)
@@ -235,7 +236,7 @@ end
 %bio_dat(:) = file(ind_final);
 bio_dat(:) = file(ind_f_new);
 
-plot_peak_time_2(bio_dat,t_i,ion,time_tab_map);
+plot_peak_time_2(bio_dat,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram
 
 g = 0; % supprimer ? %TODO
 
