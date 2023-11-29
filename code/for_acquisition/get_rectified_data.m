@@ -53,7 +53,7 @@ while u == 0  || is_measured == 0
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter
                     first_loop = 0;
                 end
-                disp('repositionnement');
+                disp('Repositioning. New height :');
                 shift = shift + 1
                 
                 % if opo_flag == 1
@@ -66,7 +66,7 @@ while u == 0  || is_measured == 0
                 if shift > max_shift
                     shift = 0;
                     sample_height = -2;
-                    disp('mesure impossible');
+                    disp('Measurement impossible : will set negative value (-2) for sample haight');
                     is_measured = 1;
                 end
             else
