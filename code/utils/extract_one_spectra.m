@@ -15,7 +15,7 @@ end
 
 loud_flag = 1;
 [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
-% [ bio_ind ,bio_map ] = data_on_map(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag);
+% [ bio_ind ,bio_map ] = data_on_map(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag); % not working ? #TODO
 
 [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 
@@ -31,20 +31,7 @@ axis off
 view(2)
 hold off
 
-%uiwait(helpdlg('Please click on the starting and ending points.'));
 [x1,y1] = ginput(1);
-
-% x_tab = carte_x(:,1);
-% y_tab = carte_y(1,:)';
-% 
-% x_diff = abs(x_tab - x1);
-% y_diff = abs(y_tab - y1);
-% 
-% ind_x = find(min(x_diff) == x_diff);
-% ind_y = find(min(y_diff) == y_diff);
-
-% min_diff_x = min(diff_tab_x);
-% min_ind_x = find(diff_tab_x==min_diff_x);
 
 
 %% Solution 1 

@@ -1,7 +1,10 @@
 % Version avec le binning
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
+
 function csv = csv_extractor(csv_map, csv_mat, band, win)
+
+    % #TODO = fonction trop lente ?
 
 path(path,"code/code_for_analysing");
 path(path,"code/code_for_recording");
@@ -9,7 +12,7 @@ path(path,"code/code_for_export");
 path(path,"mat files");
 path(path,"map files");
 
-carte = load_map_fcn(csv_map);
+map = load_map_fcn(csv_map);
 
 load(csv_mat);
 
@@ -20,7 +23,7 @@ l = length(mz_ind_tab);
 
 tab(1,12:12+l-1) = mz_ind_tab; % Always modify accordingly when adding/subtracting information from bio_dat
 
-dim = size(carte.x);
+dim = size(map.x);
 %%%%%%%%%%%%%%%%%%%%%%%%%% Stripped version of num_to_position for better
 %%%%%%%%%%%%%%%%%%%%%%%%%% performance
 pixels_number = length(bio_dat);
@@ -53,10 +56,10 @@ for j = 1: 1 : dim(1)
 %         v = index(u);
         u = u +1;
         u
-        tab(u,1) = carte.x(j,k);
-        tab(u,2) = carte.y(j,k);
-        tab(u,3) = carte.z(j,k);
-        tab(u,4) = carte.time(j,k);
+        tab(u,1) = map.x(j,k);
+        tab(u,2) = map.y(j,k);
+        tab(u,3) = map.z(j,k);
+        tab(u,4) = map.time(j,k);
         tab(u,6) = bio_dat(index(u-1)).totIonCurrent; % -1 pcq la 1ère ligne est prise pour mettre les indices des rapports mz
         tab(u,7) = bio_dat(index(u-1)).retentionTime; % -1 pcq la 1ère ligne est prise pour mettre les indices des rapports mz
 
