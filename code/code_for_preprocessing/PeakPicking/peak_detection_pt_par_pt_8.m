@@ -69,8 +69,8 @@ time = time_from_peaks_fcn(tab,min_threshold);
 
 ind_bruit =  find(tab(4,:) < min_threshold );
 ind_no_bruit =  find(tab(4,:) > min_threshold );
-tab_bruit = tab(:,ind_bruit);
 tab_no_bruit = tab(:,ind_no_bruit);
+% tab_bruit = tab(:,ind_bruit); % tba_bruit n'est pas réutilisé => tile pour debug ? Supprimer ? #TODO
 % tab_bruit(3,:) = tab_loc_2(ind_bruit);
 % nb_diff_bruit = length(tab_bruit) - sum(tab_bruit(3,:) == tab(3,ind_bruit));
 tab_peaks = tab_no_bruit;
@@ -79,7 +79,7 @@ ind_peaks2 = tab_peaks(1,:); % indices des peaks detectés
 psi = size(tab_peaks);
 if psi(2) == 0
     disp('----- Attention : too high minimum threshold, no peaks detected -------');
-    %quit(1)
+    %quit(1) #TODO => Que faire ici ? Bloquer programme, envoyer erreur ?? 
     return
 end
 
@@ -105,13 +105,11 @@ if intern_flag == 1
     ind_peaks2 = [ 1 ind_peaks2];
 end
 
-%% Ajout des points dans les espaces
-
+%% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
 new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
 
 
-%% Génération des bon indices
-
+%% Generation of the good indices %% Génération des bon indices
 if exist('new_point_tab')
     for i = 1 : length(new_point_tab)
         file(new_point_tab(i)) = to_add_pt(file(new_point_tab(i)));
@@ -135,8 +133,9 @@ for i = 2 : length(ind_final) % crée un tableau des ecarts temporels
 end
 tab_final(3,:) = tab_loc_final;
 tab_final(4,:) =   file_peak_tab(ind_final) ;
-trop_court = find(tab_final(3,:) < t_step - t_step/3);
-trop_long = find(tab_final(3,:) > t_step + t_step/5);
+
+% trop_court = find(tab_final(3,:) < t_step - t_step/3); % pas utilisé ailleurs => Supprimer #TODO ? Utile pour debug ?
+% trop_long = find(tab_final(3,:) > t_step + t_step/5);
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 %ind_deb = tab(1,1); % existe dejà, ind_debut
@@ -236,7 +235,7 @@ end
 %bio_dat(:) = file(ind_final);
 bio_dat(:) = file(ind_f_new);
 
-plot_peak_time_2(bio_dat,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram
+plot_peak_time(bio_dat,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking
 
 g = 0; % supprimer ? %TODO
 

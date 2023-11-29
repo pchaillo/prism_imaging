@@ -1,4 +1,5 @@
-function plot_peak_time_2(bio_dat,t_i,ion,time_tab_map)
+function plot_peak_time(bio_dat,t_i,ion,time_tab_map)
+% Function that display the selected peaks on the chromatogram for visual checking
 
 %avec meilleure fusion
 % avec fusion collatérales
