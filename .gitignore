@@ -5,6 +5,7 @@
 *.csv
 *.map
 *.txt
+*.tmp
 
 
 # *.csv
