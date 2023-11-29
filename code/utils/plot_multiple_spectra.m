@@ -1,5 +1,4 @@
 function plot_multiple_spectra(bio_dat,selected_ind_tab)
-% works well
 
 ind_peaks = 0;
 for n = 1 : length(selected_ind_tab) % récupère les temps et les spectres associés aux indices

@@ -5,7 +5,7 @@ function all_peaks = plot_all_spectra(bio_dat,compute_flag,all_peaks, valmin, va
 
 if compute_flag == 0 
     all_peaks = compute_all_spectra(bio_dat);
-    compute_flag = 1;
+    compute_flag = 1; % useful ? #TODO
 end
 
 parsed_all_peaks = zeros(length(all_peaks), 2);
