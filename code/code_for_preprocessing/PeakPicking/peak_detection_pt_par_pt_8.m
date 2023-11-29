@@ -14,9 +14,11 @@
 
 function [bio_dat, time, g] = peak_detection_pt_par_pt_8(mzXMLStruct,threshold_begin,t_step,min_threshold,intern_flag,tolerance,carte_time)
 
+% Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
+
 file_i = mzXMLStruct.scan ;
 
-file = clean_time(file_i); % transformation du temps en une varibale numérique
+file = clean_time(file_i); % Function that convert all the time value in retentionTime variable from char to double 
 file = clean_deiso2(file);
 
 l = length(file);
@@ -25,28 +27,24 @@ l = length(file);
 time_res = 0.5 ; % Faire remonter en argument de la fonction ?
 aspiration_time = 0.35;
 
-%            %
-
-%% Détection du premier pic
-ok = 0; %% trouve le 1er point pour supprimer les valeurs nulles qui sont avant
-i = 0;
-while ok == 0
+%% First peak detection -> find the 1st peak if there is no time coherency (no mass spectrometer trigger) # utiliser variable pour ne le faire que si c'est nécessaire ? #TODO
+first_peak_is_finded = 0; 
+i = 0; % index
+while first_peak_is_finded == 0
     i = i + 1;
     if file(i).totIonCurrent > threshold_begin
         begin_index = i;
-        ok = 1;
+        first_peak_is_finded = 1;
     end
 end
 
 %% Récupération des informations
-
 for i = 1: length(file) % récupère les datas
-    ion(i) = file(i).totIonCurrent;
+    ion(i) = file(i).totIonCurrent; % Mettre des noms de variables inspirés du paradigme mzXMLStruct ? #TODO
     t_i(i) = file(i).retentionTime;
 end
 
-%% Détection de peaks matlab
-
+%% Matlab function peak detection
 [pk loc w pw] = findpeaks(ion,t_i); % trouve les peaks et leurs localisation
 
 for i = 2 : length(loc) % crée un tableau des ecarts temporels
