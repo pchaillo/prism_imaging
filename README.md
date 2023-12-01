@@ -1,5 +1,5 @@
 # prism_imaging
-
+=> Cette branche contient des mofications sur l'interface -> a inspecter #TODO
 
 Attention, penser à créer les répertoires "csv files", "map files", "mat files", "mzXML files", and "rgb map files" to use the interface.
 
