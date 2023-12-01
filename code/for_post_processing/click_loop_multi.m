@@ -14,10 +14,7 @@ set(gcf,'CurrentCharacter','@');
 
 pause()
 
-% a = set(h_fig,'KeyPressFcn',@pressed_key3);
-k=get(gcf,'CurrentCharacter');
-
-%carte.z = map_z;
+k = get(gcf,'CurrentCharacter');
 
 c_info = getCursorInfo(dcm_obj);
 
@@ -31,7 +28,7 @@ if l ~= 0
         if length(x_v_r) > 1
             x_v = x_v_r(1);
             y_v = y_v_r(1)
-            disp('Attention, risque de supression du mauvais point, valeur exacte fausse');
+            disp('Attention, exact value false, may suppress a not selected point');
         else
             x_v = x_v_r;
             y_v = y_v_r;
@@ -45,7 +42,7 @@ if l ~= 0
 end
 close(fig);
 
-if k == 's'
+if k == 's' % S key to stop the recursive loop and get out the function and record the rectified map
     map_out = map_z;
 else
     map_out = click_loop_multi(carte,map_out1,min_threshold,max_threshold);

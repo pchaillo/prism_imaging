@@ -1,11 +1,5 @@
 function carte = load_map_fcn(nom)
 
-% suffix = nom(end-3:end); % je suis idiot c'est abuse
-% disp(suffix)
-% if suffix == '.map'
-%     disp("Empty map file name => not able to find the data") % ERROR_MESSAGE
-% end
-
 path(path,'map files')
 
 out = load(nom);
@@ -54,6 +48,6 @@ carte.x = carte_x;
 carte.y = carte_y;
 carte.z = carte_z;
 
-if exist('carte_time')
+if exist('carte_time') % to be compatible with map file without time recording
     carte.time = carte_time;
 end

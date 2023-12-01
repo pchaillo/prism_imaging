@@ -2,11 +2,12 @@ function chemin  = choix_chemin(folder_name,file_name)
 
 % Permet de choisir automatique le bon dossier pour l'enregistrement,
 % quelquesoit le fichier dans lequel est stocké le code
-% choose the good folder to record the doc
+
+% Return the good folder to record the file
 
 workspace_dir = pwd;
 
-if isunix
+if isunix % work for both Linux and Windows OS
     sep = '/';
 elseif ispc
     sep = '\';

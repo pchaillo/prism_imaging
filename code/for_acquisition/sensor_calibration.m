@@ -3,11 +3,13 @@ function new_tab = sensor_calibration(robot,sensor)
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % with better taking in care of the criticals values
 
+% Will go one way up, then one way down, and will only keep the similar value for the same height => security to remove all false point on the calibration_tab
+
 global scan
 global zone
 % global robot % passe en argument
 
-disp('Etallonage en cours')
+disp('Start Calibration')
 
 u = 0;
 k = 0;

@@ -68,14 +68,14 @@ for i = 1 : si(1)
             else
                 d = 1;
             end
-            somme = [ a b c d];
-            if sum( somme ) == 0
+            sum_tab = [ a b c d];
+            if sum( sum_tab ) == 0
                 map_out(i,j) = 0 ;
             else
                 map_out(i,j) = ( a*map_out(i-i_m,j) + b*map_out(i+i_p,j) + c*map_out(i,j-j_m) + d*map_out(i,j+j_p) ) / (a+b+c+d);
             end
             
-            nb_err = nb_err+1;
+            nb_err = nb_err + 1;
         end
     end
 end

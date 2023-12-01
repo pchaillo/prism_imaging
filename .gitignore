@@ -7,7 +7,7 @@
 *.txt
 *.ply
 *.biomap
-
+*.tmp
 
 # *.csv
 

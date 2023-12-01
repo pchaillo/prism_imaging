@@ -14,9 +14,11 @@
 
 function [bio_dat, time, g] = peak_detection_pt_par_pt_8(mzXMLStruct,threshold_begin,t_step,min_threshold,intern_flag,tolerance,carte_time)
 
+% Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
+
 file_i = mzXMLStruct.scan ;
 
-file = clean_time(file_i); % transformation du temps en une varibale numérique
+file = clean_time(file_i); % Function that convert all the time value in retentionTime variable from char to double 
 file = clean_deiso2(file);
 
 l = length(file);
@@ -25,31 +27,27 @@ l = length(file);
 time_res = 0.5 ; % Faire remonter en argument de la fonction ?
 aspiration_time = 0.35;
 
-%            %
-
-%% Détection du premier pic
-ok = 0; %% trouve le 1er point pour supprimer les valeurs nulles qui sont avant
-i = 0;
-while ok == 0
+%% First peak detection -> find the 1st peak if there is no time coherency (no mass spectrometer trigger) # utiliser variable pour ne le faire que si c'est nécessaire ? #TODO
+first_peak_is_finded = 0; 
+i = 0; % index
+while first_peak_is_finded == 0
     i = i + 1;
     if file(i).totIonCurrent > threshold_begin
         begin_index = i;
-        ok = 1;
+        first_peak_is_finded = 1;
     end
 end
 
 %% Récupération des informations
-
 for i = 1: length(file) % récupère les datas
-    ion(i) = file(i).totIonCurrent;
+    ion(i) = file(i).totIonCurrent; % Mettre des noms de variables inspirés du paradigme mzXMLStruct ? #TODO
     t_i(i) = file(i).retentionTime;
 end
 
-%% Détection de peaks matlab
-
+%% Matlab function peak detection
 [pk loc w pw] = findpeaks(ion,t_i); % trouve les peaks et leurs localisation
 
-for i = 2 : length(loc) % crée un tableau des ecarts temporels
+for i = 2 : length(loc) % create a time gap table % crée un tableau des ecarts temporels
     tab_loc(i) = loc(i) - loc(i-1) ;
 end
 
@@ -57,7 +55,7 @@ for i = 1 : length(loc) % Get peaks index, relatively to time !
     ind_peaks(i) = find( t_i == loc(i) );
 end
 
-tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair !
+tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair ! #TODO
 tab(2,:) = loc;
 tab(3,:) = tab_loc;
 tab(4,:) = pk;
@@ -71,8 +69,8 @@ time = time_from_peaks_fcn(tab,min_threshold);
 
 ind_bruit =  find(tab(4,:) < min_threshold );
 ind_no_bruit =  find(tab(4,:) > min_threshold );
-tab_bruit = tab(:,ind_bruit);
 tab_no_bruit = tab(:,ind_no_bruit);
+% tab_bruit = tab(:,ind_bruit); % tba_bruit n'est pas réutilisé => tile pour debug ? Supprimer ? #TODO
 % tab_bruit(3,:) = tab_loc_2(ind_bruit);
 % nb_diff_bruit = length(tab_bruit) - sum(tab_bruit(3,:) == tab(3,ind_bruit));
 tab_peaks = tab_no_bruit;
@@ -80,8 +78,8 @@ ind_peaks2 = tab_peaks(1,:); % indices des peaks detectés
 
 psi = size(tab_peaks);
 if psi(2) == 0
-    disp('----- Attention to high minimum threshold, no peaks detected -------');
-    %quit(1)
+    disp('----- Attention : too high minimum threshold, no peaks detected -------');
+    %quit(1) #TODO => Que faire ici ? Bloquer programme, envoyer erreur ?? 
     return
 end
 
@@ -107,13 +105,11 @@ if intern_flag == 1
     ind_peaks2 = [ 1 ind_peaks2];
 end
 
-%% Ajout des points dans les espaces
-
+%% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
 new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
 
 
-%% Génération des bon indices
-
+%% Generation of the good indices %% Génération des bon indices
 if exist('new_point_tab')
     for i = 1 : length(new_point_tab)
         file(new_point_tab(i)) = to_add_pt(file(new_point_tab(i)));
@@ -137,8 +133,9 @@ for i = 2 : length(ind_final) % crée un tableau des ecarts temporels
 end
 tab_final(3,:) = tab_loc_final;
 tab_final(4,:) =   file_peak_tab(ind_final) ;
-trop_court = find(tab_final(3,:) < t_step - t_step/3);
-trop_long = find(tab_final(3,:) > t_step + t_step/5);
+
+% trop_court = find(tab_final(3,:) < t_step - t_step/3); % pas utilisé ailleurs => Supprimer #TODO ? Utile pour debug ?
+% trop_long = find(tab_final(3,:) > t_step + t_step/5);
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 %ind_deb = tab(1,1); % existe dejà, ind_debut
@@ -166,11 +163,12 @@ if si_time(1) ~= 1
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('ATTENTION, coefficient de fusion trop important, moins des peaks detectés que de points sur la carte');
+        disp('=> ajout de pt faux pour compenser');
+        disp('ATTENTION, fusion coefficient too high, less detected peaks thans points/pixels on the image');
+        disp('=> add empty points to compensate');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
-        disp('ajout de pt faux pour compenser');
-
     end
     
     for i = 1 : length( time_tab_map)
@@ -237,7 +235,7 @@ end
 %bio_dat(:) = file(ind_final);
 bio_dat(:) = file(ind_f_new);
 
-plot_peak_time_2(bio_dat,t_i,ion,time_tab_map);
+plot_peak_time(bio_dat,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking
 
 g = 0; % supprimer ? %TODO
 

@@ -123,7 +123,7 @@ classdef LaserOpolette < LaserBase
             writeline(laser_co, "CC");
             state_string = read(laser_co,15,'string');
 
-            disp('Ouverture du miroir => ATTENTION TIR LASER EN CONTINU !');
+            disp('Open mirror => ATTENTION, CONTINUOUS LASER SHOOTING !');
         end
 
         function tir_continu_OFF(laser,laser_co)
@@ -132,7 +132,7 @@ classdef LaserOpolette < LaserBase
             writeline(laser_co, "CS"); % ferme le laser
             tab_qsw_0 = readline(laser_co);
 
-            disp('Fermeture du miroir, fin du tir laser en continu.');
+            disp('Close mirror, end of continuous laser shooting');
         
         end
         
