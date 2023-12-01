@@ -31,7 +31,7 @@ classdef PeakPickingMethod < handle
             disp(method.tolerance)
             disp(method.intern_trig)
 
-            path(path,'code/code_for_preprocessing/PeakPicking') % ranger ou ? #TODO
+            path(path,'code/for_image_building/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO
 
             [bio_dat ,time,g] = peak_detection_pt_par_pt_8(mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.tolerance,carte_time); % take only the usefull informations
 

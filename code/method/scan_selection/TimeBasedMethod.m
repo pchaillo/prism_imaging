@@ -12,7 +12,8 @@ classdef TimeBasedMethod
 
         function [bio_dat ,time,g] = selection(method,mzXML_data , carte_time)
 
-            path(path,'code/code_for_preprocessing/TimeBased') % Ranger ca ou ? #TODO
+            path(path,'code/for_image_building/TimeBased') % Ranger ca ou ? => Ici c'est bien non ? #TODO
+
             % Insert laser connexion and return connection object variable
             [bio_dat ,time,g] = continuous_detection(mzXML_data,carte_time); % take only the useful informations
 

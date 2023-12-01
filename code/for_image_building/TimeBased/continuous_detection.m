@@ -44,7 +44,7 @@ ind_f_new = corresponding_time(t_i,time_tab_map);
 %bio_dat(:) = file(ind_final);
 bio_dat(:) = file(ind_f_new);
 
-plot_peak_time_2(bio_dat,t_i,ion,time_tab_map);
+plot_peak_time(bio_dat,t_i,ion,time_tab_map);
 
 g = 0;
 time = 0;
