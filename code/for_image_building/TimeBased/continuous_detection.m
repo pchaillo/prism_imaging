@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [bio_dat, time, g] = continuous_detection(mzXMLStruct,carte_time)
+function [bio_dat, time, g] = continuous_detection(mzXMLStruct, carte_time, aspiration_time)
 
 file_i = mzXMLStruct.scan ;
 
