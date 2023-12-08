@@ -1,4 +1,4 @@
-function carte_ind = time_to_indice_3(carte_time)
+function carte_ind = time_to_indice(carte_time)
 
 si = size(carte_time);
 

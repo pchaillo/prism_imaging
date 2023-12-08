@@ -12,4 +12,4 @@ mapping_time_s = nb_pixel*time_per_pixel ;
  mapping_time = mapping_time_s/60;
 
 mapping_time_min = fix(mapping_time_s/60) ;  % integer part
- mapping_time_sec = rem(mapping_time_s,60) ;
+mapping_time_sec = rem(mapping_time_s,60) ;
