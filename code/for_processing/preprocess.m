@@ -27,23 +27,18 @@ end
 
 %fusion des lignes à fusionner
 
-%%% Supprimme les valeurs nulles
+%%% Supress all the empty data // Supprimme les valeurs nulles
 e_tab = find(peak_tab(:,2) == 0);
-peak_tab2 = peak_tab;
-peak_tab2(e_tab,:) = [];
+peak_tab(e_tab,:) = [];
 
-%remise en place des lignes qui fusionnent
-%if floor(bio_line.num) ~= bio_line.num
-    peak_tab2 = fusion_part2(peak_tab2);
-% elseif bio_line.msLevel > 1 % inutile avec fusion_p2_top !
-%     peak_tab2 = fusion_p2_coll3(peak_tab2,bio_line.msLevel);
-%end
+%% Remise en place des lignes qui fusionnent
+peak_tab = fusion_part2(peak_tab);
 
-% bining
+%% bining ? #TODO
 % peak_tab3 = bining(peak_tab2,win);
 
-processed_scan = bio_line;
-processed_scan.peaks.mz = peak_tab2;
+processed_scan = scan;
+processed_scan.peaks.mz = peak_tab;
 
 %pause()
 

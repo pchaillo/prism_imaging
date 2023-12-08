@@ -1,5 +1,6 @@
-function new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index)
+function new_point_tab =  fill_empty_parts(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index)
 
+%% Add empty points, to fill part where there was no data
 %% Ajout de points dans les grands espaces, pour permettre la bonne reconstruction de l'image
 ind_add =  find(tab_peaks(3,:) > 2*t_step - t_step/10); % ajoute un point dans les grands espaces
 ind_add_01 = ind_add -1;
@@ -25,6 +26,7 @@ for i = 1 : length(ind_add)
     end
 end
 
+%% Add point after the peaks on chromatogram, to be sure to have enough point for reconstruction
 %% Ajout de points après les peaks, pour qu'il ne manque pas de points après que l'analyse ai été effectuée
 % ajout de points a la fin, apres le sample
 ind_fin_peaks = tab_peaks(1,end);
@@ -46,6 +48,7 @@ for j = 1 : nb_pt
 end
 
 if intern_flag == 1
+    %% Add point before the first peaks on chromatogram, to avoid shifted images
     %% Ajout de points AVANT les peaks, pour qu'il ne manque pas de points AVANT que l'analyse ai été effectuée
     % ajout de points a la fin, apres le sample
     ind_deb_peaks = tab_peaks(1,end);

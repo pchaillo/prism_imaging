@@ -106,8 +106,7 @@ if intern_flag == 1
 end
 
 %% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
-new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
-
+new_point_tab =  fill_empty_parts(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
 
 %% Generation of the good indices %% Génération des bon indices
 if exist('new_point_tab')
