@@ -32,7 +32,7 @@ e_tab = find(peak_tab(:,2) == 0);
 peak_tab(e_tab,:) = [];
 
 %% Remise en place des lignes qui fusionnent
-peak_tab = fusion_part2(peak_tab);
+peak_tab = fusion_part_C(peak_tab);
 
 %% bining ? #TODO
 % peak_tab3 = bining(peak_tab2,win);

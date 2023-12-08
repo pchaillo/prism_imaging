@@ -12,16 +12,15 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, time, g] = Peak_picking(mzXMLStruct,threshold_begin,t_step,min_threshold,intern_flag,tolerance,carte_time)
+function [pixels_scans, estimated_time_gap, g] = Peak_picking(mzXMLStruct,threshold_begin,t_step,noise_threshold,intern_flag,fusion_percentage,carte_time)
 
 % Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
 
-file_i = mzXMLStruct.scan ;
+all_scans_raw = mzXMLStruct.scan ;
 
-file = clean_time(file_i); % Function that convert all the time value in retentionTime variable from char to double 
-file = clean_deiso2(file);
-
-l = length(file);
+alls_scans = clean_time(all_scans_raw); % Function that convert all the time value in retentionTime variable from char to double 
+alls_scans = clean_deiso2(alls_scans);
+% l = length(alls_scans);
 
 % VARIABLES  %
 time_res = 0.5 ; % Faire remonter en argument de la fonction ?
@@ -32,91 +31,83 @@ first_peak_is_finded = 0;
 i = 0; % index
 while first_peak_is_finded == 0
     i = i + 1;
-    if file(i).totIonCurrent > threshold_begin
+    if alls_scans(i).totIonCurrent > threshold_begin
         begin_index = i;
         first_peak_is_finded = 1;
     end
 end
 
 %% Récupération des informations
-for i = 1: length(file) % récupère les datas
-    ion(i) = file(i).totIonCurrent; % Mettre des noms de variables inspirés du paradigme mzXMLStruct ? #TODO
-    t_i(i) = file(i).retentionTime;
+for i = 1: length(alls_scans) % récupère les datas
+    TIC_tab(i) = alls_scans(i).totIonCurrent; % Mettre des noms de variables inspirés du paradigme mzXMLStruct ? #TODO
+    Scan_time(i) = alls_scans(i).retentionTime;
 end
 
 %% Matlab function peak detection
-[pk loc w pw] = findpeaks(ion,t_i); % trouve les peaks et leurs localisation
+[selected_peaks selected_times w pw] = findpeaks(TIC_tab,Scan_time); % trouve les peaks et leurs localisation
 
-for i = 2 : length(loc) % create a time gap table % crée un tableau des ecarts temporels
-    tab_loc(i) = loc(i) - loc(i-1) ;
+for i = 2 : length(selected_times) 
+    time_gap_tab(i) = selected_times(i) - selected_times(i-1) ;
 end
 
-for i = 1 : length(loc) % Get peaks index, relatively to time !
-    ind_peaks(i) = find( t_i == loc(i) );
+for i = 1 : length(selected_times) % Get peaks index, relatively to time !
+    selected_indices(i) = find( Scan_time == selected_times(i) );
 end
 
-tab(1,:) = ind_peaks; % mise des valeurs dans le tableau % utile ? rend le code moins clair ! #TODO
-tab(2,:) = loc;
-tab(3,:) = tab_loc;
-tab(4,:) = pk;
+data_tab(1,:) = selected_indices; % old ind_peaks % mise des valeurs dans le tableau % utile ? rend le code moins clair ! #TODO
+data_tab(2,:) = selected_times; % old loc
+data_tab(3,:) = time_gap_tab; % old tab_loc
+data_tab(4,:) = selected_peaks; % old pk
 
-deb_sup = find(tab(1,:) == begin_index); % Suppress all points before the 1st one
-tab(:,1:deb_sup-1) = [];
+first_point_indice = find(data_tab(1,:) == begin_index); % Suppress all points before the 1st one
+data_tab(:,1:first_point_indice-1) = [];
 
-time = time_from_peaks_fcn(tab,min_threshold);
+estimated_time_gap = time_from_peaks_fcn(data_tab,noise_threshold);
 
-%% Application du filtrage min par threshold de bruit
+%% Apply filtering using noise_threshold %% Application du filtrage min par threshold de bruit
+noise_indices =  find(data_tab(4,:) < noise_threshold ); % Supprimer ? #TODO
+data_indices  =  find(data_tab(4,:) > noise_threshold );
+filtered_data_tab =  data_tab(:,data_indices); 
 
-ind_bruit =  find(tab(4,:) < min_threshold );
-ind_no_bruit =  find(tab(4,:) > min_threshold );
-tab_no_bruit = tab(:,ind_no_bruit);
-% tab_bruit = tab(:,ind_bruit); % tba_bruit n'est pas réutilisé => tile pour debug ? Supprimer ? #TODO
-% tab_bruit(3,:) = tab_loc_2(ind_bruit);
-% nb_diff_bruit = length(tab_bruit) - sum(tab_bruit(3,:) == tab(3,ind_bruit));
-tab_peaks = tab_no_bruit;
-ind_peaks2 = tab_peaks(1,:); % indices des peaks detectés
-
-psi = size(tab_peaks);
+psi = size(filtered_data_tab);
 if psi(2) == 0
     disp('----- Attention : too high minimum threshold, no peaks detected -------');
     %quit(1) #TODO => Que faire ici ? Bloquer programme, envoyer erreur ?? 
     return
 end
 
-for i = 2 : length(tab_peaks) % crée un 3e tableau des ecarts temporels après toutes les correction qui ont été appliquées !
-    tab_loc_3(i) = tab_peaks(2,i) - tab_peaks(2,i-1) ;
+for i = 2 : length(filtered_data_tab) % Create a second time gap tab after filtering % crée un 3e tableau des ecarts temporels après toutes les correction qui ont été appliquées !
+    filtered_time_gap_tab(i) = filtered_data_tab(2,i) - filtered_data_tab(2,i-1) ;
 end
-% nb_diff = length(tab) - sum(tab_loc_3 == tab(3,:));
-tab_peaks(3,:) = tab_loc_3; % pour remettre les bons écarts dans tab
+filtered_data_tab(3,:) = filtered_time_gap_tab;
 
-%% FUsion
+%% Fusion
+[alls_scans, filtered_data_tab, filtered_selected_indices, ind_fusion, ind_peaks_supp] = peak_fusion(filtered_data_tab,fusion_percentage,alls_scans,t_step);
 
-[file, tab_peaks, ind_peaks2, ind_fusion, ind_peaks_supp] = peak_fusion2(tab_peaks,tolerance,file,t_step);
-
-for i = 1 : length(file)
-    file_time_tab(i) = file(i).retentionTime;
-    file_peak_tab(i) = file(i).totIonCurrent;
+for i = 1 : length(alls_scans)
+    file_time_tab(i) = alls_scans(i).retentionTime;
+    file_peak_tab(i) = alls_scans(i).totIonCurrent;
 end
 
-%% Detection de la pente comme un peaks
+%% Detection de la pente comme un peaks % #TODO
 % ajouter dans la dernière version
 % ajouter une condition pour savoir si il y a bien une pente
 if intern_flag == 1
-    ind_peaks2 = [ 1 ind_peaks2];
+    filtered_selected_indices = [ 1 filtered_selected_indices];
 end
 
 %% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
-new_point_tab =  fill_empty_parts(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index);
+new_point_tab =  fill_empty_parts(t_step,filtered_data_tab,intern_flag,alls_scans,time_res,file_time_tab,begin_index);
 
 %% Generation of the good indices %% Génération des bon indices
 if exist('new_point_tab')
     for i = 1 : length(new_point_tab)
-        file(new_point_tab(i)) = to_add_pt(file(new_point_tab(i)));
+        alls_scans(new_point_tab(i)) = to_add_pt(alls_scans(new_point_tab(i)));
     end
     ind_p3 = new_point_tab; % indices des points rajoutés pour combler les trous
-    ind_final_raw= [ ind_peaks2 ind_p3];
+    ind_final_raw= [ filtered_selected_indices ind_p3];
 else
-    ind_final_raw = ind_peaks2;
+    ind_final_raw = filtered_selected_indices;
 end
 
 [ind_final, ordre ]= sort(ind_final_raw) ;% indices finaux des points à mettre dans pixels_scans
@@ -131,16 +122,14 @@ for i = 2 : length(ind_final) % crée un tableau des ecarts temporels
     tab_loc_final(i) = tab_final(2,i) - tab_final(2,i-1) ;
 end
 tab_final(3,:) = tab_loc_final;
-tab_final(4,:) =   file_peak_tab(ind_final) ;
+tab_final(4,:) = file_peak_tab(ind_final) ;
 
 % trop_court = find(tab_final(3,:) < t_step - t_step/3); % pas utilisé ailleurs => Supprimer #TODO ? Utile pour debug ?
 % trop_long = find(tab_final(3,:) > t_step + t_step/5);
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
-%ind_deb = tab(1,1); % existe dejà, ind_debut
-ind_fin = tab_peaks(1,end);
-
-file = collateral_fusion2(file,begin_index,ind_fin,min_threshold,ind_peaks2,ind_fusion,t_step,ind_peaks_supp);
+ind_fin = filtered_data_tab(1,end);
+alls_scans = collateral_fusion2(alls_scans,begin_index,ind_fin,noise_threshold,filtered_selected_indices,ind_fusion,t_step,ind_peaks_supp);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
 
@@ -154,7 +143,7 @@ if si_time(1) ~= 1
     time_tab_map = map_time + aspiration_time ;
     
     for i = 1 : length(ind_final)
-        time_tab_final(i) = file(ind_final(i)).retentionTime;
+        time_tab_final(i) = alls_scans(ind_final(i)).retentionTime;
     end
     
     if length( time_tab_final) < length( time_tab_map)
@@ -181,13 +170,13 @@ if si_time(1) ~= 1
     ind_a = 0;
     for i = length(time_tab_espace) : -1 : 1 % suppression des points en trop
         if time_tab_espace(i) < - t_step*0.7
-            if file(ind_f_new(i+1)).num < 0 % pour ne pas supprimer les lignes des peaks
+            if alls_scans(ind_f_new(i+1)).num < 0 % pour ne pas supprimer les lignes des peaks
                 ind_f_new(i+1) = [];
             end
         elseif time_tab_espace(i) > t_step*0.7 % REMPLACER 0.7 PAR FUSION COEFF ???
             % i
-            time01 = file(ind_f_new(i)).retentionTime;
-            time02 = file(ind_f_new(i+1)).retentionTime;
+            time01 = alls_scans(ind_f_new(i)).retentionTime;
+            time02 = alls_scans(ind_f_new(i+1)).retentionTime;
             time_val_i = (time01 + time02)/2 ;
             time_ind = find_closest_pt_4(time_val_i,file_time_tab, t_step);
             ind_f_new = [ind_f_new time_ind];
@@ -198,19 +187,18 @@ if si_time(1) ~= 1
         end
     end
     
-    % ind_f_new = reccur_time_recti(ind_f_new,file,time_tab_map,t_step);
-    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,file,time_tab_map,t_step,file_time_tab);
+    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,time_tab_map,t_step,file_time_tab);
     
     if ind_a > 0 && length(ind_add_tab_2) > 1
         ind_add_tab_2(1) = []; % suppression du 0 ajouté pour pas que la variable soit cide si aucun point n'est ajouté
         ind_add_tab_final = unique([ind_add_tab ind_add_tab_2]);
         for i = 1 : length(ind_add_tab_final)
-            file(ind_add_tab_final(i)) = to_add_pt(file(ind_add_tab_final(i)));
+            alls_scans(ind_add_tab_final(i)) = to_add_pt(alls_scans(ind_add_tab_final(i)));
         end
     end
     
     for i = 1 : length(ind_f_new)
-        time_tab_final_2(i) = file(ind_f_new(i)).retentionTime;
+        time_tab_final_2(i) = alls_scans(ind_f_new(i)).retentionTime;
     end
     
     for i = 1 : length( time_tab_map)
@@ -231,5 +219,5 @@ end
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-pixels_scans(:) = file(ind_f_new);
-plot_peak_time(pixels_scans,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking
+pixels_scans(:) = alls_scans(ind_f_new);
+plot_peak_time(pixels_scans,Scan_time,TIC_tab,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking

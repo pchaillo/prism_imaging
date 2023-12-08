@@ -1,4 +1,5 @@
 function time_estimation = time_from_peaks_fcn(tab,min_threshold)
+% Compute the mean time between selected peaks
 
 ind_bruit =  find(tab(4,:) < min_threshold );
 ind_no_bruit =  find(tab(4,:) > min_threshold );
