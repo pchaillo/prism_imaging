@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [bio_dat, time, g] = peak_detection_pt_par_pt_8(mzXMLStruct,threshold_begin,t_step,min_threshold,intern_flag,tolerance,carte_time)
+function [pixels_scans, time, g] = Peak_picking(mzXMLStruct,threshold_begin,t_step,min_threshold,intern_flag,tolerance,carte_time)
 
 % Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
 
@@ -120,7 +120,7 @@ else
     ind_final_raw = ind_peaks2;
 end
 
-[ind_final, ordre ]= sort(ind_final_raw) ;% indices finaux des points à mettre dans bio_dat
+[ind_final, ordre ]= sort(ind_final_raw) ;% indices finaux des points à mettre dans pixels_scans
 [uv,a,b] = unique(ind_final);
 if length(uv) ~= length(ind_final)
     disp('Attention : points superposition, look at the biodat variable or at the mat file')
@@ -230,12 +230,7 @@ else
     
 end
 
-%% Pour remettre les bonnes informations dans bio_dat et pour afficher le chromatogramme avec les points
+%% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-%bio_dat(:) = file(ind_final);
-bio_dat(:) = file(ind_f_new);
-
-plot_peak_time(bio_dat,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking
-
-g = 0; % supprimer ? %TODO
-
+pixels_scans(:) = file(ind_f_new);
+plot_peak_time(pixels_scans,t_i,ion,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking

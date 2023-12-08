@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [bio_dat, time, g] = continuous_detection(mzXMLStruct,carte_time)
+function [pixels_scans, time] = continuous_detection(mzXMLStruct,carte_time)
 
 path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
 
@@ -45,13 +45,11 @@ ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intesntities by te
 %% Pour fusionner le point suivant
 file = add_neighbourgh_scan(file,ind_f_new);
 
-%% Pour remettre les bonnes informations dans bio_dat et pour afficher le chromatogramme avec les points
+%% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-%bio_dat(:) = file(ind_final);
-bio_dat(:) = file(ind_f_new);
+pixels_scans(:) = file(ind_f_new);
 
-plot_peak_time(bio_dat,t_i,ion,time_tab_map);
+plot_peak_time(pixels_scans,t_i,ion,time_tab_map);
 
-g = 0;
 time = 0;
 

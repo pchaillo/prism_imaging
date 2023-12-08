@@ -1,4 +1,4 @@
-function plot_peak_time(bio_dat,t_i,ion,time_tab_map)
+function plot_peak_time(pixels_scans,t_i,ion,time_tab_map)
 % Function that display the selected peaks on the chromatogram for visual checking
 
 %avec meilleure fusion
@@ -11,38 +11,38 @@ ind_fus = 0; % point fussionnes
 ind_norm = 0; % peaks normaux
 ind_ad = 0; % points ajoutes
 ind_coll = 0; % Points qui resultent d'une fusion "collatérale"
-for i = 1 :length(bio_dat)
+for i = 1 :length(pixels_scans)
     %% pour scatter les points
-    %if floor(bio_dat(i).num) ~= bio_dat(i).num
-    if bio_dat(i).centroided ~= 0
+    %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
+    if pixels_scans(i).centroided ~= 0
         ind_fus = ind_fus + 1 ;
-        pk_fus(ind_fus) = bio_dat(i).totIonCurrent; % ou bio_dat(i).centroided ?
-        %         loc_r= bio_dat(i).retentionTime;
+        pk_fus(ind_fus) = pixels_scans(i).totIonCurrent; % ou pixels_scans(i).centroided ?
+        %         loc_r= pixels_scans(i).retentionTime;
         %         loc_rond(ind_rond) = raw_to_time(loc_r);
-        loc_fus(ind_fus) = bio_dat(i).retentionTime;
-    elseif bio_dat(i).num < 0
+        loc_fus(ind_fus) = pixels_scans(i).retentionTime;
+    elseif pixels_scans(i).num < 0
         ind_ad = ind_ad + 1;
-        pk_ad(ind_ad) = bio_dat(i).totIonCurrent;
-        %         loc_r = bio_dat(i).retentionTime;
+        pk_ad(ind_ad) = pixels_scans(i).totIonCurrent;
+        %         loc_r = pixels_scans(i).retentionTime;
         %         loc_x(ind_x) = raw_to_time(loc_r);
-        loc_ad(ind_ad) = bio_dat(i).retentionTime;
-    elseif bio_dat(i).msLevel > 1
+        loc_ad(ind_ad) = pixels_scans(i).retentionTime;
+    elseif pixels_scans(i).msLevel > 1
         ind_coll = ind_coll + 1;
-        pk_coll(ind_coll) =  bio_dat(i).totIonCurrent;
-        loc_coll(ind_coll) = bio_dat(i).retentionTime;
+        pk_coll(ind_coll) =  pixels_scans(i).totIonCurrent;
+        loc_coll(ind_coll) = pixels_scans(i).retentionTime;
     else
         ind_norm = ind_norm + 1 ;
-        %         loc_r= bio_dat(i).retentionTime;
+        %         loc_r= pixels_scans(i).retentionTime;
         %         loc2(ind2) = raw_to_time(loc_r);
-        loc_norm(ind_norm) = bio_dat(i).retentionTime;
-        pk_norm(ind_norm) = bio_dat(i).totIonCurrent;
+        loc_norm(ind_norm) = pixels_scans(i).retentionTime;
+        pk_norm(ind_norm) = pixels_scans(i).totIonCurrent;
     end
     %% pour plot les lignes d'écarts temporels
     
     if time_tab_map ~= 0
         
-    int = bio_dat(i).totIonCurrent;
-    time_dat = bio_dat(i).retentionTime;
+    int = pixels_scans(i).totIonCurrent;
+    time_dat = pixels_scans(i).retentionTime;
     time_map = time_tab_map(i);
     
 %     time_line_x(i,:) = [time_dat int ];
