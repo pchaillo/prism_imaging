@@ -40,5 +40,4 @@ peak_tab = fusion_part_C(peak_tab);
 processed_scan = scan;
 processed_scan.peaks.mz = peak_tab;
 
-%pause()
 

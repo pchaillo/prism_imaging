@@ -1,5 +1,5 @@
-function time_ind = find_closest_pt_4(time_val_i,time_tab, t_step)
-
+function time_ind = find_closest_point(time_val_i,time_tab, t_step)
+% anciennement, find_dlosest_pt_4
 % avec retour 0 si impossible
 % rectifie les problèmes de temps !
 

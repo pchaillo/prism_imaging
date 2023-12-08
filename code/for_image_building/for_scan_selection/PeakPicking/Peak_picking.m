@@ -32,19 +32,15 @@ i = 0; % index
 while first_peak_is_finded == 0
     i = i + 1;
     if alls_scans(i).totIonCurrent > threshold_begin
-        begin_index = i;
+        first_point_indice = i;
         first_peak_is_finded = 1;
     end
 end
 
-%% Récupération des informations
-for i = 1: length(alls_scans) % récupère les datas
-    TIC_tab(i) = alls_scans(i).totIonCurrent; % Mettre des noms de variables inspirés du paradigme mzXMLStruct ? #TODO
-    Scan_time(i) = alls_scans(i).retentionTime;
-end
+[TIC_tab, Scan_time] = extract_TIC_and_time(alls_scans);
 
 %% Matlab function peak detection
-[selected_peaks selected_times w pw] = findpeaks(TIC_tab,Scan_time); % trouve les peaks et leurs localisation
+[selected_peaks, selected_times, w, pw] = findpeaks(TIC_tab,Scan_time); % trouve les peaks et leurs localisation
 
 for i = 2 : length(selected_times) 
     time_gap_tab(i) = selected_times(i) - selected_times(i-1) ;
@@ -59,7 +55,7 @@ data_tab(2,:) = selected_times; % old loc
 data_tab(3,:) = time_gap_tab; % old tab_loc
 data_tab(4,:) = selected_peaks; % old pk
 
-first_point_indice = find(data_tab(1,:) == begin_index); % Suppress all points before the 1st one
+first_point_indice = find(data_tab(1,:) == first_point_indice); % Suppress all points before the 1st one
 data_tab(:,1:first_point_indice-1) = [];
 
 estimated_time_gap = time_from_peaks_fcn(data_tab,noise_threshold);
@@ -81,13 +77,10 @@ for i = 2 : length(filtered_data_tab) % Create a second time gap tab after filte
 end
 filtered_data_tab(3,:) = filtered_time_gap_tab;
 
-%% Fusion
-[alls_scans, filtered_data_tab, filtered_selected_indices, ind_fusion, ind_peaks_supp] = peak_fusion(filtered_data_tab,fusion_percentage,alls_scans,t_step);
+%% Fusion of selected peaks that are too close to each other
+[alls_scans, filtered_data_tab, filtered_selected_indices, fusionned_indices, deleted_indices] = peak_fusion(filtered_data_tab,fusion_percentage,alls_scans,t_step);
 
-for i = 1 : length(alls_scans)
-    file_time_tab(i) = alls_scans(i).retentionTime;
-    file_peak_tab(i) = alls_scans(i).totIonCurrent;
-end
+[fusionned_TIC_tab, fusionned_Scan_time] = extract_TIC_and_time(alls_scans);
 
 %% Detection de la pente comme un peaks % #TODO
 % ajouter dans la dernière version
@@ -97,39 +90,36 @@ if intern_flag == 1
 end
 
 %% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
-new_point_tab =  fill_empty_parts(t_step,filtered_data_tab,intern_flag,alls_scans,time_res,file_time_tab,begin_index);
+point_to_add_indices =  fill_empty_parts(t_step,filtered_data_tab,intern_flag,alls_scans,time_res,fusionned_Scan_time,first_point_indice);
 
 %% Generation of the good indices %% Génération des bon indices
 if exist('new_point_tab')
-    for i = 1 : length(new_point_tab)
-        alls_scans(new_point_tab(i)) = to_add_pt(alls_scans(new_point_tab(i)));
+    for i = 1 : length(point_to_add_indices)
+        alls_scans(point_to_add_indices(i)) = Set_scan_as_empty(alls_scans(point_to_add_indices(i)));
     end
-    ind_p3 = new_point_tab; % indices des points rajoutés pour combler les trous
-    ind_final_raw= [ filtered_selected_indices ind_p3];
-else
-    ind_final_raw = filtered_selected_indices;
+    filtered_selected_indices = [ filtered_selected_indices point_to_add_indices];
 end
 
-[ind_final, ordre ]= sort(ind_final_raw) ;% indices finaux des points à mettre dans pixels_scans
+[ind_final, ordre ]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
 [uv,a,b] = unique(ind_final);
 if length(uv) ~= length(ind_final)
     disp('Attention : points superposition, look at the biodat variable or at the mat file')
 end
 
 tab_final(1,:) = ind_final; % pour informations
-tab_final(2,:) =    file_time_tab(ind_final) ;
+tab_final(2,:) =    fusionned_Scan_time(ind_final) ;
 for i = 2 : length(ind_final) % crée un tableau des ecarts temporels
     tab_loc_final(i) = tab_final(2,i) - tab_final(2,i-1) ;
 end
 tab_final(3,:) = tab_loc_final;
-tab_final(4,:) = file_peak_tab(ind_final) ;
+tab_final(4,:) = TIC_tab(ind_final) ;
 
 % trop_court = find(tab_final(3,:) < t_step - t_step/3); % pas utilisé ailleurs => Supprimer #TODO ? Utile pour debug ?
 % trop_long = find(tab_final(3,:) > t_step + t_step/5);
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 ind_fin = filtered_data_tab(1,end);
-alls_scans = collateral_fusion2(alls_scans,begin_index,ind_fin,noise_threshold,filtered_selected_indices,ind_fusion,t_step,ind_peaks_supp);
+alls_scans = collateral_fusion2(alls_scans,first_point_indice,ind_fin,noise_threshold,filtered_selected_indices,fusionned_indices,t_step,deleted_indices);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
 
@@ -178,7 +168,7 @@ if si_time(1) ~= 1
             time01 = alls_scans(ind_f_new(i)).retentionTime;
             time02 = alls_scans(ind_f_new(i+1)).retentionTime;
             time_val_i = (time01 + time02)/2 ;
-            time_ind = find_closest_pt_4(time_val_i,file_time_tab, t_step);
+            time_ind = find_closest_pt_4(time_val_i,fusionned_Scan_time, t_step);
             ind_f_new = [ind_f_new time_ind];
             ind_f_new = sort(ind_f_new);
             
@@ -187,7 +177,7 @@ if si_time(1) ~= 1
         end
     end
     
-    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,time_tab_map,t_step,file_time_tab);
+    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,time_tab_map,t_step,fusionned_Scan_time);
     
     if ind_a > 0 && length(ind_add_tab_2) > 1
         ind_add_tab_2(1) = []; % suppression du 0 ajouté pour pas que la variable soit cide si aucun point n'est ajouté

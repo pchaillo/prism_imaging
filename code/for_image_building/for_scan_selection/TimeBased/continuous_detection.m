@@ -28,12 +28,7 @@ l = length(file);
 time_res = 0.5 ;
 aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
 
-%% Récupération des informations
-
-for i = 1: length(file) % récupère les datas
-    ion(i) = file(i).totIonCurrent;
-    t_i(i) = file(i).retentionTime;
-end
+[ion, t_i] = extract_TIC_and_time(file);
 
 carte_time = carte_time + aspiration_time;
 

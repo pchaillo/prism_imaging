@@ -1,19 +1,19 @@
-function [alls_scans, data_tab, filtered_selected_indices, ind_fusion, ind_peaks_supp ] = peak_fusion(data_tab,fusion_percentage,alls_scans,t_step)
+function [alls_scans, data_tab, filtered_selected_indices, fusionned_indices, deleted_indices ] = peak_fusion(data_tab,fusion_percentage,alls_scans,t_step)
 
 %% fusion of close peaks
 tolerance_value = fusion_percentage/100;
-ind_fusion =  find(data_tab(3,:) < t_step*tolerance_value ); % Fusion indices in data_tab
-if (~isempty(ind_fusion))
-    ind_fusion(1) = [] ; % supress 1st point, always null % suppression du 1er pt, tjrs nul
-    for i = 1 : length(ind_fusion)
-        to_fusion(i,1) = data_tab(1,ind_fusion(i)-1) ;
-        to_fusion(i,2) = data_tab(1,ind_fusion(i)) ;
-        TotIon_1 = data_tab(4,ind_fusion(i)-1);
-        TotIon_2 = data_tab(4,ind_fusion(i));
+to_fusion_ind =  find(data_tab(3,:) < t_step*tolerance_value ); % Fusion indices in data_tab
+if (~isempty(to_fusion_ind))
+    to_fusion_ind(1) = [] ; % supress 1st point, always null % suppression du 1er pt, tjrs nul
+    for i = 1 : length(to_fusion_ind)
+        to_fusion(i,1) = data_tab(1,to_fusion_ind(i)-1) ;
+        to_fusion(i,2) = data_tab(1,to_fusion_ind(i)) ;
+        TotIon_1 = data_tab(4,to_fusion_ind(i)-1);
+        TotIon_2 = data_tab(4,to_fusion_ind(i));
         if TotIon_1 > TotIon_2 % We delete the scan with the lower TIC
-            to_sup(i) = ind_fusion(i);
+            to_sup(i) = to_fusion_ind(i);
         else
-            to_sup(i) = ind_fusion(i)-1 ;
+            to_sup(i) = to_fusion_ind(i)-1 ;
         end
     end
 
@@ -48,7 +48,7 @@ if (~isempty(ind_fusion))
             scans_fusion_tab(fusion_ind) = {alls_scans(i).deisotoped};
         end
     end
-    ind_peaks_supp = [];
+    to_delete_indices = [];
     if fusion_ind > 0
         processed_scans_fusion_tab = deiso_fusion_reccur(scans_fusion_tab);
         for i = 1 : length(processed_scans_fusion_tab)
@@ -64,14 +64,14 @@ if (~isempty(ind_fusion))
             for j = 1 : length(tab_fusion)
                 alls_scans(max_TIC_scan_ind) = fusion_part_B(alls_scans(tab_fusion(j)),alls_scans(max_TIC_scan_ind),tab_fusion);
             end
-            ind_peaks_supp = [ ind_peaks_supp tab_fusion ] ;
+            to_delete_indices = [ to_delete_indices tab_fusion ] ;
         end
     end
     % Cleaning % Nettoyage
-    ind_peaks_supp = sort(ind_peaks_supp);
+    to_delete_indices = sort(to_delete_indices);
     filtered_selected_indices = data_tab(1,:); % indices des peaks detectés
     
-    [ind_communs i_a i_b ] = intersect(ind_peaks_supp,filtered_selected_indices);
+    [ind_communs i_a i_b ] = intersect(to_delete_indices,filtered_selected_indices);
     data_tab(:,i_b) = []; % to delete in data_tab all the scan that get fusionned
 end
 
@@ -82,3 +82,5 @@ for i = 2 : si(2) % Compute again time gap, and replace the tab in data_tab vari
 end
 data_tab(3,:) = time_gap_tab; % pour remettre les bons écarts dans tab
 
+fusionned_indices = to_fusion_ind;
+deleted_indices = to_delete_indices;

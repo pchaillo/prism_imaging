@@ -1,4 +1,4 @@
-function new_point_tab =  fill_empty_parts(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index)
+function point_to_add_indices =  fill_empty_parts(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,begin_index)
 
 %% Add empty points, to fill part where there was no data
 %% Ajout de points dans les grands espaces, pour permettre la bonne reconstruction de l'image
@@ -16,12 +16,9 @@ for i = 1 : length(ind_add)
         new_point_time = time_loc_tab(i) + j*t_step;
         if new_point_time < time_loc_tab(i) + time_diff_tab(i) - time_res*1.5 % securite pour eviter la superposition de points
         % if new_point_time < time_loc_tab(i) + time_diff_tab(i) - (t_step/3) % securite pour eviter la superposition de points
-            new_point_ind = find_closest_pt_4(new_point_time,file_time_tab,t_step);
-            %         if new_point_ind == 454 % pour test lors du debuggage
-            %             datdatadat = 1220;
-            %         end
+            new_point_ind = find_closest_point(new_point_time,file_time_tab,t_step);
             u = u + 1;
-            new_point_tab(u) = new_point_ind;
+            point_to_add_indices(u) = new_point_ind;
         end
     end
 end
@@ -38,12 +35,9 @@ for j = 1 : nb_pt
     new_point_time = time_01 + j*t_step;
     if new_point_time < time_02 - time_res*1.5 % securite pour eviter la superposition de points
         % if new_point_time < time_loc_tab(i) + time_diff_tab(i) - (t_step/3) % securite pour eviter la superposition de points
-        new_point_ind = find_closest_pt_4(new_point_time,file_time_tab,t_step);
-        %         if new_point_ind == 454 % pour test lors du debuggage
-        %             datdatadat = 1220;
-        %         end
+        new_point_ind = find_closest_point(new_point_time,file_time_tab,t_step);
         u = u + 1;
-        new_point_tab(u) = new_point_ind;
+        point_to_add_indices(u) = new_point_ind;
     end
 end
 
@@ -60,12 +54,9 @@ if intern_flag == 1
         new_point_time = time_01_2 + j*t_step;
         if new_point_time < time_02_2 - time_res*1.5 % securite pour eviter la superposition de points
             % if new_point_time < time_loc_tab(i) + time_diff_tab(i) - (t_step/3) % securite pour eviter la superposition de points
-            new_point_ind = find_closest_pt_4(new_point_time,file_time_tab,t_step);
-            %         if new_point_ind == 454 % pour test lors du debuggage
-            %             datdatadat = 1220;
-            %         end
+            new_point_ind = find_closest_point(new_point_time,file_time_tab,t_step);
             u = u + 1;
-            new_point_tab(u) = new_point_ind;
+            point_to_add_indices(u) = new_point_ind;
         end
     end
 end
