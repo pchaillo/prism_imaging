@@ -1,8 +1,7 @@
-
  function l_out = fusion_part_A(l1,l2)
  
 % Do only half of the fusion for perfomances => The spectra will be added
-% only if the scan selection is good
+% only if the scan selection is good, in the fusion_part_B function
 
 
 l_out = l1; % de base je fusionne sur le 1er point

@@ -14,6 +14,9 @@
 
 function [bio_dat, time, g] = continuous_detection(mzXMLStruct,carte_time)
 
+path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
+
+
 file_i = mzXMLStruct.scan ;
 
 file = clean_time(file_i); % transformation du temps en une varibale numérique
@@ -37,7 +40,10 @@ carte_time = carte_time + aspiration_time;
 time_tab_map = time_in_tab(carte_time);
 
 % remplir ind_f_new
-ind_f_new = corresponding_time(t_i,time_tab_map);
+ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intesntities by temporal correlation
+
+%% Pour fusionner le point suivant
+file = add_neighbourgh_scan(file,ind_f_new);
 
 %% Pour remettre les bonnes informations dans bio_dat et pour afficher le chromatogramme avec les points
 

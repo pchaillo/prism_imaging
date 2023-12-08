@@ -1,6 +1,6 @@
 function [file, tab_peaks, ind_peaks2, ind_fusion, ind_peaks_supp ] = peak_fusion2(tab_peaks,tolerance,file,t_step)
 
-%% fusion des peaks trop proches
+%% fusion of close peaks
 tolerance_value = tolerance/100;
 %ind_fusion =  find(tab_peaks(3,:) < t_step/2.1 ); % (t_step - t_step/6) bonne valeur // ou t_step/3
 ind_fusion =  find(tab_peaks(3,:) < t_step*tolerance_value );

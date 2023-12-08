@@ -47,7 +47,6 @@ for i = 1: length(file) % récupère les datas
 end
 
 %% Détection de peaks matlab
-
 [pk loc w pw] = findpeaks(ion,t_i); %trouve les peaks et leurs localisation
 
 for i = 2 : length(loc) % crée un tableau des ecarts temporels
@@ -112,12 +111,10 @@ if intern_flag == 1
 end
 
 %% Ajout des points dans les espaces
-
 new_point_tab =  pt_add(t_step,tab_peaks,intern_flag,file,time_res,file_time_tab,ind_debut);
 
 
 %% Génération des bon indices
-
 if exist('new_point_tab')
     for i = 1 : length(new_point_tab)
         file(new_point_tab(i)) = to_add_pt(file(new_point_tab(i)));
