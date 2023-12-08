@@ -52,7 +52,7 @@ med = get_median(bio_dat);
 % sur la carte
 if time_flag == 1
     
-    carte_ind = time_to_indice_3(carte_time);
+    carte_ind = time_to_indice(carte_time);
     
     d_ind = 0    ;
     

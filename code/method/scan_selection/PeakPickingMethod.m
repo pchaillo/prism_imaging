@@ -19,7 +19,7 @@ classdef PeakPickingMethod < handle
  
         end
 
-        function [bio_dat ,time,g] = selection(method, mzXML_data , carte_time )
+        function [bio_dat ,time] = selection(method, mzXML_data , carte_time )
             if (method.intern_trig(1:2) == 'On')
                 intern_flag = 1;
             else
@@ -33,7 +33,7 @@ classdef PeakPickingMethod < handle
 
             path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO
 
-            [bio_dat ,time,g] = peak_detection_pt_par_pt_8(mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.fusion_percentage,carte_time); % take only the usefull informations
+            [bio_dat ,time] = Peak_picking(mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.fusion_percentage,carte_time); % take only the usefull informations
 
 
         end

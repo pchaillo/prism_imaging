@@ -35,7 +35,7 @@ for i = 1:length(bio_dat)
     ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
     if loud_flag == 0
         if bio_dat(i).num > 0
-            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+            value(id) = set_peaks_norm( limits,bio_dat(i) )/ionisationEnergy(id);
         else
             value(id) = 0;
         end
@@ -44,7 +44,7 @@ for i = 1:length(bio_dat)
             value(id) = 0;
         else
 
-            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+            value(id) = set_peaks_norm( limits,bio_dat(i) )/ionisationEnergy(id);
         end
     end
     % end

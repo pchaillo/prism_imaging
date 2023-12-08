@@ -1,4 +1,4 @@
-function time = time_from_peaks3(mzXMLStruct,threshold_begin,min_threshold)
+function time = time_from_peaks(mzXMLStruct,threshold_begin,min_threshold)
 
 file_i = mzXMLStruct.scan ;
 
@@ -14,12 +14,7 @@ while ok == 0
     end
 end
 
-for i = 1: length(file) % récupère les datas
-    ion(i) = file(i).totIonCurrent;
-    %     t_i_r = file(i).retentionTime;
-    %     t_i(i) = raw_to_time(t_i_r);
-    t_i(i) = file(i).retentionTime;
-end
+[ion, t_i] = extract_TIC_and_time(file);
 
 [pk loc w pw] = findpeaks(ion,t_i); %trouve les peaks et leurs localisation
 

@@ -21,4 +21,5 @@ else
     scan.num = scan_2.num;
 end
 
-scan.msLevel = scan_1.msLevel + 1;
+% scan.msLevel = scan_1.msLevel + 1; % Sinon c'est fait en double ? =>
+% Verifier #TODO

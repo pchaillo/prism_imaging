@@ -38,13 +38,13 @@ for i = 1 : length(ind_coll_dat)
         line = file(ind_coll_dat(i));
         
         %     tps(i) = line.retentionTime;  % pour enregistrer les temps dans un tableau
-        %     time_ind(i) = find_closest_pt(tps(i),peaks2_time_tab);
+        %     time_ind(i) = find_closest_point(tps(i),peaks2_time_tab);
         
         tps = line.retentionTime;  % sans enregistrer les temps dans un tableau
         if i == 865
             wahou = 0;
         end
-        time_ind(p) = find_closest_pt_4(tps,peaks2_time_tab,t_step);
+        time_ind(p) = find_closest_point(tps,peaks2_time_tab,t_step);
         p_ind_tab(p) = i;
     end
 end
@@ -59,6 +59,8 @@ if p > 0
     for i = 1 : size_coll_fus(1)
         ind_f_m = to_fusion_coll(i,1);
         ind_f_p = to_fusion_coll(i,2);
-        file(ind_f_m) = fusion_p1_top(file(ind_f_m),file(ind_f_p));
+%         file(ind_f_m) = fusion_p1_top(file(ind_f_m),file(ind_f_p));
+        file(ind_f_m) = fusion_part_A_and_B(file(ind_f_m),file(ind_f_p));
+%         file(ind_f_m) = fusion_part_B(file(ind_f_m),file(ind_f_p));
     end
 end

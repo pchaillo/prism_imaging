@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap, g] = Peak_picking(mzXMLStruct,threshold_begin,t_step,noise_threshold,intern_flag,fusion_percentage,carte_time)
+function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct,threshold_begin,t_step,noise_threshold,intern_flag,fusion_percentage,carte_time)
 
 % Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
 
@@ -93,7 +93,7 @@ end
 point_to_add_indices =  fill_empty_parts(t_step,filtered_data_tab,intern_flag,alls_scans,time_res,fusionned_Scan_time,first_point_indice);
 
 %% Generation of the good indices %% Génération des bon indices
-if exist('new_point_tab')
+if exist('point_to_add_indices')
     for i = 1 : length(point_to_add_indices)
         alls_scans(point_to_add_indices(i)) = Set_scan_as_empty(alls_scans(point_to_add_indices(i)));
     end
@@ -107,7 +107,7 @@ if length(uv) ~= length(ind_final)
 end
 
 tab_final(1,:) = ind_final; % pour informations
-tab_final(2,:) =    fusionned_Scan_time(ind_final) ;
+tab_final(2,:) =  fusionned_Scan_time(ind_final) ;
 for i = 2 : length(ind_final) % crée un tableau des ecarts temporels
     tab_loc_final(i) = tab_final(2,i) - tab_final(2,i-1) ;
 end
@@ -122,7 +122,6 @@ ind_fin = filtered_data_tab(1,end);
 alls_scans = collateral_fusion2(alls_scans,first_point_indice,ind_fin,noise_threshold,filtered_selected_indices,fusionned_indices,t_step,deleted_indices);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
-
 ind_f_new = ind_final;
 
 % if carte_time ~= 0
