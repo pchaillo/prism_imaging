@@ -4,7 +4,7 @@
 
 % Remet aussi les valeurs dans un tableau à deux colonnes
 
-function bio_line_out = preprocess6(bio_line,win)
+function processed_scan = preprocess(scan,win)
 
 %avec code fusion de deux lignes
 % avec fonction bining pour adaptation en C
@@ -12,7 +12,7 @@ function bio_line_out = preprocess6(bio_line,win)
 %choix de fenêtre pour bin
 %win = 0.05;
 
-peak_tab_r = bio_line.peaks.mz;
+peak_tab_r = scan.peaks.mz;
 l = length(peak_tab_r);
 
 h = 0; % remise du tableau dans la bonne forme ( lx1 par (l/2)x2 )
@@ -42,8 +42,8 @@ peak_tab2(e_tab,:) = [];
 % bining
 % peak_tab3 = bining(peak_tab2,win);
 
-bio_line_out = bio_line;
-bio_line_out.peaks.mz = peak_tab2;
+processed_scan = bio_line;
+processed_scan.peaks.mz = peak_tab2;
 
 %pause()
 

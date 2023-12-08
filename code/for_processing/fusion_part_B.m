@@ -1,26 +1,24 @@
 
-function l_out = fusion_part_B(l1,l2,deiso_tab)
+function scan = fusion_part_B(scan_1,scan_2,fusion_tab)
  
  % Second part of the fusion_partA function
+scan = scan_1; % de base je fusionne sur le 1er point
 
+scan.peaks.mz = [ scan_1.peaks.mz ; scan_2.peaks.mz ];
 
-l_out = l1; % de base je fusionne sur le 1er point
+scan.deisotoped = fusion_tab;
 
-l_out.peaks.mz = [ l1.peaks.mz ; l2.peaks.mz ];
-
-l_out.deisotoped = deiso_tab;
-
-l_out.ionisationEnergy = l1.ionisationEnergy + l2.ionisationEnergy ;
+scan.ionisationEnergy = scan_1.ionisationEnergy + scan_2.ionisationEnergy ;
 
 % je place le point sur le plus gros pic temporellement :
-if l1.totIonCurrent > l2.totIonCurrent
-    l_out.retentionTime = l1.retentionTime;
-    l_out.totIonCurrent = l1.totIonCurrent;
-    l_out.num = l1.num;
+if scan_1.totIonCurrent > scan_2.totIonCurrent
+    scan.retentionTime = scan_1.retentionTime;
+    scan.totIonCurrent = scan_1.totIonCurrent;
+    scan.num = scan_1.num;
 else
-    l_out.retentionTime = l2.retentionTime;
-    l_out.totIonCurrent = l2.totIonCurrent;
-    l_out.num = l2.num;
+    scan.retentionTime = scan_2.retentionTime;
+    scan.totIonCurrent = scan_2.totIonCurrent;
+    scan.num = scan_2.num;
 end
 
-l_out.msLevel = l1.msLevel + 1;
+scan.msLevel = scan_1.msLevel + 1;
