@@ -32,7 +32,7 @@ aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour r
 
 carte_time = carte_time + aspiration_time;
 
-time_tab_map = time_in_tab(carte_time);
+time_tab_map = time_in_list(carte_time);
 
 % remplir ind_f_new
 ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intesntities by temporal correlation
