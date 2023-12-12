@@ -33,6 +33,7 @@ else
         time_ind = find(time_tab == time_val);
         
         if length(time_ind) > 1
+            disp('Attention problem - Time not recorded in the good way in the mzXML file => may distort the peak detection');
             disp('Attention problème - Temps mal enregistré dans le fichier mzXML => peut nuire à la détection de peaks');
             disp(time_ind);
             time_ind = time_ind(1);

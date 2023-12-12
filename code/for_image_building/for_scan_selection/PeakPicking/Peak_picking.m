@@ -19,7 +19,7 @@ function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct,threshold
 all_scans_raw = mzXMLStruct.scan ;
 
 alls_scans = clean_time(all_scans_raw); % Function that convert all the time value in retentionTime variable from char to double 
-alls_scans = clean_deiso2(alls_scans);
+alls_scans = clean_fusion_tab(alls_scans);
 % l = length(alls_scans);
 
 % VARIABLES  %

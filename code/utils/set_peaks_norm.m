@@ -2,14 +2,14 @@
 % qui ont été fixées
 
 % system('set username');
-function value = set_peaks_norm(limits,bio_line)
+function value = set_peaks_norm(limits,scan) % pick peak
 
 % mxXML_on_map_norm7
 %main_reconstruct
 
 % bio_line = bio_dat(1);
 
-peak_tab = bio_line.peaks.mz;
+peak_tab = scan.peaks.mz;
 
 % e_tab = find(peak_tab(:,2) == 0); %already done 
 % peak_tab(e_tab,:) = [];

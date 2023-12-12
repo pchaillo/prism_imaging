@@ -1,10 +1,10 @@
-function plot_multiple_spectra(bio_dat,selected_ind_tab)
+function plot_multiple_spectra(pixels_scans,selected_ind_tab)
 
 ind_peaks = 0;
 for n = 1 : length(selected_ind_tab) % récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
-    peaks(ind_peaks) = {bio_dat(selected_ind_tab(n)).peaks.mz};
-    times(ind_peaks) = bio_dat(selected_ind_tab(n)).retentionTime;
+    peaks(ind_peaks) = {pixels_scans(selected_ind_tab(n)).peaks.mz};
+    times(ind_peaks) = pixels_scans(selected_ind_tab(n)).retentionTime;
 end
 peaks = peaks';
 times = times';

@@ -1,4 +1,4 @@
-function chemin  = choix_chemin(folder_name,file_name)
+function path  = choix_chemin(folder_name,file_name)
 
 % Permet de choisir automatique le bon dossier pour l'enregistrement,
 % quelquesoit le fichier dans lequel est stocké le code
@@ -13,7 +13,7 @@ elseif ispc
     sep = '\';
 end
 
-fichier_dir = strcat(sep,folder_name,sep);
-repertoire = strcat(workspace_dir, fichier_dir);
-chemin = [repertoire file_name];
+file_dir = strcat(sep,folder_name,sep);
+repertory = strcat(workspace_dir, file_dir);
+path = [repertory file_name];
 
