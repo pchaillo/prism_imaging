@@ -2,7 +2,7 @@
 % qui ont été fixées
 
 % system('set username');
-function value = set_peaks_norm4(limits,bio_line)
+function value = set_peaks_norm(limits,bio_line)
 
 % mxXML_on_map_norm7
 %main_reconstruct
