@@ -35,7 +35,7 @@ for i = 1:length(bio_dat)
     ionisationEnergy(id) = bio_dat(i).ionisationEnergy ;
     if loud_flag == 0
         if bio_dat(i).num > 0
-            value(id) = set_peaks_norm4( limits,bio_dat(i) )/ionisationEnergy(id);
+            value(id) = set_peaks_norm( limits,bio_dat(i) )/ionisationEnergy(id);
         else
             value(id) = 0;
         end
@@ -51,7 +51,7 @@ for i = 1:length(bio_dat)
 end
 
 %med = median(totIonCurrent,'all'); %% be carefull change to median
-med = good_med_for_norm2(bio_dat);
+med = good_med_for_norm(bio_dat);
 
 % si le temps est enregistré, on l'utilise pour replacer les informations
 % sur la carte
