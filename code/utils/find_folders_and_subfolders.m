@@ -12,5 +12,4 @@ if size_folders(2) > 0
         disp(list_folders);
     end
 end
-disp(list_folders);
 end
