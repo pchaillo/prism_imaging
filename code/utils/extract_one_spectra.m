@@ -3,7 +3,7 @@
 function extract_one_spectra(pixels_scans,map,limits)
 
 
-if isfield(carte,'time')
+if isfield(map,'time')
     time_flag = 1;
 else
     time_flag = 0;

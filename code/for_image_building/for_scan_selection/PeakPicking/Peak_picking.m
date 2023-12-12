@@ -128,7 +128,7 @@ ind_f_new = ind_final;
 si_time = size(carte_time);
 if si_time(1) ~= 1
     
-    map_time = time_in_tab(carte_time);
+    map_time = time_to_indice(carte_time);
     time_tab_map = map_time + aspiration_time ;
     
     for i = 1 : length(ind_final)
@@ -167,7 +167,7 @@ if si_time(1) ~= 1
             time01 = alls_scans(ind_f_new(i)).retentionTime;
             time02 = alls_scans(ind_f_new(i+1)).retentionTime;
             time_val_i = (time01 + time02)/2 ;
-            time_ind = find_closest_pt_4(time_val_i,fusionned_Scan_time, t_step);
+            time_ind = find_closest_point(time_val_i,fusionned_Scan_time, t_step);
             ind_f_new = [ind_f_new time_ind];
             ind_f_new = sort(ind_f_new);
             
