@@ -14,5 +14,3 @@ if display == "2D"
     view(2)
 end
 hold off
-
-[x1,y1] = ginput(1);
