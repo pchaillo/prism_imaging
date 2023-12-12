@@ -128,14 +128,14 @@ ind_f_new = ind_final;
 si_time = size(carte_time);
 if si_time(1) ~= 1
     
-    map_time = time_to_indice(carte_time);
-    time_tab_map = map_time + aspiration_time ;
+    time_list = time_to_list(carte_time);
+    corrected_time_list = time_list + aspiration_time ;
     
     for i = 1 : length(ind_final)
-        time_tab_final(i) = alls_scans(ind_final(i)).retentionTime;
+        final_selected_times_list(i) = alls_scans(ind_final(i)).retentionTime;
     end
     
-    if length( time_tab_final) < length( time_tab_map)
+    if length( final_selected_times_list) < length(corrected_time_list)
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
         disp('-------------------------------------------------------------------------------------------------e');
