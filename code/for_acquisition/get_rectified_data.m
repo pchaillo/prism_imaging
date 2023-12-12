@@ -13,7 +13,7 @@ global scan;
 u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it)
 measured_distance = 0; % initialize the variable => useful ? (#TODO : suppress it)
 
-k = 0; % counter, to count each loop
+loop_counter = 0; 
 is_measured = 0 ; % bool : if is_measured == 0 : no good value yet, continue the while loop // if is_measured == 1 : we get a value or we reach time limite, so we quit the while loop
 first_loop = 1; % bool, if 1, it's the first loop in while for repositioning, then set to 0
 
@@ -23,22 +23,22 @@ nb_boucle_repeat = 100; % 1200
 shift = 0; % height shift for the repositionning of the robot
 max_shift = 5; % maximal height shift
 
-new_tab = sensor.tab_etal; % #TODO : rename tab_etal to calibration_tab
+calibration_tab = sensor.tab_etal; % #TODO : rename tab_etal to calibration_tab
 
 while u == 0  || is_measured == 0
-    k = k + 1;
-    %    if  mod(k,100) == 0 && k> 500
-    if  k >= nb_boucle_mesure && mod(k,nb_boucle_repeat) == 0
+    loop_counter = loop_counter + 1;
+    %    if  mod(loop_counter,100) == 0 && k> 500
+    if  loop_counter >= nb_boucle_mesure && mod(loop_counter,nb_boucle_repeat) == 0
         
         d_y = sensor.class.get_data(sensor.connexion); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
         
-        si = size(new_tab);
+        si = size(calibration_tab);
         
         for z = 1 : si(2)-3
-            if abs(d_y) > abs(new_tab(2,z+1)) && abs(d_y) < abs(new_tab(2,z+2))
-                %       measured_distance = ( new_tab(1,z) + new_tab(1,z+1) ) / 2; % to get raw value directly
-                y = [ new_tab(1,z) new_tab(1,z+1)  new_tab(1,z+2) new_tab(1,z+3) ];
-                x = [ new_tab(2,z) new_tab(2,z+1) new_tab(2,z+2) new_tab(2,z+3)];
+            if abs(d_y) > abs(calibration_tab(2,z+1)) && abs(d_y) < abs(calibration_tab(2,z+2))
+                %       measured_distance = ( calibration_tab(1,z) + calibration_tab(1,z+1) ) / 2; % to get raw value directly
+                y = [ calibration_tab(1,z) calibration_tab(1,z+1)  calibration_tab(1,z+2) calibration_tab(1,z+3) ];
+                x = [ calibration_tab(2,z) calibration_tab(2,z+1) calibration_tab(2,z+2) calibration_tab(2,z+3)];
                 p = polyfit(x,y,3);
                 measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration tab
                 sample_height = scan.dh + shift - measured_distance  + delta ;
@@ -47,8 +47,8 @@ while u == 0  || is_measured == 0
         end
         
         %% nouveau repos
-        if d_y < new_tab(2,1)% || d_y == 0
-            if scan.fast == 0
+        if d_y < calibration_tab(2,1)% || d_y == 0
+            if scan.fast == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter
                     first_loop = 0;
@@ -56,7 +56,7 @@ while u == 0  || is_measured == 0
                 disp('Repositioning. New height :');
                 shift = shift + 1
                 
-                % if opo_flag == 1
+                % if opo_flag == 1 % #TODO
                 %     state_double = get_state(opotek);
                 % end
                                 

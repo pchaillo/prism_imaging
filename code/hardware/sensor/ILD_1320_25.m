@@ -1,5 +1,5 @@
 classdef ILD_1320_25
-
+    % (Analogic)
     % ILD1320-25 renvoie la tension lu sur l'Arduino, qd le VL6180x renvoie directement la distance => comment combiner les deux ?
     % => Mettre la conversion tension / distance dans le code orienté objet
 
@@ -16,7 +16,7 @@ classdef ILD_1320_25
 
         end
 
-        function data = get_data(sensor,sensor_co) % #TODO : get_voltage() ?
+        function data = get_value(sensor,sensor_co) % #TODO : get_value() ?
             % contain laser connexion and return measured depth
 
             stop = 0; % bool to stop acquistion (will stop the while loop)
