@@ -1,25 +1,25 @@
 
 
-function extract_one_spectra(bio_dat,carte,limits)
+function extract_one_spectra(pixels_scans,map,limits)
 
-carte_x = carte.x;
-carte_y = carte.y;
-carte_z = carte.z;
+carte_x = map.x;
+carte_y = map.y;
+carte_z = map.z;
 
 if isfield(carte,'time')
-    carte_time = carte.time;
+    carte_time = map.time;
     time_flag = 1;
 else
     time_flag = 0;
 end
 
 loud_flag = 1;
-[ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
-% [ bio_ind ,bio_map ] = data_on_map(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag); % not working ? #TODO
+[ bio_ind ,bio_map ] = mzXML_on_map_norm13(pixels_scans,carte_z,limits,carte_time,time_flag);
+% [ bio_ind ,bio_map ] = data_on_map(pixels_scans,carte_z,limits,carte_time,time_flag,loud_flag); % not working ? #TODO
 
 [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
 
-figure()
+figure() % fonction d'affichage a factoriser #TODO
 hold on
 s = surf(carte_x,carte_y,carte_z,bio_map);
  s.FaceColor = 'flat'; % set color interpolqtion
@@ -53,8 +53,8 @@ ind_y = max_y;
 
 ind_bio = bio_ind(ind_x,ind_y);
 
-peaks = bio_dat(ind_bio).peaks.mz;
-% times = bio_dat(ind_bio).retentionTime;
+peaks = pixels_scans(ind_bio).peaks.mz;
+% times = pixels_scans(ind_bio).retentionTime;
 
 figure()
 plot(peaks(:,1),peaks(:,2));
