@@ -1,4 +1,5 @@
-function record_map_without_time(carte_x,carte_y,carte_z,name,seuil)
+% A supprimer
+function record_map_without_time_deleted(carte_x,carte_y,carte_z,name,seuil)
 
 % To store map files without time
 
@@ -11,7 +12,7 @@ mesh(objet.x,objet.y,objet.z)
 title(name)
 axis equal
 
-folder_name = 'map files';
+folder_name = 'files/map files';
 
 chemin = choix_chemin(folder_name,name);
 
