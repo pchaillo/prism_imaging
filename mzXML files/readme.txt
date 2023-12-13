@@ -1,1 +1,0 @@
-This folder contains mzXML files acquired from experiments
