@@ -51,13 +51,13 @@ for i = 1:length(bio_dat)
 end
 
 %med = median(totIonCurrent,'all'); %% be carefull change to median
-med = good_med_for_norm2(bio_dat);
+med = get_median(bio_dat);
 
 % si le temps est enregistré, on l'utilise pour replacer les informations
 % sur la carte
 if time_flag == 1
 
-    carte_ind = time_to_indice_3(carte_time);
+    carte_ind = time_to_indice(carte_time);
 
     d_ind = 0    ;
 

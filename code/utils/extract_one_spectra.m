@@ -1,6 +1,6 @@
 
 
-function extract_one_spectra(pixels_scans,map,limits)
+function extract_one_spectra(pixels_scans,map,name_map,limits)
 
 
 if isfield(map,'time')
@@ -9,25 +9,15 @@ else
     time_flag = 0;
 end
 
-loud_flag = 1;
 [ bio_ind ,pixels_mz ] = mzXML_on_map_norm13(pixels_scans,map.z,limits,map.time,time_flag);
-% [ bio_ind ,bio_map ] = data_on_map(pixels_scans,carte_z,limits,carte_time,time_flag,loud_flag); % not working ? #TODO
 
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border_2(map.x,map.y,map.z,pixels_mz,bio_ind);
 
-% figure() % fonction d'affichage a factoriser #TODO
-% hold on
-% s = surf(carte_x,carte_y,carte_z,bio_map);
-%  s.FaceColor = 'flat'; % set color interpolqtion
-%  s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
-% %title(['biometric map, mass limits : ', num2str(import_limits(1)),'  ',num2str(import_limits(2))]);
-% axis equal
-% %grid off
-% axis off
-% view(2)
-% hold off
+pixels_mz = replace_NaN_by_zero(pixels_mz);
 
-display_mz_map(map,pixels_mz,display = "3D")
+pixels_mz = replace_NaN_by_zero(pixels_mz);
+
+display_mz_map(map,pixels_mz)
 
 [x1,y1] = ginput(1);
 
@@ -51,8 +41,9 @@ ind_bio = bio_ind(ind_x,ind_y);
 
 peaks = pixels_scans(ind_bio).peaks.mz;
 % times = pixels_scans(ind_bio).retentionTime;
-
-figure()
+csv_filename = "files/csv files/"+name_map(1:end-4)+"_x_"+ind_x+"_y_"+ind_y+".csv";
+export_spectra_to_csv(peaks,csv_filename);
+figure();
 plot(peaks(:,1),peaks(:,2));
-xlabel('Mass/Charge (M/Z)')
-ylabel('Relative Intensity')
+xlabel('Mass/Charge (M/Z)');
+ylabel('Relative Intensity');
