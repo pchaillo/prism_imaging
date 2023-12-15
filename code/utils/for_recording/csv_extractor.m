@@ -16,6 +16,8 @@ map = load_map_fcn(csv_map);
 
 load(csv_mat);
 
+bio_dat = pixels_scans;
+
 peak_tab = bio_dat(1).peaks.mz;
 peak_tab_clean = bining_2(peak_tab,win,band);
 mz_ind_tab = peak_tab_clean(:,1)';
@@ -104,7 +106,7 @@ export_name = append(export_name, '.csv');
 
 writetable(T,export_name)
 
-movefile(export_name,"csv files")
+movefile(export_name,"files/csv files")
 % csvwrite("msi_data_test4_last.csv",tab')
 disp('Successfuly exported data to a CSV file')
 end

@@ -1,4 +1,4 @@
-function display_mz_map(map,pixels_mz,display = "3D")
+function display_mz_map(map,pixels_mz)
 % to see image as 2D from front display = "2D"
 
 figure() % fonction d'affichage a factoriser #TODO
@@ -10,7 +10,7 @@ s = surf(map.x,map.y,map.z,pixels_mz);
 axis equal
 %grid off
 axis off
-if display == "2D"
-    view(2)
-end
+% if display == "2D"
+%     view(2)
+% end
 hold off

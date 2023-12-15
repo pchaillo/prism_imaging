@@ -1,6 +1,6 @@
 
 
-function extract_one_spectra(pixels_scans,map,limits)
+function extract_one_spectra(pixels_scans,map,name_map,limits)
 
 
 if isfield(map,'time')
@@ -27,7 +27,7 @@ loud_flag = 1;
 % view(2)
 % hold off
 
-display_mz_map(map,pixels_mz,display = "3D")
+display_mz_map(map,pixels_mz)
 
 [x1,y1] = ginput(1);
 
@@ -51,8 +51,9 @@ ind_bio = bio_ind(ind_x,ind_y);
 
 peaks = pixels_scans(ind_bio).peaks.mz;
 % times = pixels_scans(ind_bio).retentionTime;
-
-figure()
+csv_filename = "files/csv files/"+name_map(1:end-4)+"_x_"+ind_x+"_y_"+ind_y+".csv";
+export_spectra_to_csv(peaks,csv_filename);
+figure();
 plot(peaks(:,1),peaks(:,2));
-xlabel('Mass/Charge (M/Z)')
-ylabel('Relative Intensity')
+xlabel('Mass/Charge (M/Z)');
+ylabel('Relative Intensity');
