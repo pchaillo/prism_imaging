@@ -20,7 +20,7 @@ path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca 
 file_i = mzXMLStruct.scan ;
 
 file = clean_time(file_i); % transformation du temps en une varibale numérique
-file = clean_fusion_tab(file);
+file = clean_fusion_list(file);
 
 l = length(file);
 

@@ -1,4 +1,4 @@
-function file_out = clean_fusion_tab(file)
+function file_out = clean_fusion_list(file)
 % anciennement clean_deiso2
 
 file_out = file;
