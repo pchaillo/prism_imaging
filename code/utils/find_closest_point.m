@@ -1,44 +1,44 @@
-function time_ind = find_closest_point(time_val_i,time_tab, t_step)
+function indice_in_time_list = find_closest_point(initial_time_value, time_list, t_step)
 % anciennement, find_dlosest_pt_4
 % avec retour 0 si impossible
 % rectifie les problèmes de temps !
 
 time_band = t_step*6 ; % taille de la bande de temps à balayer
 
-ind = find( time_tab > (time_val_i - time_band) );
-ind2 = find(time_tab < (time_val_i+ time_band));
+begin_of_time_band_indices = find( time_list > (initial_time_value - time_band) );
+end_of_time_band_indices = find(time_list < (initial_time_value + time_band));
 
-if isempty(ind) || isempty(ind2)
-    time_ind = 1;
+if isempty(begin_of_time_band_indices) || isempty(end_of_time_band_indices)
+    indice_in_time_list = 1;
 else
-    m = min(ind);
-    m2 = max(ind2);
+    minimal_indice  = min(begin_of_time_band_indices);
+    maximal_indice = max(end_of_time_band_indices);
     
     u = 0;
-    for i = m : m2
+    for i = minimal_indice : maximal_indice
         u = u + 1;
-        diff_tab(u) = abs(time_tab(i) -time_val_i);
+        gap_list(u) = abs(time_list(i) - initial_time_value);
     end
     
-    if exist("diff_tab")
-        min_diff = min(diff_tab);
-        min_ind = find(diff_tab==min_diff);
+    if exist("gap_list")
+        minimal_gap_time = min(gap_list);
+        ind_in_gap_list = find( gap_list == minimal_gap_time );
         
-        if length(min_ind > 1)
-            min_ind = min_ind(1);
+        if length(ind_in_gap_list > 1)
+            ind_in_gap_list = ind_in_gap_list(1);
         end
         
-        time_val = time_tab(m + min_ind-1);
+        closest_time_value = time_list(minimal_indice + ind_in_gap_list - 1);
         
-        time_ind = find(time_tab == time_val);
+        indice_in_time_list = find(time_list == closest_time_value);
         
-        if length(time_ind) > 1
+        if length(indice_in_time_list) > 1
             disp('Attention problem - Time not recorded in the good way in the mzXML file => may distort the peak detection');
             disp('Attention problème - Temps mal enregistré dans le fichier mzXML => peut nuire à la détection de peaks');
-            disp(time_ind);
-            time_ind = time_ind(1);
+            disp(indice_in_time_list);
+            indice_in_time_list = indice_in_time_list(1);
         end
     else
-        time_ind = 2;
+        indice_in_time_list = 2;
     end
 end

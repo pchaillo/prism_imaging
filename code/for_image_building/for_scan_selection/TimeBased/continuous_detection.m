@@ -16,7 +16,6 @@ function [pixels_scans, time] = continuous_detection(mzXMLStruct,carte_time)
 
 path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
 
-
 file_i = mzXMLStruct.scan ;
 
 file = clean_time(file_i); % transformation du temps en une varibale numérique
@@ -32,10 +31,10 @@ aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour r
 
 carte_time = carte_time + aspiration_time;
 
-time_tab_map = time_to_list(carte_time);
+topography_time_list = time_to_list(carte_time);
 
 % remplir ind_f_new
-ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intensities by temporal correlation
+ind_f_new = corresponding_time(t_i,topography_time_list); % Indentify intensities by temporal correlation
 
 %% Pour fusionner le point suivant
 file = add_neighbourgh_scan(file,ind_f_new);
@@ -44,7 +43,7 @@ file = add_neighbourgh_scan(file,ind_f_new);
 
 pixels_scans(:) = file(ind_f_new);
 
-plot_peak_time(pixels_scans,t_i,ion,time_tab_map);
+plot_peak_time(pixels_scans,t_i,ion,topography_time_list);
 
 time = 0;
 
