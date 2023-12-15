@@ -35,7 +35,7 @@ carte_time = carte_time + aspiration_time;
 time_tab_map = time_to_list(carte_time);
 
 % remplir ind_f_new
-ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intesntities by temporal correlation
+ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intensities by temporal correlation
 
 %% Pour fusionner le point suivant
 file = add_neighbourgh_scan(file,ind_f_new);

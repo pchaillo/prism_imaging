@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct,threshold_begin,t_step,noise_threshold,intern_flag,fusion_percentage,carte_time)
+function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct,threshold_begin,t_step,noise_threshold,intern_flag,fusion_percentage,map_time)
 
 % Function that peak the good scan in all_scan to create all_selected_scan #TODO : keep this name / paradigm ? 
 
@@ -116,93 +116,11 @@ ind_fin = filtered_data_array(1,end);
 alls_scans = collateral_fusion2(alls_scans,first_point_indice,ind_fin,noise_threshold,filtered_selected_indices,fusionned_indices,t_step,deleted_indices);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
-ind_f_new = ind_final;
+% ind_f_new = ind_final;
+[Final_selected_indices_list,corrected_topography_time_list] = time_based_rectification(alls_scans,map_time,ind_final,t_step,fusionned_Scan_time,aspiration_time);
 
-% if carte_time ~= 0
-si_time = size(carte_time);
-if si_time(1) ~= 1
-    
-    topography_time_list = time_to_list(carte_time);
-    corrected_topography_time_list = topography_time_list + aspiration_time ;
-    
-    for i = 1 : length(ind_final)
-        spectrometry_selected_times_list(i) = alls_scans(ind_final(i)).retentionTime;
-    end
-    
-    if length( spectrometry_selected_times_list) < length(corrected_topography_time_list)
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('ATTENTION, coefficient de fusion trop important, moins des peaks detectés que de points sur la carte');
-        disp('=> ajout de pt faux pour compenser');
-        disp('ATTENTION, fusion coefficient too high, less detected peaks thans points/pixels on the image');
-        disp('=> add empty points to compensate');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-    end
-    
-    for i = 1 : length( corrected_topography_time_list)
-        topo_spectro_time_shift_list(i) = spectrometry_selected_times_list(i) - corrected_topography_time_list(i);
-    end
-    
-%     for i = 1 : length(topo_spectro_time_shift_list)-1
-%         time_tab_espace(i) = topo_spectro_time_shift_list(i+1) - topo_spectro_time_shift_list(i);
-%     end
-    topo_spectro_time_shift_gap_list = time_list_to_time_gap(topo_spectro_time_shift_list);
-    topo_spectro_time_shift_gap_list(1) = []; % supress the first value to get the good indices
-
-    ind_a = 0;
-    for i = length(topo_spectro_time_shift_gap_list) : -1 : 1 % suppression des points en trop
-        if topo_spectro_time_shift_gap_list(i) < - t_step*0.7
-            if alls_scans(ind_f_new(i+1)).num < 0 % pour ne pas supprimer les lignes des peaks
-                ind_f_new(i+1) = [];
-            end
-        elseif topo_spectro_time_shift_gap_list(i) > t_step*0.7 % REMPLACER 0.7 PAR FUSION COEFF ???
-            % i
-            time01 = alls_scans(ind_f_new(i)).retentionTime;
-            time02 = alls_scans(ind_f_new(i+1)).retentionTime;
-            time_val_i = (time01 + time02)/2 ;
-            time_ind = find_closest_point(time_val_i,fusionned_Scan_time, t_step);
-            ind_f_new = [ind_f_new time_ind];
-            ind_f_new = sort(ind_f_new);
-            
-            ind_a = ind_a + 1 ;
-            ind_add_tab(ind_a) = time_ind;
-        end
-    end
-    
-    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,corrected_topography_time_list,t_step,fusionned_Scan_time);
-    
-    if ind_a > 0 && length(ind_add_tab_2) > 1
-        ind_add_tab_2(1) = []; % suppression du 0 ajouté pour pas que la variable soit cide si aucun point n'est ajouté
-        ind_add_tab_final = unique([ind_add_tab ind_add_tab_2]);
-        for i = 1 : length(ind_add_tab_final)
-            alls_scans(ind_add_tab_final(i)) = to_add_pt(alls_scans(ind_add_tab_final(i)));
-        end
-    end
-    
-    for i = 1 : length(ind_f_new)
-        time_tab_final_2(i) = alls_scans(ind_f_new(i)).retentionTime;
-    end
-    
-    for i = 1 : length( corrected_topography_time_list)
-        time_tab_diff_2(i) = time_tab_final_2(i) - corrected_topography_time_list(i);
-    end
-    
-    debug = 0;
-    
-    ind_f_new = unique(ind_f_new);
-    
-    % Prendre le bon nombre de point pile pour la carte
-    number_of_point_on_map = length(topography_time_list);
-    ind_f_new = ind_f_new(1:number_of_point_on_map);
-else 
-    corrected_topography_time_list = 0;
-    
-end
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-pixels_scans(:) = alls_scans(ind_f_new);
+pixels_scans(:) = alls_scans(Final_selected_indices_list);
 plot_peak_time(pixels_scans,Scan_time,TIC_list,corrected_topography_time_list); % Function that display the selected peaks on the chromatogram for visual checking
