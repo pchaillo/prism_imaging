@@ -128,8 +128,8 @@ ind_f_new = ind_final;
 si_time = size(carte_time);
 if si_time(1) ~= 1
     
-    time_list = time_to_list(carte_time);
-    corrected_time_list = time_list + aspiration_time ;
+    acquisition_time_list = time_to_list(carte_time);
+    corrected_time_list = acquisition_time_list + aspiration_time ;
     
     for i = 1 : length(ind_final)
         final_selected_times_list(i) = alls_scans(ind_final(i)).retentionTime;
@@ -148,8 +148,8 @@ if si_time(1) ~= 1
         disp('-------------------------------------------------------------------------------------------------e');
     end
     
-    for i = 1 : length( time_tab_map)
-        time_tab_diff(i) = time_tab_final(i) - time_tab_map(i);
+    for i = 1 : length( corrected_time_list)
+        time_tab_diff(i) = final_selected_times_list(i) - corrected_time_list(i);
     end
     
     for i = 1 : length(time_tab_diff)-1
@@ -176,7 +176,7 @@ if si_time(1) ~= 1
         end
     end
     
-    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,time_tab_map,t_step,fusionned_Scan_time);
+    [ind_f_new, ind_add_tab_2] = reccur_time_recti_3(ind_f_new,alls_scans,corrected_time_list,t_step,fusionned_Scan_time);
     
     if ind_a > 0 && length(ind_add_tab_2) > 1
         ind_add_tab_2(1) = []; % suppression du 0 ajouté pour pas que la variable soit cide si aucun point n'est ajouté
@@ -190,8 +190,8 @@ if si_time(1) ~= 1
         time_tab_final_2(i) = alls_scans(ind_f_new(i)).retentionTime;
     end
     
-    for i = 1 : length( time_tab_map)
-        time_tab_diff_2(i) = time_tab_final_2(i) - time_tab_map(i);
+    for i = 1 : length( corrected_time_list)
+        time_tab_diff_2(i) = time_tab_final_2(i) - corrected_time_list(i);
     end
     
     debug = 0;
@@ -199,14 +199,14 @@ if si_time(1) ~= 1
     ind_f_new = unique(ind_f_new);
     
     % Prendre le bon nombre de point pile pour la carte
-    len = length(map_time);
-    ind_f_new = ind_f_new(1:len);
+    number_of_point_on_map = length(acquisition_time_list);
+    ind_f_new = ind_f_new(1:number_of_point_on_map);
 else 
-    time_tab_map = 0;
+    corrected_time_list = 0;
     
 end
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
 pixels_scans(:) = alls_scans(ind_f_new);
-plot_peak_time(pixels_scans,Scan_time,TIC_tab,time_tab_map); % Function that display the selected peaks on the chromatogram for visual checking
+plot_peak_time(pixels_scans,Scan_time,TIC_tab,corrected_time_list); % Function that display the selected peaks on the chromatogram for visual checking
