@@ -13,8 +13,12 @@ end
 
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border_2(map.x,map.y,map.z,pixels_mz,bio_ind);
 
+pixels_mz = replace_NaN_by_zero(pixels_mz);
+
+pixels_mz = replace_NaN_by_zero(pixels_mz);
+
 display_mz_map(map,pixels_mz)
-%{
+
 [x1,y1] = ginput(1);
 
 map.x2 = map.x - x1;
@@ -43,4 +47,3 @@ figure();
 plot(peaks(:,1),peaks(:,2));
 xlabel('Mass/Charge (M/Z)');
 ylabel('Relative Intensity');
-%}

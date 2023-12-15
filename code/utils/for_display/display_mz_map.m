@@ -1,6 +1,5 @@
 function display_mz_map(map,pixels_mz)
 % to see image as 2D from front display = "2D"
-
 figure() % fonction d'affichage a factoriser #TODO
 hold on
 s = surf(map.x,map.y,map.z,pixels_mz);

@@ -6,11 +6,15 @@ else
     time_flag = 0;
 end
 
+bio_dat = fix_bio_dat(bio_dat);
+
 [ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte.z,limits,carte.time,time_flag); 
 
 [ carte.x,carte.y,carte.z,bio_map ] = fix_border_2(carte.x,carte.y,carte.z,bio_map,bio_ind);
 
-display_mz_map(carte,bio_map)
+bio_map = replace_NaN_by_zero(bio_map);
+
+display_mz_map(carte,bio_map);
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
@@ -58,7 +62,6 @@ for x_ind = min_x : max_x % récupère les indices
 end
 
 %% Plot multiple spectra
-plot_multiple_spectra(bio_dat,bio_ind_tab)
 
 ind_peaks = 0;
 for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés aux indices
@@ -68,22 +71,10 @@ for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés
 end
 peaks = peaks';
 times = times';
-% 
-% resolution = 10000;
-% 
-%  figure()
-% % plot3(peaks(:,1),times, peaks(:,2));
-% [MZ,Y] = msppresample(peaks,resolution);
-% h = length(bio_ind_tab);
-% % subplot(1,2,1); % pour mettre a coté de la carte
-%  plot3(repmat(MZ,1,h),repmat(times',resolution,1),Y) % a terminer, mais fonctionne bien
-% % PLOT A RESOUDRE
-% xlabel('Mass/Charge (M/Z)')
-% ylabel('Retention Time')
-% zlabel('Relative Intensity')
-% %subplot(1,2,2);  % pour mettre a coté de la carte
 
-%% Fin de la fonction
+plot_multiple_spectra(peaks,times,length(bio_ind_tab))
+
+
 figure()
 s = surf(carte.x,carte.y,carte.z,map_color);
 s.FaceAlpha=0.9; % niveau de tranparence
