@@ -64,7 +64,7 @@ if time_flag == 1
             pixels_mz(i,j)= value(carte_ind(i,j))*med;
             %             scans_ind(i,j) = pixels_scans.num(carte_ind(i,j));
             scans_ind(i,j) = pixels_scans(carte_ind(i,j)).num;
-            pixels_mz(d_ind) = {pixels_scans(carte_ind(i,j)).deisotoped};
+            fusion_tab(d_ind) = {pixels_scans(carte_ind(i,j)).deisotoped};
         end
     end
     

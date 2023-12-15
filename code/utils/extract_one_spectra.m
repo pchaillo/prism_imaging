@@ -14,8 +14,7 @@ end
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border_2(map.x,map.y,map.z,pixels_mz,bio_ind);
 
 pixels_mz = replace_NaN_by_zero(pixels_mz);
-
-pixels_mz = replace_NaN_by_zero(pixels_mz);
+% pixels_mz = replace_NaN_by_zero(pixels_mz); % two times ? #TODO
 
 display_mz_map(map,pixels_mz)
 

@@ -12,32 +12,32 @@ function processed_scan = preprocess(scan,win)
 %choix de fenêtre pour bin
 %win = 0.05;
 
-peak_tab_r = scan.peaks.mz;
-l = length(peak_tab_r);
+raw_peaks_array = scan.peaks.mz;
+l = length(raw_peaks_array);
 
 h = 0; % remise du tableau dans la bonne forme ( lx1 par (l/2)x2 )
 for i = 1 : l
     if ( mod(i,2) == 0 )
-        peak_tab(h,2) = peak_tab_r(i);
+        peak_array(h,2) = raw_peaks_array(i);
     else
         h = h + 1;
-        peak_tab(h,1) = peak_tab_r(i);
+        peak_array(h,1) = raw_peaks_array(i);
     end
 end
 
 %fusion des lignes à fusionner
 
 %%% Supress all the empty data // Supprimme les valeurs nulles
-e_tab = find(peak_tab(:,2) == 0);
-peak_tab(e_tab,:) = [];
+ind_to_supp = find(peak_array(:,2) == 0);
+peak_array(ind_to_supp,:) = [];
 
 %% Remise en place des lignes qui fusionnent
-peak_tab = fusion_part_C(peak_tab);
+peak_array = fusion_part_C(peak_array);
 
 %% bining ? #TODO
 % peak_tab3 = bining(peak_tab2,win);
 
 processed_scan = scan;
-processed_scan.peaks.mz = peak_tab;
+processed_scan.peaks.mz = peak_array;
 
 
