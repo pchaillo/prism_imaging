@@ -16,7 +16,8 @@ end
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 % pixels_mz = replace_NaN_by_zero(pixels_mz); % two times ? #TODO
 
-display_mz_map(map,pixels_mz)
+title_str = "Pick the pixel that you want to extract the spectra";
+display_mz_map(map,pixels_mz,title_str)
 
 [x1,y1] = ginput(1);
 
