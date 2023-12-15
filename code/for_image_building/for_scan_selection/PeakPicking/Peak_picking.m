@@ -39,7 +39,8 @@ while first_peak_is_finded == 0
     end
 end
 
-[TIC_list, Scan_time] = extract_TIC_and_time(alls_scans);
+TIC_list = extract_TIC(alls_scans);
+Scan_time = extract_time(alls_scans);
 
 %% Matlab function peak detection
 [selected_peaks, selected_times, w, pw] = findpeaks(TIC_list, Scan_time); % trouve les peaks et leurs localisation
@@ -78,7 +79,7 @@ filtered_data_array(3,:) = filtered_time_gap_list;
 %% Fusion of selected peaks that are too close to each other
 [alls_scans, filtered_data_array, filtered_selected_indices, fusionned_indices, deleted_indices] = peak_fusion(filtered_data_array, fusion_percentage ,alls_scans, t_step);
 
-[fusionned_TIC_list, fusionned_Scan_time] = extract_TIC_and_time(alls_scans);
+fusionned_Scan_time = extract_time(alls_scans);
 
 %% Detection de la pente comme un peaks % #TODO
 % ajouter dans la dernière version

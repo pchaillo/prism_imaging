@@ -1,4 +1,4 @@
-function [indices,corrected_topography_time_list] = time_based_rectification(alls_scans,map_time,indices,t_step,fusionned_Scan_time,aspiration_time)
+function [indices,corrected_topography_time_list] = time_based_rectification(alls_scans,map_time,indices,t_step,scan_time_list,aspiration_time)
 
 si_time = size(map_time);
 if si_time(1) ~= 1
@@ -41,7 +41,7 @@ if si_time(1) ~= 1
             time01 = alls_scans(indices(i)).retentionTime;
             time02 = alls_scans(indices(i+1)).retentionTime;
             time_val_i = (time01 + time02)/2 ;
-            time_ind = find_closest_point(time_val_i,fusionned_Scan_time, t_step);
+            time_ind = find_closest_point(time_val_i,scan_time_list, t_step);
             indices = [indices time_ind];
             indices = sort(indices);
             
@@ -50,11 +50,12 @@ if si_time(1) ~= 1
         end
     end
     
-    [indices, ind_add_tab_2] = reccur_time_recti_3(indices,alls_scans,corrected_topography_time_list,t_step,fusionned_Scan_time);
-    
-    if ind_a > 0 && length(ind_add_tab_2) > 1
-        ind_add_tab_2(1) = []; % suppression du 0 ajouté pour pas que la variable soit cide si aucun point n'est ajouté
-        ind_add_tab_final = unique([ind_add_tab ind_add_tab_2]);
+    [indices, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, corrected_topography_time_list, t_step, scan_time_list);
+    % new_indices_selection, all_ind_in_timelist
+
+    if ind_a > 0 && length(all_ind_in_timelist) > 1
+        all_ind_in_timelist(1) = []; % suppression du 0 ajouté pour pas que la variable soit vide si aucun point n'est ajouté
+        ind_add_tab_final = unique([ind_add_tab all_ind_in_timelist]);
         for i = 1 : length(ind_add_tab_final)
             alls_scans(ind_add_tab_final(i)) = to_add_pt(alls_scans(ind_add_tab_final(i)));
         end

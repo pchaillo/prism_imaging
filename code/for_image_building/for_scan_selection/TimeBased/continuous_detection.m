@@ -27,14 +27,15 @@ l = length(file);
 time_res = 0.5 ;
 aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
 
-[ion, t_i] = extract_TIC_and_time(file);
+TIC_list = extract_TIC(file);
+scan_time_list = extract_time(file);
 
 carte_time = carte_time + aspiration_time;
 
 topography_time_list = time_to_list(carte_time);
 
 % remplir ind_f_new
-ind_f_new = corresponding_time(t_i,topography_time_list); % Indentify intensities by temporal correlation
+ind_f_new = corresponding_time(scan_time_list,topography_time_list); % Indentify intensities by temporal correlation
 
 %% Pour fusionner le point suivant
 file = add_neighbourgh_scan(file,ind_f_new);
@@ -43,7 +44,7 @@ file = add_neighbourgh_scan(file,ind_f_new);
 
 pixels_scans(:) = file(ind_f_new);
 
-plot_peak_time(pixels_scans,t_i,ion,topography_time_list);
+plot_peak_time(pixels_scans,scan_time_list,TIC_list,topography_time_list);
 
 time = 0;
 

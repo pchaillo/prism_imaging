@@ -2,10 +2,9 @@ function alls_scans = collateral_fusion(alls_scans, first_point_indice, last_sel
 %% all the scans that need to be fusionned are added in deisotoped variable in mxXML matlab format #TODO
 
 selected_scans = alls_scans(first_point_indice:last_selected_point_indice);
-for i = 1 : length(selected_scans)
-    selected_scans_TIC(i) = selected_scans(i).totIonCurrent;
-    selected_scans_num(i) = selected_scans(i).num;
-end
+
+selected_scans_TIC = extract_TIC(selected_scans);
+selected_scans_num = extract_num(selected_scans);
 
 under_noise_indices =  find(selected_scans_TIC < noise_threshold );
 over_noise_indices =  find(selected_scans_TIC > noise_threshold );
