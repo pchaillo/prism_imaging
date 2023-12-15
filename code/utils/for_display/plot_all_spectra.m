@@ -1,10 +1,10 @@
-function all_peaks = plot_all_spectra(bio_dat,compute_flag,all_peaks, valmin, valmax)
+function all_peaks = plot_all_spectra(pixels_scans,compute_flag,all_peaks, valmin, valmax)
 
 % compute_flag : booleen qui détermine s'il faut recalculer un spectre
 % global
 
 if compute_flag == 0 
-    all_peaks = compute_all_spectra(bio_dat);
+    all_peaks = compute_all_spectra(pixels_scans);
     compute_flag = 1; % useful ? #TODO
 end
 

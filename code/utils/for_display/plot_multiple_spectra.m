@@ -1,4 +1,5 @@
 function plot_multiple_spectra(peaks,times,h)
+
 resolution = 10000;
 figure()
 % plot3(peaks(:,1),times, peaks(:,2));

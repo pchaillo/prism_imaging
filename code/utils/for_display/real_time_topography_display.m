@@ -1,4 +1,5 @@
 function real_time_topography_display()
+% Passer map en argument et supprimer la variable globale ? #TODO
 
 % FR : Pour afficher la carte en temps réel
 % ENG : To display the acquisition of the topography in real time

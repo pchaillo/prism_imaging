@@ -1,20 +1,14 @@
-function carte_ind = time_to_indice(carte_time)
+function map_ind = time_to_indice(map_time)
 
-si = size(carte_time);
+% this function replace the time in the map_time variable by indices (with the same shape),
+% deduct by the time (croissant)
 
-% min_val = min(min(carte_time));
-% [rows,cols,vals] = find(carte_time == min_val)
 
-time_tab = carte_time(1,:);
-for i = 2 : si(1) 
-    time_tab = [time_tab carte_time(i,:)];
-end
+time_list = time_to_list(map_time);
 
-[B,I] = sort(time_tab);
+corrected_time_list = unique(time_list); % Indispensable ? #TODO
 
-B2 = unique(B);
-
-for  i = 1 : length(B2)
-    [rows,cols,vals] = find( carte_time == B2(i) );
-    carte_ind(rows,cols) = i ;
+for  i = 1 : length(corrected_time_list)
+    [rows,cols,vals] = find( map_time == corrected_time_list(i) );
+    map_ind(rows,cols) = i ;
 end

@@ -16,35 +16,35 @@ function [pixels_scans, time] = continuous_detection(mzXMLStruct,carte_time)
 
 path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
 
+all_scans_raw = mzXMLStruct.scan ;
 
-file_i = mzXMLStruct.scan ;
+alls_scans = clean_time(all_scans_raw); % transformation du temps en une varibale numérique
+alls_scans = clean_fusion_list(alls_scans);
 
-file = clean_time(file_i); % transformation du temps en une varibale numérique
-file = clean_deiso2(file);
-
-l = length(file);
+l = length(alls_scans);
 
 % VARIABLES  %
 time_res = 0.5 ;
 aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
 
-[ion, t_i] = extract_TIC_and_time(file);
+TIC_list = extract_TIC(alls_scans);
+scan_time_list = extract_time(alls_scans);
 
 carte_time = carte_time + aspiration_time;
 
-time_tab_map = time_in_list(carte_time);
+topography_time_list = time_to_list(carte_time);
 
 % remplir ind_f_new
-ind_f_new = corresponding_time(t_i,time_tab_map); % Indentify intesntities by temporal correlation
+Final_selected_indices_list = corresponding_time(scan_time_list, topography_time_list); % Indentify intensities by temporal correlation
 
 %% Pour fusionner le point suivant
-file = add_neighbourgh_scan(file,ind_f_new);
+alls_scans = add_neighbourgh_scan(alls_scans, Final_selected_indices_list);
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-pixels_scans(:) = file(ind_f_new);
+pixels_scans(:) = alls_scans(Final_selected_indices_list);
 
-plot_peak_time(pixels_scans,t_i,ion,time_tab_map);
+plot_peak_time(pixels_scans, scan_time_list, TIC_list, topography_time_list);
 
 time = 0;
 
