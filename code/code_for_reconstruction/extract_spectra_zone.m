@@ -14,7 +14,8 @@ bio_dat = fix_bio_dat(bio_dat);
 
 bio_map = replace_NaN_by_zero(bio_map);
 
-display_mz_map(carte,bio_map);
+title_str = "Select the area you want to extract by clicking";
+display_mz_map(carte,bio_map,title_str);
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
