@@ -14,11 +14,11 @@ classdef AnalogicSensorBase
             % voltage
         end
 
-        function calibration_tab = calibration(robot,sensor)
+        function calibration_array = calibration(sensor,robot)
 
         end
 
-        function height = get_data(robot,sensor) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
+        function height = get_data(sensor,robot) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
 
         end
    end

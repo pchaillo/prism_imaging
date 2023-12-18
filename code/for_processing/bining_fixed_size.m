@@ -5,9 +5,9 @@
 % forme finie => comparable entre elles
 % FORME NORMALISé
 
-%(copi de la fct bining_2)
+% Copie de bining_2 (anciennment bining_norm)
 
-function peak_tab3 = bining_norm(peak_tab2,win,band)
+function peak_tab3 = bining_fixed_size(peak_tab2,win,band)
 
 init = band(1);
 i_end = band(2);
@@ -43,29 +43,3 @@ for mass = init : win : i_end-win
         peak_tab3(k,1) = mass;
     end 
 end
-
-% % old version
-% for mass = init : win : i_end-win
-%     b_ok = 1;
-%     for ind = ind_p : l
-%         %while b_ok == 1
-%         %ind = ind_p + 1;
-%         if peak_tab2(ind,1) >= mass && peak_tab2(ind,1) < mass + win
-%             h = h + 1;
-%             val_tab(h,:) = peak_tab2(ind,:);
-%         else%if mass + win < peak_tab2(ind,1)
-%             k = k + 1;
-%             %peak_tab3(k,:) = mean(val_tab);
-%             peak_tab3(k,2) = sum(val_tab(:,2));
-%             peak_tab3(k,1) = mass;
-%             % i_win = peak_tab2(i,1);
-%             %clearvars val_tab
-%             val_tab = zeros(1,2); % for c
-%             h = 0;
-%             % val_tab(h,:) = peak_tab2(ind,:);
-%             % b_ok = 0;
-%             % ind_p = ind - 1;
-%         end
-%     end
-%     
-% end

@@ -1,9 +1,9 @@
-function calibration_tab = sensor_calibration(robot,sensor)
+function calibration_array = sensor_calibration(robot,sensor)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % with better taking in care of the criticals values
 
-% Will go one way up, then one way down, and will only keep the similar value for the same height => security to remove all false point on the calibration_tab
+% Will go one way up, then one way down, and will only keep the similar value for the same height => security to remove all false point on the calibration_array
 
 global scan
 global zone
@@ -82,6 +82,6 @@ for j = 1 : si(2) - 1
         % if up_tab(2,j+1) > up_tab(2,j) - error && up_tab(2,j+1) < up_tab(2,j) + error % je compare une valeur et sa suivante, si les deux se suivent d'une valeur inferieure à l'erreur, je garde le point comme moyenne de la valeur en montée et en descente
     if up_tab(2,j+1) > down_tab(2,j+) - error && up_tab(2,j+1) < down_tab(2,j) + error % je compare les tableaux de montée et de descente point par point,  si les valeurs correspondent je les garde dans le tableau final
         final_tab_ind = final_tab_ind + 1;
-        calibration_tab(:,final_tab_ind) =  [ (up_tab(1,j)+down_tab(1,j+1))/2 ; (up_tab(2,j)+down_tab(2,j+1))/2 ];
+        calibration_array(:,final_tab_ind) =  [ (up_tab(1,j)+down_tab(1,j+1))/2 ; (up_tab(2,j)+down_tab(2,j+1))/2 ];
     end
 end

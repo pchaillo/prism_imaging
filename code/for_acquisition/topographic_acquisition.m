@@ -41,11 +41,13 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
-            carte.i(v,u) =  h_m ;
+%             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
+
+            measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
+            carte.i(v,u) =  measured_height ;
             real_time_topography_display()
             
-            delta =  h_m;
+            delta =  measured_height ;
             
             if first_point == 1
                 first_point = 0;
@@ -65,11 +67,12 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            h_m = get_rectified_data(sensor,t,k,j,delta,opo_flag);
-            carte.i(v,u) =  h_m ;
+%             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
+            measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
+            carte.i(v,u) =  measured_height ;
             real_time_topography_display()
             
-            delta = h_m;
+            delta = measured_height;
             carte.time(v,u) = toc;
         end
     end

@@ -41,28 +41,3 @@ for mass = init : win : i_end-win
     end 
 end
 
-% % old version
-% for mass = init : win : i_end-win
-%     b_ok = 1;
-%     for ind = ind_p : l
-%         %while b_ok == 1
-%         %ind = ind_p + 1;
-%         if peak_tab2(ind,1) >= mass && peak_tab2(ind,1) < mass + win
-%             h = h + 1;
-%             val_tab(h,:) = peak_tab2(ind,:);
-%         else%if mass + win < peak_tab2(ind,1)
-%             k = k + 1;
-%             %peak_tab3(k,:) = mean(val_tab);
-%             peak_tab3(k,2) = sum(val_tab(:,2));
-%             peak_tab3(k,1) = mass;
-%             % i_win = peak_tab2(i,1);
-%             %clearvars val_tab
-%             val_tab = zeros(1,2); % for c
-%             h = 0;
-%             % val_tab(h,:) = peak_tab2(ind,:);
-%             % b_ok = 0;
-%             % ind_p = ind - 1;
-%         end
-%     end
-%     
-% end
