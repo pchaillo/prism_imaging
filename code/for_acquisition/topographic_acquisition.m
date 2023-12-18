@@ -42,7 +42,6 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.x(v,u) = k;
             carte.y(v,u) = j;
 %             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
-
             measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
             carte.i(v,u) =  measured_height ;
             real_time_topography_display()
