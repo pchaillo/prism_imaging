@@ -8,14 +8,15 @@ end
 
 pixels_scans = fix_ms_data(pixels_scans);
 
-[ bio_ind ,bio_map ] = mzXML_on_map_norm13(pixels_scans,map.z,limits,map.time,time_flag); 
+loud_flag = 0; % #TODO
+[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
-[ map.x,map.y,map.z,bio_map ] = fix_border_2(map.x,map.y,map.z,bio_map,bio_ind);
+[ map.x,map.y,map.z,pixels_mz ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 
-bio_map = replace_NaN_by_zero(bio_map);
+pixels_mz = replace_NaN_by_zero(pixels_mz);
 
 title_str = "Select the area you want to extract by clicking";
-display_mz_map(map,bio_map,title_str);
+display_mz_map(map,pixels_mz,title_str);
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
@@ -48,16 +49,16 @@ else
     min_y = ind_y1;
 end
 
-max_int_value = max(max(bio_map));
- [I,J] = find(bio_map == max_int_value) ;
+max_int_value = max(max(pixels_mz));
+% [I,J] = find(pixels_mz == max_int_value) ;
 
 id = 0;
 size_map = size(map.x);
-map_color = bio_map;
+map_color = pixels_mz;
 for x_ind = min_x : max_x % récupère les indices
     for y_ind = min_y : max_y
         id = id + 1 ;
-        bio_ind_tab(id) = bio_ind(x_ind,y_ind); % semble bien fonctionner
+        selected_ind_array(id) = pixels_ind(x_ind,y_ind); % semble bien fonctionner
         map_color(x_ind,y_ind) = max_int_value;
     end
 end
@@ -65,26 +66,19 @@ end
 %% Plot multiple spectra
 
 ind_peaks = 0;
-for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés aux indices
+for n = 1 : length(selected_ind_array) % récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
-    peaks(ind_peaks) = {pixels_scans(bio_ind_tab(n)).peaks.mz};
-    times(ind_peaks) = pixels_scans(bio_ind_tab(n)).retentionTime;
+    peaks(ind_peaks) = {pixels_scans(selected_ind_array(n)).peaks.mz};
+    times(ind_peaks) = pixels_scans(selected_ind_array(n)).retentionTime;
 end
 peaks = peaks';
 times = times';
 
-plot_multiple_spectra(peaks,times,length(bio_ind_tab))
+plot_multiple_spectra(peaks,times,length(selected_ind_array))
 
+title_str = 'Selected area in yellow';
+display_mz_map(map,map_color,title_str)
 
-figure()
-s = surf(map.x,map.y,map.z,map_color);
-s.FaceAlpha=0.9; % niveau de tranparence
-s.FaceColor = 'flat'; % set color interpolqtion
-s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
-title('Zone of the mass spectra');
-axis equal
-%grid off
-axis off
 si_p = size(peaks);
 
 win = 0.1;

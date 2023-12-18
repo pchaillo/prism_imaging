@@ -3,7 +3,7 @@
 
 % add_border_3()
 
-function [ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind)
+function [ carte_x,carte_y,carte_z,bio_map  ] = fix_border(carte_x,carte_y,carte_z,bio_map,bio_ind)
 
 si = size(carte_x);
 

@@ -7,9 +7,10 @@ else
     time_flag = 0;
 end
 
-[ bio_ind ,pixels_mz ] = mzXML_on_map_norm13(pixels_scans,map.z,limits,map.time,time_flag);
+loud_flag = 0; % #TODO
+[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
-[ map.x,map.y,map.z,pixels_mz  ] = fix_border_2(map.x,map.y,map.z,pixels_mz,bio_ind);
+[ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 % pixels_mz = replace_NaN_by_zero(pixels_mz); % two times ? #TODO
@@ -32,15 +33,16 @@ max_x = max(p2);
 % min_y = min(m3);
 max_y = max(m4); 
 
-ind_x = max_x;
+ind_x = max_x; % indices of the selected pixel in the image
 ind_y = max_y;
 
-ind_bio = bio_ind(ind_x,ind_y);
+selected_ind = pixels_ind(ind_x,ind_y); % indice of the selected pixel in the pixels_scans
 
-peaks = pixels_scans(ind_bio).peaks.mz;
+peaks = pixels_scans(selected_ind).peaks.mz;
 % times = pixels_scans(ind_bio).retentionTime;
 csv_filename = "files/csv files/"+name_map(1:end-4)+"_x_"+ind_x+"_y_"+ind_y+".csv";
 export_spectra_to_csv(peaks,csv_filename);
+
 figure();
 plot(peaks(:,1),peaks(:,2));
 xlabel('Mass/Charge (M/Z)');
