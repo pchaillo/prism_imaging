@@ -16,7 +16,7 @@ function [ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_sc
 % scans_ind (bio_num) => indices in the full mzXML file
 % pixels_ind (bio_ind) => indices of the relative pixel in the image
 
-si = size(map);
+si = size(map.x);
 
 if isempty(pixels_scans(1).ionisationEnergy) % pour pouvoir utiliser les vieux mat files
     for i = 1:length(pixels_scans)

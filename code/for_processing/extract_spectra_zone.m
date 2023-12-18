@@ -1,33 +1,33 @@
-function extract_spectra_zone(bio_dat,carte,limits)
+function extract_spectra_zone(pixels_scans,map,limits)
 
-if isfield(carte,'time')
+if isfield(map,'time')
     time_flag = 1;
 else
     time_flag = 0;
 end
 
-bio_dat = fix_bio_dat(bio_dat);
+pixels_scans = fix_ms_data(pixels_scans);
 
-[ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte.z,limits,carte.time,time_flag); 
+[ bio_ind ,bio_map ] = mzXML_on_map_norm13(pixels_scans,map.z,limits,map.time,time_flag); 
 
-[ carte.x,carte.y,carte.z,bio_map ] = fix_border_2(carte.x,carte.y,carte.z,bio_map,bio_ind);
+[ map.x,map.y,map.z,bio_map ] = fix_border_2(map.x,map.y,map.z,bio_map,bio_ind);
 
 bio_map = replace_NaN_by_zero(bio_map);
 
 title_str = "Select the area you want to extract by clicking";
-display_mz_map(carte,bio_map,title_str);
+display_mz_map(map,bio_map,title_str);
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
 
-[p2,m2] = find( carte.x < x1 );
-[p4,m4] = find( carte.y < y1 );
+[p2,m2] = find( map.x < x1 );
+[p4,m4] = find( map.y < y1 );
 
 ind_x1 = max(p2);
 ind_y1 = max(m4); 
 
-[p1,m1] = find( carte.x < x2 );
-[p3,m3] = find( carte.y < y2 );
+[p1,m1] = find( map.x < x2 );
+[p3,m3] = find( map.y < y2 );
 
 ind_x2 = max(p1);
 ind_y2 = max(m3); 
@@ -52,7 +52,7 @@ max_int_value = max(max(bio_map));
  [I,J] = find(bio_map == max_int_value) ;
 
 id = 0;
-size_map = size(carte.x);
+size_map = size(map.x);
 map_color = bio_map;
 for x_ind = min_x : max_x % récupère les indices
     for y_ind = min_y : max_y
@@ -67,8 +67,8 @@ end
 ind_peaks = 0;
 for n = 1 : length(bio_ind_tab) % récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
-    peaks(ind_peaks) = {bio_dat(bio_ind_tab(n)).peaks.mz};
-    times(ind_peaks) = bio_dat(bio_ind_tab(n)).retentionTime;
+    peaks(ind_peaks) = {pixels_scans(bio_ind_tab(n)).peaks.mz};
+    times(ind_peaks) = pixels_scans(bio_ind_tab(n)).retentionTime;
 end
 peaks = peaks';
 times = times';
@@ -77,7 +77,7 @@ plot_multiple_spectra(peaks,times,length(bio_ind_tab))
 
 
 figure()
-s = surf(carte.x,carte.y,carte.z,map_color);
+s = surf(map.x,map.y,map.z,map_color);
 s.FaceAlpha=0.9; % niveau de tranparence
 s.FaceColor = 'flat'; % set color interpolqtion
 s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.

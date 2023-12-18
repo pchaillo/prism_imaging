@@ -22,7 +22,7 @@ end
 
 % Peaklist = mzxml2peaks_biodat(bio_dat)
 
-spectra_tab = fusion_part2(spectra_tab_raw);
+spectra_tab = fusion_part_C(spectra_tab_raw);
 
 win = 0.1;
 

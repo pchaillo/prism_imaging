@@ -1,5 +1,3 @@
-
-
 function extract_one_spectra(pixels_scans,map,name_map,limits)
 
 
