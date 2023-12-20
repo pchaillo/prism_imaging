@@ -1,35 +1,34 @@
 % Réalise le groupement des données
 
-function peak_tab3 = bining(peak_tab2,win)
+function bined_peak_array = bining(peak_array,window_width)
 
-if length(peak_tab2) ~= 0 &&  length(peak_tab2) ~= 1
-    init = peak_tab2(1,1);
-    i_win = init;
-    si = size(peak_tab2);
-    l = si(1);
+if length(peak_array) ~= 0 &&  length(peak_array) ~= 1
+    window_left_value = peak_array(1,1);
+    si = size(peak_array);
+    peak_array_length = si(1);
     
-    k = 0;
-    h = 0;
+    ind_in_final_array = 0;
+    ind_in_all_peaks = 0;
     
-    val_tab = zeros(1,2); % for c
-    peak_tab3 = zeros(1,2); % for c
+    all_peaks_in_window = zeros(1,2); % for c
+    bined_peak_array = zeros(1,2); % for c
     
-    for i = 1 : l
-        if peak_tab2(i,1) >= i_win && peak_tab2(i,1) < i_win + win
-            h = h + 1;
-            val_tab(h,:) = peak_tab2(i,:);
+    for i = 1 : peak_array_length
+        if peak_array(i,1) >= window_left_value && peak_array(i,1) < window_left_value + window_width
+            ind_in_all_peaks = ind_in_all_peaks + 1;
+            all_peaks_in_window(ind_in_all_peaks,:) = peak_array(i,:);
         else
-            k = k + 1;
-            %peak_tab3(k,:) = mean(val_tab);
-            peak_tab3(k,2) = sum(val_tab(:,2));
-            peak_tab3(k,1) = mean(val_tab(:,1));
-            i_win = peak_tab2(i,1);
-            %clearvars val_tab
-            val_tab = zeros(1,2); % for c
-            h = 1 ;
-            val_tab(h,:) = peak_tab2(i,:);
+            ind_in_final_array = ind_in_final_array + 1;
+            %bined_peak_array(k,:) = mean(all_peaks_in_window);
+            bined_peak_array(ind_in_final_array,2) = sum(all_peaks_in_window(:,2));
+            bined_peak_array(ind_in_final_array,1) = mean(all_peaks_in_window(:,1));
+            window_left_value = peak_array(i,1);
+            %clearvars all_peaks_in_window
+            all_peaks_in_window = zeros(1,2); % for c
+            ind_in_all_peaks = 1 ;
+            all_peaks_in_window(ind_in_all_peaks,:) = peak_array(i,:);
         end
     end
 else
-    peak_tab3 = zeros(1,2);
+    bined_peak_array = zeros(1,2);
 end
