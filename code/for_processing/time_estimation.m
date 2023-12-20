@@ -1,8 +1,8 @@
-function time_estimation = time_from_peaks_fcn(tab,min_threshold)
+function estimated_time = time_estimation(data_array,noise_threshold)
 % Compute the mean time between selected peaks
 
-ind_bruit =  find(tab(4,:) < min_threshold );
-ind_no_bruit =  find(tab(4,:) > min_threshold );
+ind_bruit =  find(data_array(4,:) < noise_threshold );
+ind_no_bruit =  find(data_array(4,:) > noise_threshold );
 
 %% Pour estimer le temps de reconstruction à choisir
 % detection de "plateau" de peaks, prendre ceux après la fusion des peaks !
@@ -32,11 +32,9 @@ for i = length(ind_plat_tab) : - 1 : 2
     end
 end
 
-plat_time_tab = tab(3,ind_plat_tab2);
+plat_time_tab = data_array(3,ind_plat_tab2);
 
 % temps de reconstruction suggéré
-time = mean(plat_time_tab); % fonctionne très bien sur cet exemple !
+estimated_time = mean(plat_time_tab); % fonctionne très bien sur cet exemple !
 % time2 = median(plat_time_tab);
-fprintf('Mean time between peaks : %f seconds \n Attention, ne fonctionne pas à haute fréquence d échantillonage \n', time);
-
-time_estimation = time ;
+fprintf('Mean time between peaks : %f seconds \n Attention, ne fonctionne pas à haute fréquence d échantillonage \n', estimated_time);
