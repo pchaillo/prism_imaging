@@ -23,7 +23,7 @@ l = length(file);
 
 % VARIABLES  %
 time_res = 0.5 ;
-aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
+% aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
 
 %% Récupération des informations
 
