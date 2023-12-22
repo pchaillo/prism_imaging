@@ -1,20 +1,17 @@
-% Permet de selectionner les valeurs à replacer sur la carte
+% Selects the values that will be placed onto the map
+% Does the first hald of the peaks' fusion in two lines (fusion_p1_top())
 
-% réalise la première moitié de la fusion des pics en deux lignes ( fusion_p1_top() )
+% Best version => Fusion of neighbouring peaks and collateral data
+% -> Should work for all spectra and sampling frequencies
 
-% Meilleure vesrion => fusion des peaks proches et des données collatérales
-% -> sensé fonctionner pour tous les spectres et toutes les fréquences
-% d'échantillonage
+% Reconstruction time detection is recommanded 
+% Triggereint with a flag as argument 
+% Tolerance percentage as an argument
 
-% avec la detection du temps de reconstruction recommandé !
-
-% avec mode trigerreint interne avec un flag en argument !
-
-% avec le pourcentage de tolérance en argument !
 
 function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct, threshold_begin, t_step, noise_threshold, intern_flag, fusion_percentage, map_time)
 
-% Indices = position in the list or in the arrat
+% Indices = position in the list or in the array
 % Nums = position in the raw mzXML file
 
 
@@ -53,7 +50,7 @@ filtered_data_array(3,:) = filtered_time_gap_list;
 
 fusionned_Scan_time = extract_time(alls_scans);
 
-%% Detection de la pente comme un peaks % #TODO
+%% Slope detection like a peak % #TODO
 % ajouter dans la dernière version
 % ajouter une condition pour savoir si il y a bien une pente
 if intern_flag == 1
@@ -71,7 +68,7 @@ if exist('point_to_add_indices')
     filtered_selected_indices = [ filtered_selected_indices point_to_add_indices];
 end
 
-[sorted_selected_indices, ordre ]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
+[sorted_selected_indices, ordre]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
 [uv,a,b] = unique(sorted_selected_indices);
 if length(uv) ~= length(sorted_selected_indices)
     disp('Attention : points superposition, look at the biodat variable or at the mat file')
