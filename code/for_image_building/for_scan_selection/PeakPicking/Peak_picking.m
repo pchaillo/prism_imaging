@@ -24,9 +24,9 @@ time_res = 0.5 ; % Faire remonter en argument de la fonction ?
 aspiration_time = 0.35;
 
 TIC_list = extract_TIC(alls_scans);
-Scan_time = extract_time(alls_scans);
+Scan_time_list = extract_time(alls_scans);
 
-[data_array,first_point_indice] = create_data_array_from_peak_detection(all_peaks,threshold_begin,TIC_list,Scan_time_list)
+[data_array,first_point_indice] = create_data_array_from_peak_detection(alls_scans,threshold_begin,TIC_list,Scan_time_list);
 
 estimated_time_gap = time_estimation(data_array, noise_threshold);
 
@@ -93,4 +93,4 @@ alls_scans = collateral_fusion(alls_scans, first_point_indice, last_selected_poi
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
 pixels_scans(:) = alls_scans(Final_selected_indices_list);
-plot_peak_time(pixels_scans,Scan_time,TIC_list,corrected_topography_time_list); % Function that display the selected peaks on the chromatogram for visual checking
+plot_peak_time(pixels_scans,Scan_time_list,TIC_list,corrected_topography_time_list); % Function that display the selected peaks on the chromatogram for visual checking

@@ -1,4 +1,4 @@
-function [data_array,first_point_indice] = create_data_array_from_peak_detection(all_peaks,threshold_begin,TIC_list,Scan_time_list)
+function [data_array,first_point_indice] = create_data_array_from_peak_detection(alls_scans,threshold_begin,TIC_list,Scan_time_list)
 
 %% First peak detection -> find the 1st peak if there is no time coherency (no mass spectrometer trigger) # utiliser variable pour ne le faire que si c'est nécessaire ? #TODO
 first_peak_is_finded = 0; 
