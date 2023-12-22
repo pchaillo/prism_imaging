@@ -1,6 +1,7 @@
-classdef TimeBasedMethod
+classdef TimeBasedMethod  < handle
 
     properties
+        aspiration_time = 1.05;
 
     end
 
@@ -10,14 +11,14 @@ classdef TimeBasedMethod
 
         end
 
-        function [bio_dat ,time,g] = selection(method, mzXML_data, carte_time, aspiration_time)
+        function set_aspiration_time(method,aspiration_time)
+            method.aspiration_time = aspiration_time;
+        end
 
-            path(path,'code/for_image_building/TimeBased') % Ranger ca ou ? => Ici c'est bien non ? #TODO
-            path(path,'code/for_image_building/for_scan_selection/TimeBased') % Ranger ca ou ? => Ici c'est bien non ? #TODO
-            path(path,'code/for_image_building/for_scan_selection')
-            path(path,'code/for_processing') 
+        function [pixels_scans ,estimated_time_gap] = selection(method, mzXML_data, carte_time)
             % Insert laser connexion and return connection object variable
-            [bio_dat ,time,g] = continuous_detection(mzXML_data, carte_time, aspiration_time); % take only the useful informations
+            disp(method.aspiration_time)
+            [pixels_scans ,estimated_time_gap] = time_based_selection(mzXML_data, carte_time, method.aspiration_time); % take only the useful informations
 
         end
     end

@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, time] = continuous_detection(mzXMLStruct,carte_time)
+function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,carte_time,aspiration_time)
 
 path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
 
@@ -24,8 +24,7 @@ alls_scans = clean_fusion_list(alls_scans);
 l = length(alls_scans);
 
 % VARIABLES  %
-time_res = 0.5 ;
-aspiration_time = 1.05; % remonter en argument de la fonction % 1 seconde pour recaler les referentiels + 0.35s aspiration time
+% time_res = 0.5 ;
 
 TIC_list = extract_TIC(alls_scans);
 scan_time_list = extract_time(alls_scans);
@@ -46,5 +45,5 @@ pixels_scans(:) = alls_scans(Final_selected_indices_list);
 
 plot_peak_time(pixels_scans, scan_time_list, TIC_list, topography_time_list);
 
-time = 0;
+estimated_time_gap = 0;
 
