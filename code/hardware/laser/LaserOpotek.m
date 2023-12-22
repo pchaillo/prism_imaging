@@ -4,6 +4,7 @@ classdef LaserOpotek < LaserBase
         IP_address = '192.168.0.59'
         Port = 10001
         Temp_limit = 38
+        voltage_value
     end
     
     methods %(Static)

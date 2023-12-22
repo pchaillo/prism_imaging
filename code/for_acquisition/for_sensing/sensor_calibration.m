@@ -15,7 +15,7 @@ calibration_finished = 0;
 calib_tab_ind = 0;
 going_down = 0;
 
-calibration_resolution = scan.etal;
+calibration_resolution = sensor.class.calibration_step;
 
 calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argument ? #TODO
 

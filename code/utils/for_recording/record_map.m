@@ -1,4 +1,4 @@
-function time_diff_med = record_map(carte_x,carte_y,carte_z,nom,seuil,with_shift,carte_time)
+function time_diff_med = record_map(carte_x,carte_y,carte_z,nom,with_shift,carte_time)
 
 % Pour enregistrer la carte .map dans le fichier correspondant
 % record the threshold
@@ -56,7 +56,7 @@ punto = fopen(chemin,'w');
 
 % On rentre les dimensions pour la reconstruction %%%
 si = size(objet.z);
-fprintf(punto,'%f %f %f %f \n', si(1), si(2),seuil,time_diff_med );
+fprintf(punto,'%f %f %f %f \n', si(1), si(2),time_diff_med );
 if nargin > 6
     %%% On rentre les données dans le document %%%
     for i = 1 : si(1)
