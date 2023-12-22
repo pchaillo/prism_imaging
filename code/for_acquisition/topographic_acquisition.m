@@ -44,7 +44,7 @@ for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + p
 %             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
             map.i(v,u) =  measured_height ;
-            real_time_topography_display()
+            real_time_topography_display(map)
             
             delta =  measured_height ;
             
@@ -69,7 +69,7 @@ for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + p
 %             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
             measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
             map.i(v,u) =  measured_height ;
-            real_time_topography_display()
+            real_time_topography_display(map)
             
             delta = measured_height;
             map.time(v,u) = toc;
