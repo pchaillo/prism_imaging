@@ -1,17 +1,18 @@
-function time_diff_med = record_map(carte_x,carte_y,carte_z,nom,with_shift,carte_time)
 
-% Pour enregistrer la carte .map dans le fichier correspondant
-% record the threshold
+function time_diff_med = record_map(map_x,map_y,map_z,name,threshold,with_shift,map_time)
+% Records the .map in its designated folder
 
-objet.x = carte_x;
-objet.y = carte_y;
-objet.z = carte_z;
+% Record the threshold
 
-% Si carte_time est fourni en argument alors alors on enregistre le fichier map avec le time
+objet.x = map_x;
+objet.y = map_y;
+objet.z = map_z;
+
+% Si map_time est fourni en argument alors alors on enregistre le fichier map avec le time
 if nargin > 6
-    objet.time = carte_time;
+    objet.time = map_time;
     % écart temporel entre les points !
-    size_time = size(carte_time);
+    size_time = size(map_time);
     u = 0;
     % On effectue le décalage si besoin (with_shift est un booléen)
     if with_shift 
@@ -19,12 +20,12 @@ if nargin > 6
             if ( mod(i,2) ~= 0 )
                 for j = 1 : size_time(2)
                     u = u + 1;
-                    tab_time(u) = carte_time(i,j) ;
+                    tab_time(u) = map_time(i,j) ;
                 end
             else
                 for j = size_time(2) : -1 : 1 % décalage de deux millimètres pour éviter les bloquages
                     u = u + 1;
-                    tab_time(u) = carte_time(i,j) ;
+                    tab_time(u) = map_time(i,j) ;
                 end
             end
         end
@@ -32,7 +33,7 @@ if nargin > 6
         for i = 1 : size_time(1)
             for j = 1 : size_time(2)
                 u = u + 1;
-                tab_time_r(u) = carte_time(i,j);
+                tab_time_r(u) = map_time(i,j);
             end
         end
     end
@@ -50,13 +51,14 @@ axis equal
 
 folder_name = 'files/map files';
 
-chemin = choix_chemin(folder_name,nom);
+chemin = choix_chemin(folder_name,name);
 
 punto = fopen(chemin,'w');
 
 % On rentre les dimensions pour la reconstruction %%%
 si = size(objet.z);
 fprintf(punto,'%f %f %f %f \n', si(1), si(2),time_diff_med );
+
 if nargin > 6
     %%% On rentre les données dans le document %%%
     for i = 1 : si(1)
