@@ -1,4 +1,4 @@
-function map_out = click_loop_multi(carte,map_z,min_threshold,max_threshold)
+function map_z_out = click_loop_multi(carte,map_z,min_threshold,max_threshold)
 
 % Recursive function to select, step by step, all the points that the users
 % wants to rectify
@@ -43,7 +43,7 @@ end
 close(fig);
 
 if k == 's' % S key to stop the recursive loop and get out the function and record the rectified map
-    map_out = map_z;
+    map_z_out = map_z;
 else
-    map_out = click_loop_multi(carte,map_out1,min_threshold,max_threshold);
+    map_z_out = click_loop_multi(carte,map_out1,min_threshold,max_threshold);
 end
