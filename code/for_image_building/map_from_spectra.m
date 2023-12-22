@@ -1,5 +1,5 @@
 
-function map_from_spectra(bio_dat,carte,compute_flag)
+function map_from_spectra(pixels_scans,map,compute_flag)
 
 % compute_flag : booleen qui détermine s'il faut recalculer un spectre
 % global. 0 => rien en mémoire / 1 => reprendre le tableau en mémoire
@@ -13,32 +13,23 @@ else
     limits = [x2 x1];
 end
 
-carte_x = carte.x;
-carte_y = carte.y;
-carte_z = carte.z;
-if isfield(carte,'time')
-    carte_time = carte.time;
-end
-
 fprintf('(%s) - The map file is loaded \n', datestr(now,'HH:MM:SS'));
 fprintf('(%s) - Starting to build the intensity matrix\n', datestr(now,'HH:MM:SS'));
 
-if isfield(carte,'time')
+if isfield(map,'time')
     time_flag = 1;
-    %[ bio_ind ,bio_map ] = mzXML_on_map_norm12(bio_dat,carte_z,limits,carte_time); % put the information on the map
 else
     time_flag = 0;
-    %[ bio_ind ,bio_map ] = mzXML_on_map_norm8_4(bio_dat,carte_z,limits,seuil); % put the information on the map
 end
 
-%[ bio_ind, bio_num, bio_map, deiso_tab] = mzXML_on_map_norm17(bio_dat,carte_z,limits,carte_time,time_flag,loud_flag);
-[ bio_ind ,bio_map ] = mzXML_on_map_norm13(bio_dat,carte_z,limits,carte_time,time_flag);
+loud_flag = 0; % faire propre #TODO
+[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
-[ carte_x,carte_y,carte_z,bio_map  ] = fix_border_2(carte_x,carte_y,carte_z,bio_map,bio_ind);
+[ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 
 fprintf('(%s) - Done, displaying the image\n', datestr(now,'HH:MM:SS'));
 figure()
-s = surf(carte_x,carte_y,carte_z,bio_map);
+s = surf(map.x,map.y,map.z,pixels_mz);
 s.FaceAlpha = 0.9; % niveau de transparence
 s.FaceColor = 'flat'; % set color interpolation or not
 s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
