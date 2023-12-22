@@ -1,4 +1,4 @@
-function sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag)
+function sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag,parameters)
 
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 
@@ -7,7 +7,7 @@ function sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag)
 
 % global opotek; % Pour Mass spectro imaging, with taking in care the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
-global scan;
+global scan; % need to be deleted #TODO
 
 % # TODO : supress both useles variable
 u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it)
@@ -82,7 +82,7 @@ end
 %     sample_height = 0.01;
 % end
 
-if sample_height > scan.s_offset + scan.hmax
+if sample_height > parameters.surface_offset + parameters.mapping_step
     sample_height = 0.02;
 end
 

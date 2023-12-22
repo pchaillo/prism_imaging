@@ -22,7 +22,7 @@ calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argume
 % REFAIRE UNE NOUVELLE VERSION DE LA FONCTION D'ÉTALONNAGE, (NOUVEAU NOM)
 % AVEC CES VALEURS EXTRÊME EN ARGUMENT ?
 % hauteur de début de l'étalonnage : dépend de la distance entre la caméra et le pointeur laser => plus la caméra et le laser sont proches, plus on peut commencer la calibration bas
-init_height = 71 + scan.s_offset -0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece
+init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece
 final_height = init_height + calibration_band + 3 ;%-5 ; %-5 pour compenser le +5 juste avant
 
 current_height = init_height;

@@ -11,12 +11,12 @@
 
 % ne crée pas de valeur pour les points ajoutés
 
-function [ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_scans,map,limits,map_time,time_flag,loud_flag)
+function [ pixels_ind, scans_ind, pixels_mz, fusion_list] = data_on_map(pixels_scans,map,limits,map_time,time_flag,loud_flag)
 % anciennement mzXML_on_map17.m
 % scans_ind (bio_num) => indices in the full mzXML file
 % pixels_ind (bio_ind) => indices of the relative pixel in the image
 
-si = size(map.x);
+map_dimension = size(map.x);
 
 if isempty(pixels_scans(1).ionisationEnergy) % pour pouvoir utiliser les vieux mat files
     for i = 1:length(pixels_scans)
@@ -28,20 +28,20 @@ end
 id = 0;
 for i = 1:length(pixels_scans)
    % if pixels_scans(i).num ~= 2 %to delete useless empty point
-        id = id +1 ;
+        id = id +1 ; % id equal to i ? #TODO
         ionisationEnergy(id) = pixels_scans(i).ionisationEnergy ;
         if loud_flag == 0
             if pixels_scans(i).num > 0
-                value(id) = peak_selection( limits,pixels_scans(i) )/ionisationEnergy(id);
+                intensity_list(id) = intensity_selection( limits,pixels_scans(i) )/ionisationEnergy(id);
             else
-                value(id) = 0;
+                intensity_list(id) = 0;
             end
         else
             if ionisationEnergy(id) == 0
-                value(id) = 0;
+                intensity_list(id) = 0;
             else
                 
-                value(id) = peak_selection( limits,pixels_scans(i) )/ionisationEnergy(id);
+                intensity_list(id) = intensity_selection( limits,pixels_scans(i) )/ionisationEnergy(id);
             end
         end
   %  end
@@ -54,57 +54,57 @@ med = get_median(pixels_scans);
 % sur la carte
 if time_flag == 1
     
-    carte_ind = time_to_indice(map_time);
+    map_indices_array = time_to_indice(map_time);
     
-    d_ind = 0    ;
+    fusion_list_ind = 0    ;
     
-    for i =  1  :  si(1)
-        for j = 1 : si(2)
-            d_ind = d_ind + 1;
-            pixels_mz(i,j)= value(carte_ind(i,j))*med;
-            %             scans_ind(i,j) = pixels_scans.num(carte_ind(i,j));
-            scans_ind(i,j) = pixels_scans(carte_ind(i,j)).num;
-            fusion_tab(d_ind) = {pixels_scans(carte_ind(i,j)).deisotoped};
+    for x_ind =  1  :  map_dimension(1)
+        for y_ind = 1 : map_dimension(2)
+            fusion_list_ind = fusion_list_ind + 1;
+            pixels_mz(x_ind,y_ind)= intensity_list(map_indices_array(x_ind,y_ind))*med;
+            %             scans_ind(i,j) = pixels_scans.num(map_indices_array(i,j));
+            scans_ind(x_ind,y_ind) = pixels_scans(map_indices_array(x_ind,y_ind)).num;
+            fusion_list(fusion_list_ind) = {pixels_scans(map_indices_array(x_ind,y_ind)).deisotoped};
         end
     end
     
-    pixels_ind = carte_ind ;
+    pixels_ind = map_indices_array ;
     
     % sinon on suit le pattern classique
 else
-    v = 0;
-    k = 0;
-    for i =  1  :  si(1)
-        v = v + 1;
-        if ( mod(v,2) ~= 0 )
-            u = 0;
-            for j = 1 : si(2)
-                u = u +1;
-                k = k+1;
-                pixels_ind(v,u) = k;
-                scans_ind(v,u) = pixels_scans(k).num;
-                d_ind = d_ind + 1;
-                fusion_tab(d_ind) = {pixels_scans(k).deisotoped};
-                k
-                if ionisationEnergy(k) ~= 0
-                    pixels_mz(v,u)= value(k)*med;
+    x_ind = 0;
+    scan_ind = 0;
+    for i =  1  :  map_dimension(1)
+        x_ind = x_ind + 1;
+        if ( mod(x_ind,2) ~= 0 )
+            y_ind = 0;
+            for j = 1 : map_dimension(2)
+                y_ind = y_ind +1;
+                scan_ind = scan_ind+1;
+                pixels_ind(x_ind,y_ind) = scan_ind;
+                scans_ind(x_ind,y_ind) = pixels_scans(scan_ind).num;
+                fusion_list_ind = fusion_list_ind + 1;
+                fusion_list(fusion_list_ind) = {pixels_scans(scan_ind).deisotoped};
+                scan_ind
+                if ionisationEnergy(scan_ind) ~= 0
+                    pixels_mz(x_ind,y_ind)= intensity_list(scan_ind)*med;
                 else
-                    pixels_mz(v,u) = 0;
+                    pixels_mz(x_ind,y_ind) = 0;
                 end
             end
         else
-            u = si(2)+1;
-            for j = si(2) : -1  : 1
-                u = u - 1;
-                k = k+1;
-                pixels_ind(v,u) = k;
-                scans_ind(v,u) = pixels_scans(k).num;
-                d_ind = d_ind + 1;
-                fusion_tab(d_ind) = {pixels_scans(k).deisotoped};
-                if ionisationEnergy(k) ~= 0
-                    pixels_mz(v,u)= value(k)*med;
+            y_ind = map_dimension(2)+1;
+            for j = map_dimension(2) : -1  : 1
+                y_ind = y_ind - 1;
+                scan_ind = scan_ind+1;
+                pixels_ind(x_ind,y_ind) = scan_ind;
+                scans_ind(x_ind,y_ind) = pixels_scans(scan_ind).num;
+                fusion_list_ind = fusion_list_ind + 1;
+                fusion_list(fusion_list_ind) = {pixels_scans(scan_ind).deisotoped};
+                if ionisationEnergy(scan_ind) ~= 0
+                    pixels_mz(x_ind,y_ind)= intensity_list(scan_ind)*med;
                 else
-                    pixels_mz(v,u) = 0;
+                    pixels_mz(x_ind,y_ind) = 0;
                 end
             end
         end

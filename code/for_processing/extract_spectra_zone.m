@@ -84,24 +84,24 @@ si_p = size(peaks);
 win = 0.1;
 band = [200 1500];
 
-%1ere ligne
-peak_tab2 = peaks{1, 1}  ;
-peak_tab3 = bining_norm(peak_tab2,win,band);
-norm_peak_struct(1) = {peak_tab3};
-peak_tab_norm_sum = peak_tab3;
+%f irst line % 1ere ligne
+raw_peak_array = peaks{1, 1}  ;
+fix_peak_array = bining_fixed_size(raw_peak_array,win,band);
+all_selected_spectra_struct(1) = {fix_peak_array};
+peak_sum_array = fix_peak_array;
 
 for i = 2 : si_p(1)
-    peak_tab2 = peaks{i, 1}  ;
-    peak_tab3 = bining_norm(peak_tab2,win,band);
-    norm_peak_struct(i) = {peak_tab3};
-    peak_tab_norm_sum(:,2) = peak_tab_norm_sum(:,2) + peak_tab3(:,2);
+    raw_peak_array = peaks{i, 1}  ;
+    fix_peak_array = bining_fixed_size(raw_peak_array,win,band);
+    all_selected_spectra_struct(i) = {fix_peak_array};
+    peak_sum_array(:,2) = peak_sum_array(:,2) + fix_peak_array(:,2);
 end
 
 figure()
-plot(peak_tab_norm_sum(:,1),peak_tab_norm_sum(:,2));
+plot(peak_sum_array(:,1),peak_sum_array(:,2));
 xlabel('Mass/Charge (M/Z)')
 ylabel('Relative Intensity')
 title('Sum of all the spectra of the zone');
 
-csv_spectra_recorder(peak_tab_norm_sum,"Test_sauv_somme.csv")
-
+csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv")
+% #TODO : sauver tous les spectres dans un .csv et la somme dans un autre ?

@@ -1,8 +1,12 @@
+% Move to peak_selection function => intensity_selection
+
 % Permet d'isoler la valeur utiles entre les bornes de masses d'ionisation
 % qui ont été fixées
 
 % system('set username');
 function value = set_peaks_norm(limits,scan) % pick peak
+
+disp("Fonction obsolete : utiliser intensity_selection ! (for_image_building) ")
 
 % mxXML_on_map_norm7
 %main_reconstruct

@@ -20,10 +20,10 @@ bined_peak_array = zeros(1,2); % for c
 
 ind_p = 0;
 
-for mass = band_begin : window : band_end - window
+for mz = band_begin : window : band_end - window
     
-    all_peaks_over_mass_array = find ( peak_array(:,1) > mass );%&& peak_array(:,1) < mass +window);
-    all_peaks_under_max_mass_array = find( peak_array(:,1) < mass + window);
+    all_peaks_over_mass_array = find ( peak_array(:,1) > mz );%&& peak_array(:,1) < mz +window);
+    all_peaks_under_max_mass_array = find( peak_array(:,1) < mz + window);
     max_ind = max(all_peaks_under_max_mass_array);
     min_ind = min(all_peaks_over_mass_array);
     
@@ -31,12 +31,12 @@ for mass = band_begin : window : band_end - window
     
     if min_ind < max_ind
         bined_peak_array(ind_in_bined_array,2) = sum(peak_array(min_ind:max_ind,2));
-        bined_peak_array(ind_in_bined_array,1) = mass;
+        bined_peak_array(ind_in_bined_array,1) = mz;
     elseif min_ind == max_ind % if there is only one m/z that fit to the window in peak_aray
         bined_peak_array(ind_in_bined_array,2) = peak_array(min_ind,2);
-        bined_peak_array(ind_in_bined_array,1) = mass;
+        bined_peak_array(ind_in_bined_array,1) = mz;
     else
         bined_peak_array(ind_in_bined_array,2) = 0;
-        bined_peak_array(ind_in_bined_array,1) = mass;
+        bined_peak_array(ind_in_bined_array,1) = mz;
     end 
 end
