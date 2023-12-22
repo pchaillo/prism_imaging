@@ -3,13 +3,13 @@ function sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag,
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 
 % #TODO : what is delta variable in input ? 
-% #TODO : ranme k_pos as x_pos and j as y_pos ?
+% #TODO : rename k_pos as x_pos and j as y_pos ?
 
-% global opotek; % Pour Mass spectro imaging, with taking in care the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
+% global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
 global scan; % need to be deleted #TODO
 
-% # TODO : supress both useles variable
+% # TODO : Remove the two useless variables
 u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it)
 measured_distance = 0; % initialize the variable => useful ? (#TODO : suppress it)
 
@@ -20,7 +20,7 @@ first_loop = 1; % bool, if 1, it's the first loop in while for repositioning, th
 nb_boucle_mesure = 1200; % 1200
 nb_boucle_repeat = 100; % 1200
 
-shift = 0; % height shift for the repositionning of the robot
+shift = 0; % height shift for the robot repositioning 
 max_shift = 5; % maximal height shift
 
 calibration_tab = sensor.tab_etal; % #TODO : rename tab_etal to calibration_tab
