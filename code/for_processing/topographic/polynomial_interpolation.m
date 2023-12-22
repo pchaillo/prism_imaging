@@ -78,7 +78,7 @@ for v = 1 : 1 : si0(1)
             g = g + 1 ;
             b = p(u,1)*k^3 + p(u,2)*k^2 + p(u,3)*k + p(u,4);
             if b~= 0
-                interpolated_map.x(v,g) = b;
+                interpolated_map.z(v,g) = b;
             end
             
         end
@@ -86,7 +86,7 @@ for v = 1 : 1 : si0(1)
     end
 end
 
-su = size(interpolated_map.x);
+su = size(interpolated_map.z);
 l = su(1);
 m = su(2);
 %prise en compte des valeurs impossbiles pour puissance 3
@@ -94,8 +94,8 @@ m = su(2);
 for t = 1 : multiplier
     l = l + 1 ;
     m = m + 1 ;
-    interpolated_map.x(l,:) = 0;
-    interpolated_map.x(:,m) = 0;
+    interpolated_map.z(l,:) = 0;
+    interpolated_map.z(:,m) = 0;
 end
 
 % L'interpolation du 3e ordre ne peut pas être effectué sur les points du
@@ -109,11 +109,11 @@ for i = map.x(1 , 1 ) : scanning_step/multiplier: map.x( si(1) , 1 )% + scan.pas
     y = 0;
     for j = map.y(1,1) : scanning_step/multiplier : map.y(1,si(2))% + scan.pas/scan.pre
         y = y + 1;
-        if interpolated_map.x(x,y) == 0
-           interpolated_map.x(x,y) = carte_o2(x,y);
+        if interpolated_map.z(x,y) == 0
+           interpolated_map.z(x,y) = carte_o2(x,y);
         end
-        interpolated_map.y(x,y) = i;
-        interpolated_map.z(x,y) = j;
+        interpolated_map.x(x,y) = i;
+        interpolated_map.y(x,y) = j;
         
         x_new = ceil(x/multiplier); 
         y_new = ceil(y/multiplier); 
