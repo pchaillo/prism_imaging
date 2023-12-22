@@ -48,7 +48,7 @@ punto = fopen(path,'w');
 
 % On rentre les dimensions pour la reconstruction %%%
 si = size(map.z);
-fprintf(punto,'%f %f %f %f \n', si(1), si(2),time_gap_median );
+fprintf(punto,'%f %f %f %f \n', si(1), si(2),time_gap_median,0 );
 
 % if nargin > 6
 %%% On rentre les données dans le document %%%
