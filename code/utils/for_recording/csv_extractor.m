@@ -7,14 +7,14 @@ function csv = csv_extractor(csv_map, csv_mat, band, win)
     % #TODO = fonction trop lente ?
 
 path(path,"code/code_for_analysing");
-path(path,"code/code_for_recording");
-path(path,"code/code_for_export");
+path(path,"code/utils/for_recording");
+path(path,"code/for_processing");
 path(path,"mat files");
 path(path,"map files");
 
 map = load_map_fcn(csv_map);
 
-load(csv_mat); % to load the pixels scans variable from mat files
+load(csv_mat); % to load the pixel scans from mat files
 
 peak_array = pixels_scans(1).peaks.mz;
 peak_array_fixed = bining_fixed_size(peak_array,win,band);
