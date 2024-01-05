@@ -3,7 +3,7 @@
 % Win = Binning window in M/z
 
 function csv = csv_extractor(csv_map, csv_mat, band, win)
-
+tic
     % #TODO = fonction trop lente ?
 
 path(path,"code/code_for_analysing");
@@ -107,4 +107,5 @@ writetable(data_table,export_name)
 movefile(export_name,"files/csv files")
 % csvwrite("msi_data_test4_last.csv",data_array_for_extraction')
 disp('Successfuly exported data to a CSV file')
+toc
 end
