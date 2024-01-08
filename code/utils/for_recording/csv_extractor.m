@@ -26,6 +26,7 @@ data_array_for_extraction(1,12:12+l-1) = mz_list; % Always modify accordingly wh
 dim = size(map.x);
 %%%%%%%%%%%%%%%%%%%%%%%%%% Stripped version of num_to_position for better
 %%%%%%%%%%%%%%%%%%%%%%%%%% performance
+
 pixels_number = length(pixels_scans);
 
 dimX = dim(2);
@@ -54,8 +55,8 @@ data_ind = 1; % Sort absolute nums in increasing order in num_order_table, and f
 for x_ind = 1: 1 : dim(1)
     for y_ind = 1 : dim(2)
 %         v = index(data_ind);
+
         data_ind = data_ind +1;
-        data_ind
         data_array_for_extraction(data_ind,1) = map.x(x_ind,y_ind);
         data_array_for_extraction(data_ind,2) = map.y(x_ind,y_ind);
         data_array_for_extraction(data_ind,3) = map.z(x_ind,y_ind);
@@ -64,6 +65,7 @@ for x_ind = 1: 1 : dim(1)
         data_array_for_extraction(data_ind,7) = pixels_scans(index(data_ind-1)).retentionTime; % -1 pcq la 1ère ligne est prise pour mettre les indices des rapports mz
 
         fusion_list = pixels_scans(index(data_ind-1)).deisotoped;
+        
         l2 = length(fusion_list);
         if l2 == 1
             data_array_for_extraction(data_ind,8) = fusion_list;
@@ -73,14 +75,14 @@ for x_ind = 1: 1 : dim(1)
             data_array_for_extraction(data_ind,8) = sorted_fusion_list(1);
             data_array_for_extraction(data_ind,9) = sorted_fusion_list(l2);
         end
-
+        
         data_array_for_extraction(data_ind,10) = pixels_scans(index(data_ind-1)).basePeakMz; % -1 pcq la 1ère ligne est prise pour mettre les indices des rapports mz
         data_array_for_extraction(data_ind,11) = pixels_scans(index(data_ind-1)).basePeakIntensity; % -1 pcq la 1ère ligne est prise pour mettre les indices des rapports mz
-
 
         peak_array = pixels_scans(index(data_ind-1)).peaks.mz;
         peak_array_fixed = bining_fixed_size(peak_array,win,band);
         data_array_for_extraction(data_ind,12:12+l-1) = peak_array_fixed(:,2)';
+        
     end
 end
 
