@@ -8,7 +8,6 @@
 % Copie de bining_2 (anciennment bining_norm)
 
 function binned_peak_array = bining_fixed_size(peak_array,window,band)
-tic
 band_begin = band(1);
 band_end = band(2);
 
@@ -39,5 +38,4 @@ for mz = band_begin : window : band_end - window
         binned_peak_array(ind_in_binned_array,2) = 0;
         binned_peak_array(ind_in_binned_array,1) = mz;
     end 
-toc
 end

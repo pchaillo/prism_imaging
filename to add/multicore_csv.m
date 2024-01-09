@@ -1,10 +1,9 @@
-% Version avec le binning
-% Band = [M/z_min, M/z_max] 
-% Win = Binning window in M/z
+% DEBUG
+csv_map = "M15_T2_corrected.map";
+csv_mat = "M15_T2.mat";
+band = [500 1000];
+win = 0.1;
 
-function csv = csv_extractor(csv_map, csv_mat, band, win)
-
-    % #TODO = fonction trop lente ?
 path(path,"code/utils/for_recording");
 path(path,"code/for_processing");
 path(path,"files/mat files");
@@ -106,4 +105,3 @@ writetable(data_table,export_name)
 movefile(export_name,"files/csv files")
 % csvwrite("msi_data_test4_last.csv",data_array_for_extraction')
 disp('Successfuly exported data to a CSV file')
-end
