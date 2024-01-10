@@ -1,7 +1,7 @@
 % DEBUG
 csv_map = "M15_T2_corrected.map";
 csv_mat = "M15_T2.mat";
-band = [500 1000];
+band = [0 2000];
 win = 0.1;
 
 path(path,"code/utils/for_recording");
