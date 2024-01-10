@@ -18,6 +18,7 @@ _ Matlab v.2022b:
 	- Signal Processing Toolbox
 	- Simulink
 	- Statistics and Machine Learning Toolbox
+	- Parallel Computing Toolbox
 _ Windows or Linux-based sysem
 
 For first use : 

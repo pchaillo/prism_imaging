@@ -1,6 +1,7 @@
-% Version avec le binning
+% Version with binning
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
+% One of those names needs to change, too unclear
 
 function csv = csv_extractor(csv_map, csv_mat, band, win)
 
