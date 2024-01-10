@@ -103,5 +103,5 @@ xlabel('Mass/Charge (M/Z)')
 ylabel('Relative Intensity')
 title('Sum of all the spectra of the zone');
 
-csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv")
+csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv") % fonction qui n'existe pas, appeler plutot csv_extractor #TODO
 % #TODO : sauver tous les spectres dans un .csv et la somme dans un autre ?

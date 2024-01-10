@@ -28,10 +28,12 @@ loud_flag = 0; % faire propre #TODO
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 
 fprintf('(%s) - Done, displaying the image\n', datestr(now,'HH:MM:SS'));
-figure()
-s = surf(map.x,map.y,map.z,pixels_mz);
-s.FaceAlpha = 0.9; % niveau de transparence
-s.FaceColor = 'flat'; % set color interpolation or not
-s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
-axis equal
-title(['biometric map, mass limits : ', num2str(limits(1)),'  ',num2str(limits(2))]);
+title_str = strcat("biometric map, mass limits : ", num2str(limits(1)),"  ",num2str(limits(2)) );
+display_mz_map(map,pixels_mz,title_str)
+% figure()
+% s = surf(map.x,map.y,map.z,pixels_mz);
+% s.FaceAlpha = 0.9; % niveau de transparence
+% s.FaceColor = 'flat'; % set color interpolation or not
+% s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
+% axis equal
+% title(['biometric map, mass limits : ', num2str(limits(1)),'  ',num2str(limits(2))]);

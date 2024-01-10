@@ -5,17 +5,10 @@
 
 function csv = csv_extractor(csv_map, csv_mat, band, win)
 
-    % #TODO = fonction trop lente ?
 path(path,"code/utils/for_recording");
 path(path,"code/for_processing");
 path(path,"files/mat files");
 path(path,"files/map files");
-
-% DEBUG ONLY
-csv_map = "files/map files/M15_T2_corrected.map";
-csv_mat = "files/mat files/M15_T2.mat";
-band = [0 2000];
-win = 0.1;
 
 map = load(csv_map);
 
@@ -30,6 +23,7 @@ l = length(mz_list);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Stripped version of num_to_position for better
 %%%%%%%%%%%%%%%%%%%%%%%%%% performance
+
 pixels_number = length(pixels_scans);
  
 dimX = map(1,2);
@@ -72,6 +66,7 @@ parfor ind = 1:total_pixels
 
     fusion_list = m.pixels_scans(index(ind)).deisotoped;
     l2 = length(fusion_list);
+
     if l2 == 1
         temp(8) = fusion_list;
         temp(9) = fusion_list;
@@ -80,6 +75,7 @@ parfor ind = 1:total_pixels
         temp(8) = sorted_fusion_list(1);
         temp(9) = sorted_fusion_list(l2);
     end
+
     temp(10) = m.pixels_scans(index(ind)).basePeakMz;
     temp(11) = m.pixels_scans(index(ind)).basePeakIntensity;
 
@@ -89,7 +85,6 @@ parfor ind = 1:total_pixels
 
     data_array_for_extraction(ind+1, :) = temp; % Accounts for the m/Z column
 end
-
 
 cell = num2cell(data_array_for_extraction');
 cell{1,1} = "x";
