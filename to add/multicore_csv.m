@@ -51,7 +51,6 @@ l = length(mz_list);
 total_pixels = map(1,1)*map(1,2);
 data_array_for_extraction = zeros(total_pixels, 12+l-1);
 
-parpool
 parfor ind = 1:total_pixels
     temp = zeros(1, 12+l-1);
     temp(1) = map(ind+1, 1);
