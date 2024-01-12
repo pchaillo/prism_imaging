@@ -1,6 +1,6 @@
 % Réalise le groupement des données
 % remet le tableau dans une forme finie définie par band, la bande de
-% masses qui nous interesse et binding_step, la largeur de la fenetre de bining
+% masses qui nous interesse et bining_step, la largeur de la fenetre de bining
 
 % forme finie => comparable entre elles
 % Normalizes the shape of the array
