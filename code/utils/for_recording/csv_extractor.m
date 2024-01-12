@@ -10,6 +10,12 @@ path(path,"code/for_processing");
 path(path,"files/mat files");
 path(path,"files/map files");
 
+% Debug
+csv_map = "M15_T2_corrected.map";
+csv_mat = "M15_T2.mat";
+band = [0 2000];
+win = 0.1;
+
 map = load(csv_map);
 
 load(csv_mat); % to load the pixel scans from mat files
