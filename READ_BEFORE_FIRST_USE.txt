@@ -14,12 +14,12 @@ _ Matlab v.2022b:
 	- MATLAB Coder
 	- MATLAB Compiler
 	- Medical Imaging Toolbox 
+	- Parallel Computing Toolbox
 	- Robotics System Toolbox
 	- Signal Processing Toolbox
 	- Simulink
 	- Statistics and Machine Learning Toolbox
-	- Parallel Computing Toolbox
-_ Windows or Linux-based sysem
+_ Windows (10+, 7/8 could work) or Linux-based computer
 
 For first use : 
 _ Launch the 'LAUNCH_FOR_FIRST_USE.bat' file included at the root of the source code. 
@@ -30,7 +30,7 @@ _ Launch Matlab v.2022b
 _ On the MatLab Command Window, in the middle of the screen, write the following:
 pyenv('Version','%Your Python installation directory%\python.exe')
 
-If you have not modified the installation location of Python 3.8, it should look like this:	
+If you have not modified the installation location of Python 3.8 and are running Windows 10 or newer, it should look like this:	
 pyenv('Version','C:\Python38\python.exe')
 
 _ Navigate to the prism_imaging folder on the left of the screen
