@@ -1,7 +1,5 @@
 function carte = load_map_fcn(nom)
 
-path(path,'map files')
-
 out = load(nom);
 
 si = size(out);

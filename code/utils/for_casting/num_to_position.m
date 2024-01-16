@@ -2,12 +2,6 @@
 
 function index = num_to_position(map_name, mat) 
 
-path(path, 'mat files')
-path(path, 'map files')
-
-% mat = 'M15_T2.mat' ; % debug only  #TODO
-% map_name = 'M15_T2_corrected.map' ; % Debug only
-
 mat_file = load(mat);
 pixels_number = length(mat_file.bio_dat);
 

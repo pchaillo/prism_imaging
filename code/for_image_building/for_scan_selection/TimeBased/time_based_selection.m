@@ -14,8 +14,6 @@
 
 function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,carte_time,aspiration_time)
 
-path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO pour peak_fusion2 => mettre dans for_scan_slection direct ?
-
 all_scans_raw = mzXMLStruct.scan ;
 
 alls_scans = clean_time(all_scans_raw); % transformation du temps en une varibale numérique
