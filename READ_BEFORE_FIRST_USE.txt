@@ -19,6 +19,7 @@ _ Matlab v.2022b:
 	- Signal Processing Toolbox
 	- Simulink
 	- Statistics and Machine Learning Toolbox
+	- Symbolic Math Toolbox
 _ Windows (10+, 7/8 could work) or Linux-based computer
 
 For first use : 
