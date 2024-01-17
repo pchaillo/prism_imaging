@@ -5,7 +5,7 @@ function biologic_2D_acquisition(robot,laser,nb_shot,t_b,time_ref)
 
 %pas d'adaptation angulaire
 
-upate_log(app, log, 'Biometric Scan')
+upate_log(app, app.info_log, 'Biometric Scan')
 
 % global robot
 global carte

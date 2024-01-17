@@ -32,7 +32,7 @@ classdef LaserOpolette < LaserBase
         
         function  temp = get_temp(laser,laser_co)
             temp = 404;
-            update_log(app, log, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
+            update_log(app, app.info_log, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
         function tir(laser,laser_co,nb_shot)
@@ -43,7 +43,7 @@ classdef LaserOpolette < LaserBase
 %                 writeline(laser_co, "QSP")
                 writeline(laser_co, "OP");
                 state_string = read(laser_co,15,'string');
-                update_log(app, log, "LASER SHOT")
+                update_log(app, app.info_log, "LASER SHOT")
                 pause(0.1)
             end
         end
@@ -64,12 +64,12 @@ classdef LaserOpolette < LaserBase
             % insert code to turn the laser off
             delete(laser_co);
             clear laser;
-            update_log(app, log, "Opolette Laser disconnected")
+            update_log(app, app.info_log, "Opolette Laser disconnected")
         end
         
         function set_voltage(laser,laser_co,voltage_value)
             % insert code to set the laser voltage
-            update_log(app, log, 'Warning: Cannot chose voltage with the Opolette laser.')
+            update_log(app, app.info_log, 'Warning: Cannot chose voltage with the Opolette laser.')
         end
 
         function [state_text, state_double] = choose_state_text(laser,state)
@@ -110,7 +110,7 @@ classdef LaserOpolette < LaserBase
 
             state_text = strcat('State : ',state_text);
 %             disp("Debug process : ")
-            update_log(app, log, state_text);
+            update_log(app, app.info_log, state_text);
 %             disp("Debug end /")
 
         end
@@ -120,7 +120,7 @@ classdef LaserOpolette < LaserBase
             
             writeline(laser_co, "CC");
             state_string = read(laser_co,15,'string');
-            update_log(app, log, 'Warning: The mirror is open. The laser is now continuously firing!');
+            update_log(app, app.info_log, 'Warning: The mirror is open. The laser is now continuously firing!');
         end
 
         function tir_continu_OFF(laser, laser_co)
@@ -128,7 +128,7 @@ classdef LaserOpolette < LaserBase
             
             writeline(laser_co, "CS"); % ferme le laser
             tab_qsw_0 = readline(laser_co);
-            update_log(app, log, 'Warning: Mirror closed. End of continuous laser firing.');
+            update_log(app, app.info_log, 'Warning: Mirror closed. End of continuous laser firing.');
         
         end
         

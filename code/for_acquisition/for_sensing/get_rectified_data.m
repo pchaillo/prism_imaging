@@ -53,9 +53,9 @@ while u == 0  || is_measured == 0
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter
                     first_loop = 0;
                 end
-                update_log(app, log, 'Repositioning. New height :');
+                update_log(app, app.info_log, 'Repositioning. New height :');
                 shift = shift + 1;
-                update_log(app, log, string(shift))
+                update_log(app, app.info_log, string(shift))
                 
                 % if opo_flag == 1 % #TODO
                 %     state_double = get_state(opotek);
@@ -67,7 +67,7 @@ while u == 0  || is_measured == 0
                 if shift > max_shift
                     shift = 0;
                     sample_height = -2;
-                    update_log(app, log, 'Measurement impossible : will set negative value (-2) for sample height');
+                    update_log(app, app.info_log, 'Measurement impossible : will set negative value (-2) for sample height');
                     is_measured = 1;
                 end
             else

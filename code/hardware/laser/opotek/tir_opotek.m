@@ -7,13 +7,13 @@ time_stop = nb_shot*0.1;
 
 writeline(opotek, "QSW 1")  % Opens the laser
 tab_qsw_1 = readline(opotek);
-update_log(app, log, tab_qsw_1)
+update_log(app, app.info_log, tab_qsw_1)
 
 pause(time_stop);
 
 writeline(opotek, "QSW 0") % Shuts the laser down
 tab_qsw_0 = readline(opotek);
-update_log(app, log, tab_qsw_0)
+update_log(app, app.info_log, tab_qsw_0)
 
 % % for i = 1 : nb_shot
 % %
@@ -32,5 +32,5 @@ update_log(app, log, tab_qsw_0)
 % err_1 = find(tab_qsw_1 == 'ERROR');
 % err_0 = find(tab_qsw_0 == 'ERROR');
 
-update_log(app, log, 'Firing...')
+update_log(app, app.info_log, 'Firing...')
 

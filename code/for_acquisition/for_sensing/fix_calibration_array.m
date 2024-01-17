@@ -39,7 +39,7 @@ update_log
 to_supp = -1;
 
 if t_sup > 100
-    update_log(app, log, 'Warning: Biased table');
+    update_log(app, app.info_log, 'Warning: Biased table');
 end
 
 for i = 1 :  length(calibration_array) % Corrects sensible values that are wrong nonetheless
