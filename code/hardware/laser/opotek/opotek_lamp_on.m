@@ -16,7 +16,7 @@ run = readline(opotek)
 pause(10)
 
 if run == "ERROR"
-    disp('the lamp cannot be turned on');
+    update_log(app, log, 'Error: The lamp cannot be turned on.');
     is_ok = 0;
     %return
 % else

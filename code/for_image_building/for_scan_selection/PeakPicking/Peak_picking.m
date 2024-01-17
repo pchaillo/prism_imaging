@@ -21,7 +21,7 @@ alls_scans = clean_fusion_list(alls_scans);
 
 % VARIABLES  %
 time_res = 0.5 ; % Faire remonter en argument de la fonction ?
-aspiration_time = 0.35;
+aspiration_time = 0.35; % This probably should be set in the GUI instead
 
 TIC_list = extract_TIC(alls_scans);
 Scan_time_list = extract_time(alls_scans);
@@ -37,8 +37,8 @@ filtered_data_array =  data_array(:,data_indices);
 
 psi = size(filtered_data_array);
 if psi(2) == 0
-    disp('----- Attention : too high minimum threshold, no peaks detected -------');
-    %quit(1) #TODO => Que faire ici ? Bloquer programme, envoyer erreur ?? 
+    update_log(app, log, '----- Warning: Minimum threshold is too high. No peaks detected. -------');
+    %quit(1) #TODO => Que faire ici ? Bloquer programme, envoyer erreur ??     
     return
 end
 
@@ -71,7 +71,7 @@ end
 [sorted_selected_indices, ordre]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
 [uv,a,b] = unique(sorted_selected_indices);
 if length(uv) ~= length(sorted_selected_indices)
-    disp('Attention : points superposition, look at the biodat variable or at the mat file')
+    update_log(app, log, 'Warning: Points are overlapping. Please investigate the all_peaks variable or the mat file.')
 end
 
 %% Usefull value for debug

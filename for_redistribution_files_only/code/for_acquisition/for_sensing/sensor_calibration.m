@@ -9,7 +9,7 @@ global scan
 global zone
 % global robot % passe en argument
 
-disp('Starting calibration')
+update_log(app, log, 'Starting calibration')
 
 calibration_finished = 0;
 calib_tab_ind = 0;
@@ -56,7 +56,7 @@ while calibration_finished == 0
 
     if current_height < 50 % current_height étant la hauteur de l'effecteur, il s'agit d'une sécurité pour arrêter la calibration si le robot s'approche trop près du sol
         calibration_finished = 1;
-        disp('Calibration aborted over safety concerns.')
+        update_log(app, log, 'Calibration aborted over safety concerns.')
     end
 
     pos = [pos_x pos_y current_height 180 0 180 ];

@@ -7,6 +7,8 @@ function [map_out, nb_err ]= map_rectification_multi(map,min_threshold,max_thres
 % impossibles
 
 % prise en compte des voisins en croix (plus) pas en carré
+% Only takes vertical and horizontal neighbours into account. Diagonals are
+% disregarded. 
 
 si = size(map);
 
@@ -14,7 +16,7 @@ map_out = map;
 
 nb_err = 0;
 
-s_n = min_threshold ;%+ scan.s_offset; % seuil négatif de valeur considérée comme fausse / negative threshold, under it, the value is consider as false
+s_n = min_threshold ;%+ scan.s_offset; % seuil négatif de valeur considérée comme fausse / Negative threshold: Under it, the value is consider as false
 
 surf_max = max_threshold;% + scan.s_offset;
 
@@ -29,7 +31,7 @@ for w = 1 : l
     i = x_tab(w);
     j = y_tab(w);
     
-    %%% Edges Detection %%%
+    %%% Edge Detection %%%
     if i == 1
         i_m = -1;
     else

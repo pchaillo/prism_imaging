@@ -1,9 +1,11 @@
 function [new_indices_selection, all_ind_in_timelist ] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list)
 
-% Fonction qui rajoute et retire des points en compraant les temps de
+% Fonction qui rajoute et retire des points en comparant les temps de
 % cartographies et issues du fichier mzXML
+% Function that can add or remove points by comparing mapping times with
+% mzXML times
 
-ok = 0;
+ok = 0; % Should be renamed
 
 for i = 1 : length(indices)
     all_scans_time_list(i) = alls_scans(indices(i)).retentionTime;

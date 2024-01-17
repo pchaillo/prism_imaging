@@ -9,7 +9,7 @@ for i = 1 : l
         spectra_tab_raw = [ spectra_tab_raw ; bio_dat(i).peaks.mz ];
     end
     X = sprintf('Spectra creation : %d / %d',i,l);
-    disp(X)
+    update_log(app, log, X)
 end
 
 % tests => bon ca marche pas pour l'instant, mais y'a moyen de faire plus

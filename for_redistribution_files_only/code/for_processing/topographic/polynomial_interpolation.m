@@ -5,6 +5,8 @@ function interpolated_map = polynomial_interpolation(map,multiplier)
 
 % ordre 3
 % réalise l'approximation sur les deux axes
+% Third degree polynomial
+% Performs the approximation on both axes
 
 si = size(map.x);
 

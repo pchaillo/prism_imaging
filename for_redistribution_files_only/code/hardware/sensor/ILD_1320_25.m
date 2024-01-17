@@ -38,16 +38,16 @@ classdef ILD_1320_25
                 if u < 0.75 % Pourquoi 0.75 ? % #TODO
                     nb_err = nb_err + 1 ;
                     if nb_err > nb_err_threshold
-                        value = 0 % peut etre trouver une meilleure solution ? #TODO
+                        value = 0; % peut etre trouver une meilleure solution ? #TODO
+                        update_log(app, log, string(value))
                         stop = 1;
                     end
                 else
-                    value = u
+                    value = u;
+                    update_log(app, log, string(value))
                     stop = 1;
                 end
             end
         end
-
-
     end
 end

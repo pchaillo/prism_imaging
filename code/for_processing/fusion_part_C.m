@@ -17,6 +17,6 @@ si = size(fusioned_array);
 
 for i = 1 : si(1)-1 % verification de la fusion des spectres
     if fusioned_array(i,1) > fusioned_array(i+1,1)
-        disp('attention pb de fusion');
+        update_log(app, log, 'Warning: Peak fusion abnormality.');
     end
 end

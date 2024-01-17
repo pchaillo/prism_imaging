@@ -30,7 +30,7 @@ classdef RobotMeca500
             m3 = m2(2 : 5 );
             %u = str2double(m3);
             if m3 == '3000'
-                disp('Robot Connected')
+                update_log(app, log, 'Robot Connected')
             end
 
             %Activation
@@ -48,9 +48,9 @@ classdef RobotMeca500
             m2 = convertContainedStringsToChars(m1);
             m3 = m2(2 : 5 );
             if m3 == '2000'
-                disp('Robot Activated')
+                update_log(app, log, 'Robot Activated')
             elseif m3 == '1011'
-                disp('Robot is in error')
+                update_log(app, log, 'Robot in error state')
                 ok = 0;
             end
 
@@ -68,7 +68,7 @@ classdef RobotMeca500
             m2 = convertContainedStringsToChars(m1);
             m3 = m2(2 : 5 );
             if m3 == '2002'
-                disp('Robot Homed')
+                update_log(app, log, 'Robot Homed')
             end
 
             data = ['SetJointVel(15)' char(0)]; % set the percentage of maximum velocity, at 25% by default.
@@ -109,7 +109,7 @@ classdef RobotMeca500
             m3 = m2(2 : 5 );
             u = str2double(m3);
             if m3 == '2004'
-                disp('Robot Desactivated')
+                update_log(app, log, 'Robot Deactivated')
             end
 
             pause(0.01)

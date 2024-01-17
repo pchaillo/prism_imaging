@@ -15,7 +15,7 @@ classdef PeakPickingMethod < handle
             method.min_threshold = app.LoudthresholdEditField.Value;
             method.fusion_percentage = app.FusionpercentSlider.Value;
             method.intern_trig = app.InternalTriggeringSwitch.Value;
-            disp( method.intern_trig)
+            update_log(app, log, method.intern_trig)
  
         end
 
@@ -25,16 +25,13 @@ classdef PeakPickingMethod < handle
             else
                 intern_flag = 0;
             end
-            disp(method.threshold_begin)
-            disp(method.t_b)
-            disp(method.min_threshold)
-            disp(method.fusion_percentage)
-            disp(method.intern_trig)
-
-            path(path,'code/for_image_building/for_scan_selection/PeakPicking') % Ranger ca ou ? => Ici c'est bien non ? #TODO
+            update_log(app, log, method.threshold_begin)
+            update_log(app, log, method.t_b)
+            update_log(app, log, method.min_threshold)
+            update_log(app, log, method.fusion_percentage)
+            update_log(app, log, method.intern_trig)
 
             [bio_dat ,time] = Peak_picking(mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.fusion_percentage,carte_time); % take only the usefull informations
-
 
         end
     end

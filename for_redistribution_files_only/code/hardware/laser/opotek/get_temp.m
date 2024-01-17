@@ -16,15 +16,15 @@ is_hot = 0;
         if temp < temp_limit
             % print('attendre %d C : trop froid \n Appuyer sur une touche pour restester la temperature, ou CTRL+C pour arreter le script',temp)
             X = sprintf('Temperature de %d C : trop froid \n Appuyer sur une touche pour restester la temperature, ou CTRL+C pour arreter le script',temp);
-            disp(X)
+            update_log(app, log, X)
              % pause()
             %is_hot = 1; % pour stopper la boucle => app
         else
             X = sprintf('Temperature de %d C : OK',temp);
-            disp(X)
+            update_log(app, log, X)
             %is_hot = 1;
         end
     else
-        disp('no temperature, connexion or buffer problem')
+        update_log(app, log, 'No temperature found. Check the laser connexion and investigate the buffer.')
     end
     str_temp_ok = readline(opotek);

@@ -13,7 +13,7 @@ global scan
 global zone
 global state
 
-disp('Creating the map');
+update_log(app, log, 'Creating the map');
 
 opo_flag = 0 ; % avec message lors du repositionnement pour le watchdog
 

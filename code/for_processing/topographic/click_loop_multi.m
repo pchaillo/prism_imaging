@@ -27,8 +27,9 @@ if l ~= 0
 
         if length(x_v_r) > 1
             x_v = x_v_r(1);
-            y_v = y_v_r(1)
-            disp('Attention, exact value false, may suppress a not selected point');
+            y_v = y_v_r(1);
+            update_log(app, log, string(y_v))
+            update_log(app, log, 'Warning: The exact value is false. It may remove an unselected point');
         else
             x_v = x_v_r;
             y_v = y_v_r;
@@ -38,11 +39,13 @@ if l ~= 0
         y_tab(i) = y_v;
     end
 
-    [map_out1, nb_err ] = map_rectification_multi(map_z,min_threshold,max_threshold,x_tab,y_tab);
+    [map_out1, nb_err] = map_rectification_multi(map_z,min_threshold,max_threshold,x_tab,y_tab);
 end
 close(fig);
 
 if k == 's' % S key to stop the recursive loop and get out the function and record the rectified map
+%     This input should definitely be explained in the GUI, at least with a
+%     tooltip
     map_z_out = map_z;
 else
     map_z_out = click_loop_multi(carte,map_out1,min_threshold,max_threshold);

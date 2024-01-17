@@ -4,6 +4,6 @@ function check_isempty(data,file_type_text)
 
 if isempty(data)
     message = strcat('ATTENTION : file of type [', file_type_text, '] name not filled');
-    disp(message)
+    update_log(app, log, message)
     f = msgbox(message);
 end

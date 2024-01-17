@@ -5,7 +5,7 @@ function map = topographic_acquisition(robot,sensor,parameters)
 % global scan
 % global zone
 
-disp('Creating the map...');
+update_log(app, log, 'Creating the map...');
 
 opo_flag = 0 ; % sans message lors du repositionnement pour le watchdog % inutile = pas de laser ici !
 

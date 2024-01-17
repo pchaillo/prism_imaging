@@ -11,16 +11,16 @@ if si_time(1) ~= 1
     end
     
     if length( spectrometry_selected_times_list) < length(corrected_topography_time_list)
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('ATTENTION, coefficient de fusion trop important, moins des peaks detectés que de points sur la carte');
-        disp('=> ajout de pt faux pour compenser');
-        disp('ATTENTION, fusion coefficient too high, less detected peaks thans points/pixels on the image');
-        disp('=> add empty points to compensate');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
-        disp('-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, 'ATTENTION, coefficient de fusion trop important, moins des peaks detectés que de points sur la carte');
+        update_log(app, log, '=> ajout de pt faux pour compenser');
+        update_log(app, log, 'ATTENTION, fusion coefficient too high, less detected peaks thans points/pixels on the image');
+        update_log(app, log, '=> add empty points to compensate');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
+        update_log(app, log, '-------------------------------------------------------------------------------------------------e');
     end
     
     for i = 1 : length( corrected_topography_time_list)

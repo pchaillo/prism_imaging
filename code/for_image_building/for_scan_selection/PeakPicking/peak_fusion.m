@@ -4,7 +4,7 @@ function [alls_scans, data_array, filtered_selected_indices, fusionned_indices, 
 tolerance_value = fusion_percentage/100;
 to_fusion_ind =  find(data_array(3,:) < t_step*tolerance_value ); % Fusion indices in data_array
 if (~isempty(to_fusion_ind))
-    to_fusion_ind(1) = [] ; % supress 1st point, always null % suppression du 1er pt, tjrs nul
+    to_fusion_ind(1) = [] ; % Remove the first point, always null % suppression du 1er pt, tjrs nul
     for i = 1 : length(to_fusion_ind)
         to_fusion(i,1) = data_array(1,to_fusion_ind(i)-1) ;
         to_fusion(i,2) = data_array(1,to_fusion_ind(i)) ;

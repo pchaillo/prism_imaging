@@ -3,7 +3,7 @@ function path  = path_editor(folder_name,file_name)
 % Permet de choisir automatique le bon dossier pour l'enregistrement,
 % quelquesoit le fichier dans lequel est stocké le code
 
-% Return the good folder to record the file
+% Return the proper folder to record the file
 
 workspace_dir = pwd;
 

@@ -9,7 +9,7 @@ classdef TimeBasedMethod  < handle
 
         function init(method,app)
             method.aspiration_time = app.AspirationTimesEditField.Value;
-            disp(method.aspiration_time)
+            update_log(app, log, method.aspiration_time)
         end
 
 %         function set_aspiration_time(method,aspiration_time)
