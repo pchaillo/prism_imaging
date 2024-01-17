@@ -1,5 +1,7 @@
-function update_log(app, log, msg)  %WIP 
-log = strcat(log, newline, msg);
+function update_log(app, log, msg)   
+log = [log, newline, string(datetime), msg];
+app.info_log = log;
+
 app.TextArea.Value = log;
 app.TextArea2.Value = log;
 app.LogTextArea.Value = log;
