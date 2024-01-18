@@ -5,9 +5,9 @@
 
 % system('set username');
 
-function value = set_peaks_norm(limits,scan) % pick peak
+function value = set_peaks_norm(app, limits,scan) % pick peak
 
-update_log("Obsolete_function: Use intensity_selection instead! (for_image_building) ")
+update_log(app, "Obsolete_function: Use intensity_selection instead! (for_image_building) ")
 % Why is this not a comment?
 
 % mxXML_on_map_norm7

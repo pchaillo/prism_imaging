@@ -30,12 +30,12 @@ classdef LaserOpolette < LaserBase
 %             state_text = state_string;
         end
         
-        function  temp = get_temp(laser,laser_co)
+        function  temp = get_temp(app, laser,laser_co)
             temp = 404;
             update_log(app, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
-        function tir(laser,laser_co,nb_shot)
+        function tir(app, laser,laser_co,nb_shot)
 %             disp("tir") % for tests 
             for i=1:nb_shot
                 
@@ -60,19 +60,19 @@ classdef LaserOpolette < LaserBase
             state_string = read(laser_co,15,'string');
         end
 
-        function disconnect(laser,laser_co)
+        function disconnect(app, laser,laser_co)
             % insert code to turn the laser off
             delete(laser_co);
             clear laser;
             update_log(app, "Opolette Laser disconnected")
         end
         
-        function set_voltage(laser,laser_co,voltage_value)
+        function set_voltage(app, laser,laser_co,voltage_value)
             % insert code to set the laser voltage
             update_log(app, 'Warning: Cannot chose voltage with the Opolette laser.')
         end
 
-        function [state_text, state_double] = choose_state_text(laser,state)
+        function [state_text, state_double] = choose_state_text(app, laser, state)
             s = state;
             n = strtrim(s);
 
@@ -115,7 +115,7 @@ classdef LaserOpolette < LaserBase
 
         end
 
-        function tir_continu_ON(laser, laser_co)
+        function tir_continu_ON(app, laser, laser_co)
             % insert code to open the mirror that let the laser get out
             
             writeline(laser_co, "CC");
@@ -123,7 +123,7 @@ classdef LaserOpolette < LaserBase
             update_log(app, 'Warning: The mirror is open. The laser is now continuously firing!');
         end
 
-        function tir_continu_OFF(laser, laser_co)
+        function tir_continu_OFF(app, laser, laser_co)
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(laser_co, "CS"); % ferme le laser

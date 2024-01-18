@@ -1,5 +1,4 @@
-
-function state_double = get_state(opotek)
+function state_double = get_state(app, opotek)
 
 writeline(opotek, "STATE")
 state = readline(opotek);

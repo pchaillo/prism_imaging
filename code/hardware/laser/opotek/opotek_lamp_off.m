@@ -1,8 +1,9 @@
-function state_double = opotek_lamp_off(opotek)
+function state_double = opotek_lamp_off(app, opotek)
 
 writeline(opotek, "STOP")
 pause(0.1)
-stop = readline(opotek)
+stop = readline(opotek);
+update_log(app, stop)
 
 % %% ERROR
 %

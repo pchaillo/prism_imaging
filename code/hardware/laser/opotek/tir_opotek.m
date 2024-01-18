@@ -1,4 +1,4 @@
-function tir_opotek(opotek,nb_shot)
+function tir_opotek(app, opotek,nb_shot)
 
 % Déclenche un "tir" pour la désorbtion de la surface à analyser
 % Equivalent au "burst mode" du logiciel Opotek

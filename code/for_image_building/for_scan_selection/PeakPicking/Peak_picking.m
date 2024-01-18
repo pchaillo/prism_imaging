@@ -9,7 +9,7 @@
 % Tolerance percentage as an argument
 
 
-function [pixels_scans, estimated_time_gap] = Peak_picking(mzXMLStruct, threshold_begin, t_step, noise_threshold, intern_flag, fusion_percentage, map_time)
+function [pixels_scans, estimated_time_gap] = Peak_picking(app, mzXMLStruct, threshold_begin, t_step, noise_threshold, intern_flag, fusion_percentage, map_time)
 
 % Indices = position in the list or in the array
 % Nums = position in the raw mzXML file
@@ -85,10 +85,10 @@ end
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 last_selected_point_indice = filtered_data_array(1,end);
-alls_scans = collateral_fusion(alls_scans, first_point_indice, last_selected_point_indice, noise_threshold, filtered_selected_indices, fusionned_indices, t_step, deleted_indices);
+alls_scans = collateral_fusion(app, alls_scans, first_point_indice, last_selected_point_indice, noise_threshold, filtered_selected_indices, fusionned_indices, t_step, deleted_indices);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
-[Final_selected_indices_list,corrected_topography_time_list] = time_based_rectification(alls_scans,map_time,sorted_selected_indices,t_step,fusionned_Scan_time,aspiration_time);
+[Final_selected_indices_list,corrected_topography_time_list] = time_based_rectification(app, alls_scans,map_time,sorted_selected_indices,t_step,fusionned_Scan_time,aspiration_time);
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 

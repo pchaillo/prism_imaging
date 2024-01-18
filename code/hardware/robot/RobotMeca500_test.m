@@ -8,7 +8,7 @@ classdef RobotMeca500
 
     methods
 
-        function robot_co = connect(robot)   % init_tcp for MECA500
+        function robot_co = connect(app, robot)   % init_tcp for MECA500
            % Connexion
             t = tcpip(robot.IP_adress,10000,'NetworkRole','client');
             fopen(t);
@@ -85,7 +85,7 @@ classdef RobotMeca500
             robot_co = t;
         end
 
-        function disconnect(robot, robot_co)  % close_tcp_r.m for MECA500
+        function disconnect(app, robot, robot_co)  % close_tcp_r.m for MECA500
            % Pour desactiver le MECA500 et fermer sa connecion TCP/IP
 
                if robot_co.BytesAvailable ~= 0 % && h < 100 % wait robot message
@@ -114,7 +114,7 @@ classdef RobotMeca500
 
         end
         
-        function reset_error(robot, robot_co) % utile ?
+        function reset_error(robot, robot_co) % utile ? Yes, should definitely be added. 
            % insert code to remove error state of the robot % reset_error.m for MECA500
         end
         

@@ -1,4 +1,4 @@
-function check_isempty(data,file_type_text)
+function check_isempty(app, data,file_type_text)
 
 % Check if the field is empty, and if it is, send a message text
 

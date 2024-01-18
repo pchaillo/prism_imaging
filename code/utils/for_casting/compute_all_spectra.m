@@ -1,4 +1,4 @@
-function all_peaks = compute_all_spectra(bio_dat)
+function all_peaks = compute_all_spectra(app, bio_dat)
 
 l = length(bio_dat);
 
@@ -22,7 +22,7 @@ end
 
 % Peaklist = mzxml2peaks_biodat(bio_dat)
 
-spectra_tab = fusion_part_C(spectra_tab_raw);
+spectra_tab = fusion_part_C(app, spectra_tab_raw);
 
 win = 0.1;
 

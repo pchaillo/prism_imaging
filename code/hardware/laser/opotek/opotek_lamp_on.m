@@ -1,9 +1,10 @@
-function  opotek_lamp_on(opotek)
+function  opotek_lamp_on(app, opotek)
 
 %% ALLUME LA LAMPE
 
 writeline(opotek, "STATE")
-state = readline(opotek)
+state = readline(opotek);
+update_log(app, state)
 state_ok = readline(opotek);
 
 pause(1)
@@ -11,7 +12,8 @@ pause(1)
 %flush(opotek)
 writeline(opotek, "RUN \r")
 %writeline(opotek, "RUN")
-run = readline(opotek)
+run = readline(opotek);
+update_log(app, run)
 
 pause(10)
 

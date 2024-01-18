@@ -1,4 +1,4 @@
-function fusioned_array = fusion_part_C(raw_array)
+function fusioned_array = fusion_part_C(app, raw_array)
 
 % This C step cost computing, so it's done during preprocessing, only if
 % data will be used to reconstruct image

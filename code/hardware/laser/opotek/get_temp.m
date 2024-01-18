@@ -1,4 +1,4 @@
-function temp = get_temp(opotek)
+function temp = get_temp(app, opotek)
 
 temp_limit = 38; % limit celsius temperature under that you canot shot
 

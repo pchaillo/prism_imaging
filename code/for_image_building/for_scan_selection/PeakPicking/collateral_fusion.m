@@ -1,4 +1,4 @@
-function alls_scans = collateral_fusion(alls_scans, first_point_indice, last_selected_point_indice, noise_threshold, selected_indices, fusion_indices, t_step, deleted_indices )
+function alls_scans = collateral_fusion(app, alls_scans, first_point_indice, last_selected_point_indice, noise_threshold, selected_indices, fusion_indices, t_step, deleted_indices )
 %% all the scans that need to be fusionned are added in deisotoped variable in mxXML matlab format #TODO
 
 selected_scans = alls_scans(first_point_indice:last_selected_point_indice);
@@ -29,7 +29,7 @@ end
 ind = 0;
 for i = 1 : length(selected_over_noise_inds)
     if selected_over_noise_inds(i) < 0
-        update_log('Warning: Collateral information found in the points assigned between peaks.');
+        update_log(app, 'Warning: Collateral information found in the points assigned between peaks.');
     else
         ind = ind + 1;
         scan = alls_scans(selected_over_noise_inds(i));

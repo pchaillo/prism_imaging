@@ -1,5 +1,5 @@
 
-function biologic_2D_acquisition(robot,laser,nb_shot,t_b,time_ref)
+function biologic_2D_acquisition(app, robot,laser,nb_shot,t_b,time_ref)
 
 %with spectro time_ref
 

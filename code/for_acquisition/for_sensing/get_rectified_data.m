@@ -1,4 +1,4 @@
-function sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag,parameters)
+function sample_height = get_rectified_data(app, sensor,robot,k_pos,j,delta,opo_flag,parameters)
 
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 

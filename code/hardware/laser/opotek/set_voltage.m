@@ -1,4 +1,4 @@
-function real_voltage = set_voltage(voltage_value,opotek)
+function real_voltage = set_voltage(app, voltage_value,opotek)
 
 %% set the voltage
 writeline(opotek, "CAPVSET"); % CAPVSET ### program the flashlamp voltage

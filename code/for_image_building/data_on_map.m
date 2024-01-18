@@ -11,7 +11,7 @@
 
 % ne crée pas de valeur pour les points ajoutés
 
-function [ pixels_ind, scans_ind, pixels_mz, fusion_list] = data_on_map(pixels_scans,map,limits,map_time,time_flag,loud_flag)
+function [ pixels_ind, scans_ind, pixels_mz, fusion_list] = data_on_map(app, pixels_scans,map,limits,map_time,time_flag,loud_flag)
 % anciennement mzXML_on_map17.m
 % scans_ind (bio_num) => indices in the full mzXML file
 % pixels_ind (bio_ind) => indices of the relative pixel in the image

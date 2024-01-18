@@ -1,4 +1,4 @@
-function [indices,corrected_topography_time_list] = time_based_rectification(alls_scans,map_time,indices,t_step,scan_time_list,aspiration_time)
+function [indices,corrected_topography_time_list] = time_based_rectification(app, alls_scans,map_time,indices,t_step,scan_time_list,aspiration_time)
 
 si_time = size(map_time);
 if si_time(1) ~= 1

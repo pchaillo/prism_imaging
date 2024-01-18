@@ -12,7 +12,7 @@ classdef RobotMeca500
 
     methods
 
-        function robot_co = connect(robot)   % init_tcp for MECA500
+        function robot_co = connect(app, robot)   % init_tcp for MECA500
             % Connexion
             robot_co = tcpip(robot.IP_adress,10000,'NetworkRole','client');
             fopen(robot_co);
@@ -88,7 +88,7 @@ classdef RobotMeca500
 
         end
 
-        function disconnect(robot, robot_co)  % close_tcp_r.m for MECA500
+        function disconnect(app, robot, robot_co)  % close_tcp_r.m for MECA500
             % Pour desactiver le MECA500 et fermer sa connecion TCP/IP
 
             if robot_co.BytesAvailable ~= 0 % && h < 100 % wait robot message

@@ -1,4 +1,4 @@
-function indice_in_time_list = find_closest_point(initial_time_value, time_list, t_step)
+function indice_in_time_list = find_closest_point(app, initial_time_value, time_list, t_step)
 % anciennement, find_dlosest_pt_4
 % avec retour 0 si impossible
 % rectifie les problèmes de temps !

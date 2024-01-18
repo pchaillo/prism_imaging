@@ -1,4 +1,4 @@
-function corrected_calibration_array = fix_calibration_array(calibration_array)
+function corrected_calibration_array = fix_calibration_array(app, calibration_array)
 
 % Removes erroneous values
 % New version for the ILD1320-25 sensor
@@ -34,7 +34,7 @@ while supp ~= 0
 end
 
 t_sup = sum(tab_sup);
-update_log
+update_log(app, string(t_sup))
 
 to_supp = -1;
 

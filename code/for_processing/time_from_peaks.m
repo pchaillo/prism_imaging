@@ -1,4 +1,4 @@
-function estimated_time = time_from_peaks(mzXMLStruct,threshold_begin,noise_threshold)
+function estimated_time = time_from_peaks(app, mzXMLStruct,threshold_begin,noise_threshold)
 
 all_peaks_raw = mzXMLStruct.scan ;
 all_peaks = clean_time(all_peaks_raw); % avec plot_peak2

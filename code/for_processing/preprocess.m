@@ -4,7 +4,7 @@
 
 % Remet aussi les valeurs dans un tableau à deux colonnes
 
-function processed_scan = preprocess(scan,win)
+function processed_scan = preprocess(app, scan,win)
 
 %avec code fusion de deux lignes
 % avec fonction bining pour adaptation en C
@@ -32,7 +32,7 @@ ind_to_supp = find(peak_array(:,2) == 0);
 peak_array(ind_to_supp,:) = [];
 
 %% Remise en place des lignes qui fusionnent
-peak_array = fusion_part_C(peak_array);
+peak_array = fusion_part_C(app, peak_array);
 
 %% bining ? #TODO
 % peak_tab3 = bining(peak_tab2,win);

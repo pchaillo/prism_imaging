@@ -3,7 +3,7 @@
 % Win = Binning window in M/z
 % One of those names needs to change, too unclear
 
-function csv = csv_extractor(csv_map, csv_mat, band, win)
+function csv = csv_extractor(app, csv_map, csv_mat, band, win)
 
 map = load(csv_map);
 

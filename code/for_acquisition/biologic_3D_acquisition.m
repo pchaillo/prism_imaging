@@ -1,4 +1,4 @@
-function biologic_3D_acquisition(robot,sensor,laser,t_b,nb_shot,time_ref)
+function biologic_3D_acquisition(app, robot,sensor,laser,t_b,nb_shot,time_ref)
 
 % with spectro time_ref
 
@@ -51,7 +51,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            h_m = get_rectified_data(sensor,robot,k,j,delta,opo_flag);
+            h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog
@@ -83,7 +83,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             end
             carte.x(v,u) = k;
             carte.y(v,u) = j;
-            h_m = get_rectified_data(sensor,robot,k,j,delta,opo_flag);
+            h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
             % state_double = get_state(opotek); % pour watchdog

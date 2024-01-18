@@ -1,4 +1,4 @@
-function extract_one_spectra(pixels_scans,map,name_map,limits)
+function extract_one_spectra(app, pixels_scans,map,name_map,limits)
 
 
 if isfield(map,'time')
@@ -8,7 +8,7 @@ else
 end
 
 loud_flag = 0; % #TODO
-[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(pixels_scans,map,limits,map.time,time_flag,loud_flag);
+[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(app, pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 

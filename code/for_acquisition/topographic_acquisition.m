@@ -1,4 +1,4 @@
-function map = topographic_acquisition(robot,sensor,parameters)
+function map = topographic_acquisition(app, robot,sensor,parameters)
 % with time recording
 
 % global map
@@ -41,7 +41,7 @@ for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + p
             end
             map.x(v,u) = k;
             map.y(v,u) = j;
-%             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
+%             measured_height = get_rectified_data(app, sensor,t,k,j,delta,opo_flag);
             measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
             map.i(v,u) =  measured_height ;
             real_time_topography_display(map)
@@ -66,7 +66,7 @@ for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + p
             end
             map.x(v,u) = k;
             map.y(v,u) = j;
-%             measured_height = get_rectified_data(sensor,t,k,j,delta,opo_flag);
+%             measured_height = get_rectified_data(app, sensor,t,k,j,delta,opo_flag);
             measured_height = sensor.class.get_data(robot,k,j,delta,opo_flag);
             map.i(v,u) =  measured_height ;
             real_time_topography_display(map)

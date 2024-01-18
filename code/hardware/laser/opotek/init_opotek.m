@@ -5,6 +5,8 @@ function  opotek = init_opotek()
 % Initialise la connexion au laser pour la desorbtion (Q-SMART / OPOTEK
 % Radiant)
 % A COMPLETER A l'INSERM
+% Not implementing update_log here since this code is not put in a
+% function. I might deal with it later.
 
 opotek = tcpclient('192.168.0.59',10001); 
 

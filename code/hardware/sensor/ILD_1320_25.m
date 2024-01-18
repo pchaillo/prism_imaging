@@ -17,17 +17,17 @@ classdef ILD_1320_25
         end
 
         function calibration_array = calibration(sensor,robot)
-            calibration_array = sensor_calibration(robot,sensor);
+            calibration_array = sensor_calibration(app, robot,sensor);
         end
 
         function height = get_data(sensor,robot) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
             k_pos = robot.class.current_x;
             j = robot.class.current_y;
             % delta et opo_flag % #TODO
-            sample_height = get_rectified_data(sensor,robot,k_pos,j,delta,opo_flag);
+            sample_height = get_rectified_data(app, sensor,robot,k_pos,j,delta,opo_flag);
         end
 
-        function value = get_value(sensor,sensor_co) % #TODO : get_value() ?
+        function value = get_value(app, sensor,sensor_co) % #TODO : get_value() ?
             % contain laser connexion and return measured depth
             stop = 0; % bool to stop acquistion (will stop the while loop)
             nb_err = 0; % error counter
