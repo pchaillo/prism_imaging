@@ -1,4 +1,4 @@
-function point_to_add_indices =  fill_empty_parts(t_step,data_array,intern_flag,file,time_res,scan_time_list,begin_index)
+function point_to_add_indices =  fill_empty_parts(app, t_step,data_array,intern_flag,file,time_res,scan_time_list,begin_index)
 
 %% Add empty points, to fill part where there was no data
 %% Ajout de points dans les grands espaces, pour permettre la bonne reconstruction de l'image
@@ -16,7 +16,7 @@ for i = 1 : length(big_space_indices)
         new_point_time = selected_time_list(i) + j*t_step;
         if new_point_time < selected_time_list(i) + time_gap_list(i) - time_res*1.5 % securite pour eviter la superposition de points
         % if new_point_time < selected_time_list(i) + time_gap_list(i) - (t_step/3) % securite pour eviter la superposition de points
-            new_point_ind = find_closest_point(new_point_time,scan_time_list,t_step);
+            new_point_ind = find_closest_point(app, new_point_time,scan_time_list,t_step);
             u = u + 1;
             point_to_add_indices(u) = new_point_ind;
         end
@@ -33,7 +33,7 @@ for j = 1 : nb_pt
     new_point_time = last_selected_time + j*t_step;
     if new_point_time < last_scan_time - time_res*1.5 % securite pour eviter la superposition de points
         % if new_point_time < selected_time_list(i) + time_gap_list(i) - (t_step/3) % securite pour eviter la superposition de points
-        new_point_ind = find_closest_point(new_point_time,scan_time_list,t_step);
+        new_point_ind = find_closest_point(app, new_point_time,scan_time_list,t_step);
         u = u + 1;
         point_to_add_indices(u) = new_point_ind;
     end
@@ -50,7 +50,7 @@ if intern_flag == 1
         new_point_time = first_scan_time + j*t_step;
         if new_point_time < first_selected_time - time_res*1.5 % securite pour eviter la superposition de points
             % if new_point_time < selected_time_list(i) + time_gap_list(i) - (t_step/3) % securite pour eviter la superposition de points
-            new_point_ind = find_closest_point(new_point_time,scan_time_list,t_step);
+            new_point_ind = find_closest_point(app, new_point_time,scan_time_list,t_step);
             u = u + 1;
             point_to_add_indices(u) = new_point_ind;
         end

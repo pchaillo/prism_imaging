@@ -54,7 +54,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
-            % state_double = get_state(opotek); % pour watchdog
+            % state_double = get_state(app, opotek); % pour watchdog
 
             real_time_topography_display()
 
@@ -86,7 +86,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
             carte.i(v,u) =  h_m ;
 
-            % state_double = get_state(opotek); % pour watchdog
+            % state_double = get_state(app, opotek); % pour watchdog
 
             real_time_topography_display()
 

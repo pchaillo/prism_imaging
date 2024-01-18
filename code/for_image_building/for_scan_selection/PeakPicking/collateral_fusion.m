@@ -34,7 +34,7 @@ for i = 1 : length(selected_over_noise_inds)
         ind = ind + 1;
         scan = alls_scans(selected_over_noise_inds(i));
         time = scan.retentionTime;  % Without recording times in a table
-        indices_in_time_list(ind) = find_closest_point(time,selected_time_list,t_step);
+        indices_in_time_list(ind) = find_closest_point(app, time,selected_time_list,t_step);
         p_ind_tab(ind) = i;
     end
 end

@@ -58,7 +58,7 @@ while u == 0  || is_measured == 0
                 update_log(app, string(shift))
                 
                 % if opo_flag == 1 % #TODO
-                %     state_double = get_state(opotek);
+                %     state_double = get_state(app, opotek);
                 % end
                                 
                 a = [k_pos j scan.dh+delta+shift 180 0 180];
