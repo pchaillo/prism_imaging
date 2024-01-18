@@ -1,8 +1,12 @@
-function update_log(app, log, msg)   
-log = [log, newline, string(datetime), msg];
-app.info_log = log;
+function update_log(app, msg)   
 
-app.TextArea.Value = log;
-app.TextArea2.Value = log;
-app.LogTextArea.Value = log;
+global info_log
+
+new_log = [info_log, newline, string(datetime), msg];
+info_log = new_log;
+
+app.TextArea.Value = new_log;
+app.TextArea2.Value = new_log;
+app.LogTextArea.Value = new_log;
 % If any additionnal textbox needs to be updated, add it here
+end

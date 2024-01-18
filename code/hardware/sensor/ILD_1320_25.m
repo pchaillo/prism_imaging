@@ -39,12 +39,12 @@ classdef ILD_1320_25
                     nb_err = nb_err + 1 ;
                     if nb_err > nb_err_threshold
                         value = 0; % peut etre trouver une meilleure solution ? #TODO
-                        update_log(app, app.info_log, string(value))
+                        update_log(app, string(value))
                         stop = 1;
                     end
                 else
                     value = u;
-                    update_log(app, app.info_log, string(value))
+                    update_log(app, string(value))
                     stop = 1;
                 end
             end

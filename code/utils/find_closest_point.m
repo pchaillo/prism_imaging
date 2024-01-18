@@ -33,9 +33,9 @@ else
         indice_in_time_list = find(time_list == closest_time_value);
         
         if length(indice_in_time_list) > 1
-            update_log(app, app.info_log, 'Warning: Time is not properly recorded in the mzXML file. This may distort the peak detection');
-            update_log(app, app.info_log, 'Attention: - Le temps est mal enregistré dans le fichier mzXML. Cela peut nuire à la détection de pics.');
-            update_log(app, app.info_log, indice_in_time_list);
+            update_log(app, 'Warning: Time is not properly recorded in the mzXML file. This may distort the peak detection');
+            update_log(app, 'Attention: - Le temps est mal enregistré dans le fichier mzXML. Cela peut nuire à la détection de pics.');
+            update_log(app, indice_in_time_list);
             indice_in_time_list = indice_in_time_list(1);
         end
     else

@@ -15,28 +15,28 @@ classdef LaserOpotek < LaserBase
 %             flush(laser_co)
             writeline(laser_co, "ECHO 0") % ECHO 1 active le retour commande
             echo = readline(laser_co);
-            update_log(app, app.info_log, echo)
+            update_log(app, echo)
             %pvers_ok = readline(opotek)
             
             % flush(opotek)
             writeline(laser_co, "PSVERS")
             pvers = readline(laser_co);
-            update_log(app, app.info_log, pvers)
+            update_log(app, pvers)
             pvers_ok = readline(laser_co);
-            update_log(app, app.info_log, pvers_ok)
+            update_log(app, pvers_ok)
             
             % flush(opotek)
             writeline(laser_co, "LVERS")
             lvers = readline(laser_co);
-            update_log(app, app.info_log, lvers)
+            update_log(app, lvers)
             lvers_ok = readline(laser_co);
-            update_log(app, app.info_log, lvers_ok)
+            update_log(app, lvers_ok)
             % flush(opotek)
             writeline(laser_co, "STATE")
             state = readline(laser_co);
-            update_log(app, app.info_log, state)
+            update_log(app, state)
             state_ok = readline(laser_co);
-            update_log(app, app.info_log, state_ok)
+            update_log(app, state_ok)
             % 2 - ready for the RUN command
             
             %% parameters
@@ -50,7 +50,7 @@ classdef LaserOpotek < LaserBase
             opotek = laser_co;
             writeline(opotek, "STATE")
             state_raw = readline(opotek);
-            update_log(app, app.info_log, state_raw)
+            update_log(app, state_raw)
             state_ok = readline(opotek);
             
             char_state = char(state_raw);
@@ -58,7 +58,7 @@ classdef LaserOpotek < LaserBase
                 char_state_num = char_state(9);
                 state_double = str2double(char_state_num);
             else
-                update_log(app, app.info_log, 'No state found. Please check the connexion to the laser and investigate the buffer.')
+                update_log(app, 'No state found. Please check the connexion to the laser and investigate the buffer.')
                 state_double = -1;
             end
 
@@ -83,16 +83,16 @@ classdef LaserOpotek < LaserBase
                 if temp < temp_limit
                     % print('attendre %d C : trop froid \n Appuyer sur une touche pour restester la temperature, ou CTRL+C pour arreter le script',temp)
                     X = sprintf('Temperature de %d C : trop froid \n Appuyer sur une touche pour restester la temperature, ou CTRL+C pour arreter le script',temp);
-                    update_log(app, app.info_log, X)
+                    update_log(app, X)
                     % pause()
                     %is_hot = 1; % pour stopper la boucle => app
                 else
                     X = sprintf('Temperature de %d C : OK',temp);
-                    update_log(app, app.info_log, X)
+                    update_log(app, X)
                     %is_hot = 1;
                 end
             else
-                update_log(app, app.info_log, 'No temperature found. Please check the connexion to the laser and investigate the buffer.')
+                update_log(app, 'No temperature found. Please check the connexion to the laser and investigate the buffer.')
             end
             str_temp_ok = readline(opotek);
         end
@@ -106,16 +106,16 @@ classdef LaserOpotek < LaserBase
             
             writeline(opotek, "QSW 1")  % ouvre le laser
             tab_qsw_1 = readline(opotek);
-            update_log(app, app.info_log, tab_qsw_1)
+            update_log(app, tab_qsw_1)
             
             pause(time_stop);
             
             writeline(opotek, "QSW 0") % ferme le laser
             tab_qsw_0 = readline(opotek);
-            update_log(app, app.info_log, tab_qsw_0)
+            update_log(app, tab_qsw_0)
             
             
-            update_log(app, app.info_log, 'Firing...');
+            update_log(app, 'Firing...');
         end
         
         function state_string = lamp_on(laser,laser_co)
@@ -124,7 +124,7 @@ classdef LaserOpotek < LaserBase
             
             writeline(opotek, "STATE")
             state_string = readline(opotek);
-            update_log(app, app.info_log, state_string)
+            update_log(app, state_string)
             state_ok = readline(opotek);
             
             pause(1)
@@ -133,12 +133,12 @@ classdef LaserOpotek < LaserBase
             writeline(opotek, "RUN \r")
             %writeline(opotek, "RUN")
             run = readline(opotek);
-            update_log(app, app.info_log, run)
+            update_log(app, run)
             
             pause(10)
             
             if run == "ERROR"
-                update_log(app, app.info_log, 'Error: The lamp cannot be turned on.');
+                update_log(app, 'Error: The lamp cannot be turned on.');
                 is_ok = 0;
             end
         end
@@ -149,11 +149,11 @@ classdef LaserOpotek < LaserBase
             writeline(opotek, "STOP")
             pause(0.1)
             stop = readline(opotek);
-            update_log(app, app.info_log, stop)
+            update_log(app, stop)
                        
             writeline(opotek, "STATE")
             state_string = readline(opotek);
-            update_log(app, app.info_log, state_string)
+            update_log(app, state_string)
             state_ok = readline(opotek);
             
             char_state = char(state_string);
@@ -161,17 +161,17 @@ classdef LaserOpotek < LaserBase
                 char_state_num = char_state(9);
                 state_double = str2double(char_state_num);
             else
-                update_log(app, app.info_log, 'No state found. Please check the laser connexion and investigate the buffer.')
+                update_log(app, 'No state found. Please check the laser connexion and investigate the buffer.')
             end
             
-            update_log(app, app.info_log, 'The state ID shoud be 2.');
+            update_log(app, 'The state ID shoud be 2.');
         end
 
         function disconnect(laser,laser_co)
             % insert code to turn the laser off
             delete(laser_co);
             clear laser;
-            update_log(app, app.info_log, "Opotek Laser Disconnected")
+            update_log(app, "Opotek Laser Disconnected")
         end
 
         function set_voltage(laser,laser_co,voltage_value)
@@ -179,9 +179,9 @@ classdef LaserOpotek < LaserBase
             %% set the voltage
             writeline(opotek, "CAPVSET"); % CAPVSET ### program the flashlamp voltage
             capvset = readline(opotek);
-            update_log(app, app.info_log, capvset)
+            update_log(app, capvset)
             capvset_ok = readline(opotek);
-            update_log(app, app.info_log, capvset_ok)
+            update_log(app, capvset_ok)
             
             str_volt = num2str(voltage_value);
             to_set_temp = strcat("CAPVSET ",str_volt);
@@ -189,13 +189,13 @@ classdef LaserOpotek < LaserBase
             writeline(opotek, to_set_temp) % CAPVSET ### program the flashlamp voltage
             %capvset2 = readline(opotek)
             capvset_ok2 = readline(opotek);
-            update_log(app, app.info_log, capvset_ok2)
+            update_log(app, capvset_ok2)
             
             writeline(opotek, "CAPVSET") % CAPVSET ### program the flashlamp voltage
             capvset3 = readline(opotek);
-            update_log(app, app.info_log, capvset_3)
+            update_log(app, capvset_3)
             capvset_ok3 = readline(opotek);
-            update_log(app, app.info_log, capvset_ok3)
+            update_log(app, capvset_ok3)
             
             real_volt_char = convertStringsToChars(capvset3);
             l = length(real_volt_char);
@@ -203,7 +203,7 @@ classdef LaserOpotek < LaserBase
             real_voltage = str2double(real_voltage_str);
             
             if real_voltage ~= voltage_value
-                update_log(app, app.info_log, 'Warning: Voltage setting problem');
+                update_log(app, 'Warning: Voltage setting problem');
                 return
                 
             end
@@ -259,8 +259,8 @@ classdef LaserOpotek < LaserBase
             
             writeline(opotek, "QSW 1")  % ouvre le laser
             tab_qsw_1 = readline(opotek);
-            update_log(app, app.info_log, tab_qsw_1)
-            update_log(app, app.info_log, 'Warning: The mirror is open. The laser is now continuosuly firing!');
+            update_log(app, tab_qsw_1)
+            update_log(app, 'Warning: The mirror is open. The laser is now continuosuly firing!');
         end
 
         function tir_continu_OFF(laser,laser_co)
@@ -268,8 +268,8 @@ classdef LaserOpotek < LaserBase
             
             writeline(opotek, "QSW 0") % ferme le laser
             tab_qsw_0 = readline(opotek);
-            update_log(app, app.info_log, tab_qsw_0)
-            update_log(app, app.info_log, 'Warning: Closing the mirror. End of continuous firing.')
+            update_log(app, tab_qsw_0)
+            update_log(app, 'Warning: Closing the mirror. End of continuous firing.')
         end
     end
 end

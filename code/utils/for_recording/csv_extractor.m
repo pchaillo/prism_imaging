@@ -50,7 +50,7 @@ data_array_for_extraction(1,12:12+l-1) = mz_list; % Always modify accordingly wh
 m = load(csv_mat); % Without loading the pixel scans as an object, MatLab throws a hissy fit and refuses to use in inside the loop
 
 parfor ind = 1:total_pixels
-    update_log(app, app.info_log, ind)
+    update_log(app, ind)
     temp = zeros(1, 12+l-1);
     temp(1) = map(ind+1, 1); % Y
     temp(2) = map(ind+1, 2); % X
@@ -103,5 +103,5 @@ writetable(data_table,export_name)
 
 movefile(export_name,"files/csv files")
 % csvwrite("msi_data_test4_last.csv",data_array_for_extraction')
-update_log(app, app.info_log, 'Data exported to a CSV file.')
+update_log(app, 'Data exported to a CSV file.')
 end

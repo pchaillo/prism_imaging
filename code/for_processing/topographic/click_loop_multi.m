@@ -28,8 +28,8 @@ if l ~= 0
         if length(x_v_r) > 1
             x_v = x_v_r(1);
             y_v = y_v_r(1);
-            update_log(app, app.info_log, string(y_v))
-            update_log(app, app.info_log, 'Warning: The exact value is false. It may remove an unselected point');
+            update_log(app, string(y_v))
+            update_log(app, 'Warning: The exact value is false. It may remove an unselected point');
         else
             x_v = x_v_r;
             y_v = y_v_r;

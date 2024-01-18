@@ -85,7 +85,7 @@ else
                 scans_ind(x_ind,y_ind) = pixels_scans(scan_ind).num;
                 fusion_list_ind = fusion_list_ind + 1;
                 fusion_list(fusion_list_ind) = {pixels_scans(scan_ind).deisotoped};
-                update_log(app, app.info_log, scan_ind)
+                update_log(app, scan_ind)
                 if ionisationEnergy(scan_ind) ~= 0
                     pixels_mz(x_ind,y_ind)= intensity_list(scan_ind)*med;
                 else

@@ -7,6 +7,6 @@ TIC_list = extract_TIC(alls_scans);
 Scan_time_list = extract_time(alls_scans);
 
 [data_array,first_point_index] = create_data_array_from_peak_detection(all_peaks,threshold_begin,TIC_list,Scan_time_list);
-update_log(app, app.info_log, string([data_array, first_point_index]))
+update_log(app, string([data_array, first_point_index]))
 
 estimated_time = time_estimation(data_array,noise_threshold);
