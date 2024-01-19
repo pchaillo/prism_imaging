@@ -10,103 +10,26 @@ function [map_out, nb_err ]= map_rectification_multi(map,min_threshold,max_thres
 % Only takes vertical and horizontal neighbours into account. Diagonals are
 % disregarded. 
 
-si = size(map);
+dim_map = size(map);
 
 map_out = map;
 
 nb_err = 0;
 
-s_n = min_threshold ;%+ scan.s_offset; % seuil négatif de valeur considérée comme fausse / Negative threshold: Under it, the value is consider as false
-
-surf_max = max_threshold;% + scan.s_offset;
-
-%%
-% i = x_d;
-% j = y_d;
-
 l = length(x_tab);
 
-for w = 1 : l
+for ind = 1 : l
     
-    i = x_tab(w);
-    j = y_tab(w);
+    i = x_tab(ind);
+    j = y_tab(ind);
     
-    %%% Edge Detection %%%
-    if i == 1
-        i_m = -1;
-    else
-        i_m = 1;
-    end
+    edge_flags = edge_detection(i,j,dim_map);
+
+    neighbor_flag = false_neighbor_detection(i,j,edge_flags,min_threshold,max_threshold,map,map_out);
     
-    if i == si(1)
-        i_p = -1;
-    else
-        i_p = 1;
-    end
+    neighbor_flag = add_selected_neighbor(i,j,neighbor_flag,ind,x_tab,y_tab,l);
     
-    if j == 1
-        j_m = -1;
-    else
-        j_m = 1;
-    end
-    
-    if j == si(2)
-        j_p = -1;
-    else
-        j_p = 1;
-    end
-    
-    %%% détection des voisins faux eux aussi %%%
-    if map_out(i-i_m,j) < s_n || map_out(i-i_m,j) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
-        a = 0;
-    else
-        a = 1;
-    end
-    
-    if map_out(i+i_p,j) < s_n || map_out(i+i_p,j) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
-        b = 0;
-    else
-        b = 1;
-    end
-    
-    if map_out(i,j-j_m) < s_n ||  map_out(i,j-j_m) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
-        c = 0;
-    else
-        c = 1;
-    end
-    
-    if map_out(i,j+j_p) < s_n || map_out(i,j+j_p) > surf_max || map(i,j) == 0.01 || map(i,j) == 0.02
-        d = 0;
-    else
-        d = 1;
-    end
-    
-    %%% detection des voisins aussi cochés
-    
-    if w < l
-        for k = w+1 : l
-            if i-1 == x_tab(k) && j == y_tab(k)
-                a = 0;
-            end
-            if i+1 == x_tab(k) && j == y_tab(k)
-                b = 0;
-            end
-            if i == x_tab(k) && j-1 == y_tab(k)
-                c = 0;
-            end
-            if i == x_tab(k) && j+1 == y_tab(k)
-                d = 0;
-            end
-        end
-    end
-    
-    somme = [ a b c d];
-    
-    if sum( somme ) == 0
-        map_out(i,j) = 0 ;
-    else
-        map_out(i,j) = ( a*map_out(i-i_m,j) + b*map_out(i+i_p,j) + c*map_out(i,j-j_m) + d*map_out(i,j+j_p) ) / (a+b+c+d);
-    end
+    map_out(i,j) = compute_new_height(i,j,edge_flags,neighbor_flag,map_out);
     
 end
 
