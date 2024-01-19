@@ -62,10 +62,10 @@ classdef LaserOpotek < LaserBase
                 state_double = -1;
             end
 
-            state_string = laser.choose_state_text(state_double);
+            state_string = laser.choose_state_text(app, state_double);
         end
         
-        function temp = get_temp(app, laser,laser_co)
+        function temp = get_temp(app, laser, laser_co)
             opotek = laser_co;
             
             temp_limit = 38; % limit celsius temperature under that you canot shot
@@ -97,7 +97,7 @@ classdef LaserOpotek < LaserBase
             str_temp_ok = readline(opotek);
         end
         
-        function tir(app, laser,laser_co,nb_shot)
+        function tir(app, laser, laser_co, nb_shot)
             opotek = laser_co;
             % Déclenche un "tir" pour la désorbtion de la surface à analyser
             % Equivalent au "burst mode" du logiciel Opotek
@@ -118,7 +118,7 @@ classdef LaserOpotek < LaserBase
             update_log(app, 'Firing...');
         end
         
-        function state_string = lamp_on(app, laser,laser_co)
+        function state_string = lamp_on(app, laser, laser_co)
             opotek = laser_co;
             %% Turning the lamp on
             
@@ -167,14 +167,14 @@ classdef LaserOpotek < LaserBase
             update_log(app, 'The state ID shoud be 2.');
         end
 
-        function disconnect(app, laser,laser_co)
+        function disconnect(app, laser, laser_co)
             % insert code to turn the laser off
             delete(laser_co);
             clear laser;
             update_log(app, "Opotek Laser Disconnected")
         end
 
-        function set_voltage(app, laser,laser_co,voltage_value)
+        function set_voltage(app, laser, laser_co, voltage_value)
             opotek = laser_co;
             %% set the voltage
             writeline(opotek, "CAPVSET"); % CAPVSET ### program the flashlamp voltage
@@ -209,7 +209,7 @@ classdef LaserOpotek < LaserBase
             end
         end
 
-        function [state_text, state_double] = choose_state_text(laser,state) % fonction propre et unique a LaserOpotek ?
+        function [state_text, state_double] = choose_state_text(~, laser, state) % fonction propre et unique a LaserOpotek ?
             n = state;
 
             if n == 0

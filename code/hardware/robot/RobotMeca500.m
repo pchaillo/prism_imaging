@@ -168,7 +168,7 @@ classdef RobotMeca500
             % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
             robot.set_position(robot_co,robot.rest_position);
             pause(3);
-            robot.disconnect(robot_co);
+            robot.disconnect(app, robot_co);
         end
 
     end

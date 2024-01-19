@@ -58,7 +58,7 @@ if intern_flag == 1
 end
 
 %% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
-point_to_add_indices =  fill_empty_parts(t_step, filtered_data_array, intern_flag, alls_scans, time_res, fusionned_Scan_time, first_point_indice);
+point_to_add_indices =  fill_empty_parts(app, t_step, filtered_data_array, intern_flag, alls_scans, time_res, fusionned_Scan_time, first_point_indice);
 
 %% Generation of the good indices %% Génération des bon indices
 if exist('point_to_add_indices')

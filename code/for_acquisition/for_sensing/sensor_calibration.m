@@ -40,7 +40,7 @@ pause(7)
 
 while calibration_finished == 0
 
-    value = sensor.class.get_value(sensor.connexion);
+    value = sensor.class.get_value(app, sensor.connexion);
 
     if going_down == 0 % Determines if the robot is traveling upwards or downwards
         current_height = current_height + calibration_resolution;

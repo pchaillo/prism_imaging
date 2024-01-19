@@ -1,0 +1,20 @@
+These issues are all found in the compiled_exe branch
+
+On both versions:
+- A diode is misnamed in the code: The robot calibration lamp must be renamed to app.SensorCalibrationstateLamp in the connect robot callback
+- biologic_3D_acquisition is not called anywhere
+- biologic_2D_acquisition is not called anywhere
+- topographic_acquisition is not called anywhere
+- alls_scans should be renamed all_scans
+- set_peaks_norm is not called anywhere
+- opotek_lamp_off is not called anywhere
+- opotek_lamp_on is not called anywhere
+- tir_opotek is not called anywhere
+- set_peaks_norm is not called anywhere
+
+On the compiled code:
+- The folder scan does not work, causing any dropdown list that depends on it to break. This seems to be caused by it not being found in the workspace. This should be fixed at compiling.
+
+On the MatLab interface:
+- update_log seems to sometimes brak due to 'app' being an 'unrecognized function or variable'. This behaviour is found upon robot connexion for instance.
+- Sometimes the connexion will hang forever. This is not a flaw of the interface, but rather due to the robot entering an error state (in my case, most likely because the new logging breaks scripts called outside of the interface). This can be fixed by resetting the error on the robot's bespoke interface.

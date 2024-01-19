@@ -30,7 +30,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(laser.connexion)
+    laser.class.tir_continu_ON(app, laser.connexion)
 end
 
 si_c = size(carte.x);
@@ -108,7 +108,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(laser.connexion)
+    laser.class.tir_continu_OFF(app, laser.connexion)
 end
 
 end

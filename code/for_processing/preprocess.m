@@ -4,7 +4,7 @@
 
 % Remet aussi les valeurs dans un tableau à deux colonnes
 
-function processed_scan = preprocess(app, scan,win)
+function processed_scan = preprocess(app, scan, win)
 
 %avec code fusion de deux lignes
 % avec fonction bining pour adaptation en C

@@ -16,7 +16,7 @@ global zone
 v = 0;
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(laser.connexion)
+    laser.class.tir_continu_ON(app, laser.connexion)
 end
 
 for k = zone.dec : scan.pas : zone.dim_x+zone.dec
@@ -35,7 +35,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.i(v,u) =  0 ;
 
             if laser.continuous_flag == 0
-                laser.class.tir(laser.connexion,nb_shot)
+                laser.class.tir(app, laser.connexion, nb_shot)
             end
 
             pause(t_b);
@@ -55,7 +55,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             carte.i(v,u) =  0 ;
 
             if laser.continuous_flag == 0
-                laser.class.tir(laser.connexion,nb_shot)
+                laser.class.tir(app, laser.connexion,nb_shot)
             end
             
             pause(t_b);
@@ -66,7 +66,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(laser.connexion)
+    laser.class.tir_continu_OFF(app, laser.connexion)
 end
 
 end

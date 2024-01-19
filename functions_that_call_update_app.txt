@@ -1,0 +1,62 @@
+Functions
+#################
+biologic_3D_acquisition *
+fix_calibration_array *
+get_rectified_data *
+sensor_calibration *
+topographic_acquisition *
+data_on_map *
+Peak_picking *
+collateral_fusion * 
+time_based_rectification * 
+set_peaks_norm * 
+fusion_part_C *
+time_from_peaks *
+click_loop_multi * 
+get_state (Needs testing) 
+get_temp (Needs testing)
+opotek_lamp_off *
+opotek_lamp_on *
+set_voltage * 
+tir_opotek * 
+check_isempty * 
+find_closest_point * 
+compute_all_spectra *
+csv_extractor * 
+set_peaks_norm *
+
+Classes
+###########
+PeakPickingMethod
+- selection * 
+TimeBasedMethod
+- init * 
+LaserOpolette/Opotek
+- init * 
+- get_state * 
+- get_temp * 
+- tir * 
+- lamp_on * 
+- lamp_off * 
+- disconnect *
+- set_voltage * 
+- choose_state_text * 
+- tir_continu_ON * 
+- tir_continu_OFF * 
+
+Opotek/LaserOpotek (Removed in this version as it looks like a deprecated duplicate)
+RobotMeca500
+- connect *
+- disconnect * 
+RobotMeca500_test (Probably unimportant)
+ILD_1320_25
+- get_value *
+
+Dependencies
+##############
+map_from_spectra * 
+extract_one_spectra *
+extract_spectra_zone *
+preprocess *
+fill_empty_parts * 
+plot_all_spectra * 
