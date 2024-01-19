@@ -7,9 +7,9 @@ function map = topographic_acquisition(app, robot,sensor,parameters)
 
 update_log(app, 'Creating the map...');
 
-opo_flag = 0 ; % sans message lors du repositionnement pour le watchdog % inutile = pas de laser ici !
+opo_flag = 0 ; % No need to accound for the laser watchdog since this workflow only performs topography
 
-% Initialisation of the variable => necessary for real time acquisition display
+% Initialization of the variable => necessary for real time acquisition display
 v = 0;
 for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + parameters.mapping_step
     v = v + 1 ;
@@ -57,12 +57,12 @@ for k = parameters.mapping_step : parameters.mapping_step : parameters.dim_x + p
         end
     else
         u =  ( parameters.dim_y  ) / parameters.mapping_step +2  ;
-        for j = parameters.dim_y+2 : - parameters.mapping_step : 2 % décalage de deux millimètres pour éviter les bloquages
+        for j = parameters.dim_y+2 : - parameters.mapping_step : 2 % 2mm offset to avoid stoppages
             u = u - 1;
             a = [k  j  parameters.initial_height + delta 180 0 180];
             if robot.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
-                robot.class.set_position(robot.connexion,a);
+                update_log(app, string([k j])) % Shows the current position of the robot. May be useless (Comment it)
+                robot.class.set_position(robot.connexion, a);
             end
             map.x(v,u) = k;
             map.y(v,u) = j;
