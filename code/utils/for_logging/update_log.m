@@ -2,6 +2,8 @@ function update_log(app, msg)
 
 global info_log
 
+disp(msg) % to get message on command window
+
 new_log = [info_log, newline, string(datetime), msg];
 info_log = new_log;
 

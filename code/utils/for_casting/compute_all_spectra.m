@@ -1,12 +1,12 @@
-function all_peaks = compute_all_spectra(app, bio_dat)
+function all_peaks = compute_all_spectra(app, pixels_scans)
 
-l = length(bio_dat);
+l = length(pixels_scans);
 
 spectra_tab_raw = [];
 
 for i = 1 : l
-    if bio_dat(i).num > 0
-        spectra_tab_raw = [ spectra_tab_raw ; bio_dat(i).peaks.mz ];
+    if pixels_scans(i).num > 0
+        spectra_tab_raw = [ spectra_tab_raw ; pixels_scans(i).peaks.mz ];
     end
     X = sprintf('Spectra creation : %d / %d',i,l);
     update_log(app, X)
@@ -14,13 +14,13 @@ end
 
 % tests => bon ca marche pas pour l'instant, mais y'a moyen de faire plus
 % vite c'est sur
-% spectra_tab_raw2 =  [bio_dat.peaks.mz]
-% spectra_tab_raw2 = arrayfun(@(x) x.peaks.mz, bio_dat)
-% spectra_tab_raw2 = arrayfun(@(x) x.peaks.mz, bio_dat, 'UniformOutput', false)
-% spectra_tab_raw3 = arrayfun(@(x) cat(1,x,bio_dat.peaks.mz), bio_dat)
+% spectra_tab_raw2 =  [pixels_scans.peaks.mz]
+% spectra_tab_raw2 = arrayfun(@(x) x.peaks.mz, pixels_scans)
+% spectra_tab_raw2 = arrayfun(@(x) x.peaks.mz, pixels_scans, 'UniformOutput', false)
+% spectra_tab_raw3 = arrayfun(@(x) cat(1,x,pixels_scans.peaks.mz), pixels_scans)
 % T = cell2table(spectra_tab_raw3)
 
-% Peaklist = mzxml2peaks_biodat(bio_dat)
+% Peaklist = mzxml2peaks_biodat(pixels_scans)
 
 spectra_tab = fusion_part_C(app, spectra_tab_raw);
 
