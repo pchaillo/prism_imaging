@@ -279,6 +279,14 @@ classdef mapping_APP_7 < matlab.apps.AppBase
             global info_log;
             info_log = "";
 
+            % Add folders to the workspace
+            path(path, "code/utils")
+            list_folders_to_import = [find_folders_and_subfolders("code");find_folders_and_subfolders("files")];
+            si=size(list_folders_to_import);
+            for i = 1 : si(1)
+                path(path,list_folders_to_import(i));
+            end
+
             global state; % Global variable that contains all the state of the system
             state.stop_flag = 0; % security flag => the system will stop itself if state.stop_flag == 1 % anciennement state.arret
             state.source_connected = 0; % laser connexion => if connected state.laser == 1 % anciennement state.opo
@@ -1124,11 +1132,13 @@ classdef mapping_APP_7 < matlab.apps.AppBase
             nom_map = strcat(nom_map_r,'.map');
             carte = load_map_fcn(nom_map);
 
-            if nom_mat_r == old_name
-                compute_flag = 1;
-            else
-                compute_flag = 0;
-            end
+            if length(nom_mat_r) == length(old_name)
+                if nom_mat_r == old_name
+                    compute_flag = 1;
+                else
+                    compute_flag = 0;
+                end
+            else 
 
             all_peaks = plot_all_spectra(pixels_scans,compute_flag,all_peaks,valmin,valmax);
             map_from_spectra(app, pixels_scans,carte);
