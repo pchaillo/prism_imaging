@@ -8,14 +8,14 @@ function biologic_3D_acquisition(app, robot,sensor,laser,t_b,nb_shot,time_ref)
 % cartographie la zone et non l'objet
 % avec enregistrement des temps
 
-global carte % essayer de reduire ses dependances non explicites
+global carte % Try to remove those implicit dependencies
 global scan
 global zone
 global state
 
 update_log(app, 'Creating the map');
 
-opo_flag = 0 ; % avec message lors du repositionnement pour le watchdog
+opo_flag = 0 ; % Message sent upon repositioning to deal with the watchdog
 
 %% Creation of the empty map variable (useful for real_display of the topographic map)
 v = 0;
@@ -46,7 +46,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
             u = u +1;
             a = [k  j  scan.dh+delta 180 0 180];
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
+                [k j ] % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(robot.connexion,a);
             end
             carte.x(v,u) = k;
@@ -60,9 +60,9 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 
             delta = h_m;
 
-            a = [k  j  scan.dh+delta 180 0 180]; %replace le robot pour s'assurer d'etre a la distance scan.dh de la surface
+            a = [k  j  scan.dh+delta 180 0 180]; % Repositions the robot to ensure that it remains at a proper distance (scan.dh) of the surface
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
+                [k j ] % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(robot.connexion,a);
                 if laser.continuous_flag == 0
                     laser.class.tir(laser.connexion,nb_shot)
