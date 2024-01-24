@@ -1,3 +1,5 @@
+
+
 classdef AnalogicSensorBase
    
     properties
@@ -17,7 +19,7 @@ classdef AnalogicSensorBase
         end
 
         function calibration_array = calibration(sensor,robot)
-
+            calibration_array = default_sensor_calibration(app, robot,sensor); 
         end
 
         function height = get_data(sensor,robot) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).

@@ -10,10 +10,12 @@ classdef ILD_1320_25
     end
 
     methods
-        function sensor_co = connect(sensor)
+        function sensor_co = IDL_1320(self, arduino, pin)
             % insert laser connexion and return connection object variable
             sensor_co = arduino(); % connect the arduino sensor acquisition
 
+            self.arduino = arduino; 
+            self.pin = pin
         end
 
         function calibration_array = calibration(sensor,robot)
@@ -34,7 +36,7 @@ classdef ILD_1320_25
             nb_err_threshold= 10; % threshold that will stop trying measurement if the error counter reach it
             while stop == 0
                 pause(sensor.wait_time)
-                u = readVoltage(sensor_co , sensor.pin); % get analog voltage
+                u = readVoltage(self.arduino , self.pin); % get analog voltage
                 if u < 0.75 % Pourquoi 0.75 ? % #TODO
                     nb_err = nb_err + 1 ;
                     if nb_err > nb_err_threshold
