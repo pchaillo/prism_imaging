@@ -19,7 +19,7 @@ classdef PeakPickingMethod < handle
  
         end
 
-        function [bio_dat ,time] = selection(app, method, mzXML_data , carte_time )
+        function [bio_dat ,time] = selection(method, mzXML_data , carte_time, app)
             if (method.intern_trig(1:2) == 'On')
                 intern_flag = 1;
             else
