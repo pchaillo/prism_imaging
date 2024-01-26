@@ -1,7 +1,7 @@
 classdef TimeBasedMethod  < handle
 
     properties
-        aspiration_time = 1.05;
+        aspiration_time = 1.05; % I think this should no longer be here
 
     end
 
