@@ -9,7 +9,7 @@ classdef PeakPickingMethod < handle
     end
 
     methods
-        function init(method,app)
+        function init(method, app)
             method.threshold_begin = app.BeginThresholdEditField.Value; % update them here with data from interface !
             method.t_b = app.Timebetween2lasershotsecondEditField.Value;
             method.min_threshold = app.LoudthresholdEditField.Value;

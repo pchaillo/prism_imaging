@@ -6,11 +6,11 @@ classdef ScanSelectionMethodBase
 
     methods
 
-        function init(method,app)
+        function init(method, app)
 
         end
 
-        function [bio_dat ,time,g] = selection(method,mzXML_data , carte_time)
+        function [bio_dat, time, g] = selection(method, mzXML_data, carte_time)
                 % insert your method function here
         end
     end

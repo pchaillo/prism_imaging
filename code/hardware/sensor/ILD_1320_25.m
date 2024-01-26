@@ -27,7 +27,7 @@ classdef ILD_1320_25
             sample_height = get_rectified_data(app, sensor,robot,k_pos,j,delta,opo_flag);
         end
 
-        function value = get_value(app, sensor,sensor_co) % #TODO : get_value() ?
+        function value = get_value(sensor, sensor_co, app) % #TODO : get_value() ?
             % contain laser connexion and return measured depth
             stop = 0; % bool to stop acquistion (will stop the while loop)
             nb_err = 0; % error counter

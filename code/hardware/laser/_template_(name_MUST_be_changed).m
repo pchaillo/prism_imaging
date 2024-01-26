@@ -42,7 +42,7 @@ classdef (Abstract) LaserBase
             % insert code to turn the laser off
         end
 
-        function set_voltage(app, laser,laser_co,voltage_value)
+        function set_voltage(laser, laser_co, voltage_value, app)
             % insert code to set the laser voltage
         end
 
