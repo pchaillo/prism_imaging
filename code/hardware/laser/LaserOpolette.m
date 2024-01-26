@@ -8,12 +8,12 @@ classdef LaserOpolette < LaserBase
     end
     
     methods
-        function laser_co = init(~, laser)
+        function laser_co = init(laser, ~)
            laser_co = serialport(laser.USB_port,laser.Baudrate);
            laser_co.configureTerminator("CR/LF");
         end
         
-        function [state_text, state_double] = get_state(~, laser,laser_co)
+        function [state_text, state_double] = get_state(laser, laser_co, ~)
             flush(laser_co);
             writeline(laser_co, "QI");
             state_string = read(laser_co,15,'string');
@@ -48,13 +48,13 @@ classdef LaserOpolette < LaserBase
             end
         end
         
-        function state_string = lamp_on(~, laser,laser_co)
+        function state_string = lamp_on(laser, laser_co, ~)
             flush(laser_co);
             writeline(laser_co, "A");
             state_string = read(laser_co,15,'string');
         end
         
-        function state_string = lamp_off(~, laser, laser_co)
+        function state_string = lamp_off(laser, laser_co, ~)
             flush(laser_co);
             writeline(laser_co, "S");
             state_string = read(laser_co,15,'string');

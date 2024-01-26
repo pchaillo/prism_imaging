@@ -30,7 +30,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(app, laser.connexion)
+    laser.class.tir_continu_ON(laser.connexion, app)
 end
 
 si_c = size(carte.x);
@@ -65,7 +65,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 [k j ] % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(robot.connexion,a);
                 if laser.continuous_flag == 0
-                    laser.class.tir(laser.connexion,nb_shot)
+                    laser.class.tir(laser.connexion, nb_shot, app)
                 end
                 carte.time(v,u) = toc(time_ref);
                 pause(t_b);
@@ -97,7 +97,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
                 if laser.continuous_flag == 0
-                    laser.class.tir(laser.connexion,nb_shot)
+                    laser.class.tir(laser.connexion, nb_shot, app)
                 end                
                 carte.time(v,u) = toc(time_ref);
                 pause(t_b);
@@ -108,7 +108,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(app, laser.connexion)
+    laser.class.tir_continu_OFF(laser.connexion, app)
 end
 
 end

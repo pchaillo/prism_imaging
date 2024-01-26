@@ -209,7 +209,7 @@ classdef LaserOpotek < LaserBase
             end
         end
 
-        function [state_text, state_double] = choose_state_text(~, laser, state) % fonction propre et unique a LaserOpotek ?
+        function [state_text, state_double] = choose_state_text(laser, state, ~) % fonction propre et unique a LaserOpotek ?
             n = state;
 
             if n == 0

@@ -88,7 +88,7 @@ classdef RobotMeca500
 
         end
 
-        function disconnect(app, robot, robot_co)  % close_tcp_r.m for MECA500
+        function disconnect(robot, robot_co, app)  % close_tcp_r.m for MECA500
             % Pour desactiver le MECA500 et fermer sa connecion TCP/IP
 
             if robot_co.BytesAvailable ~= 0 % && h < 100 % wait robot message
@@ -168,7 +168,7 @@ classdef RobotMeca500
             % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
             robot.set_position(robot_co,robot.rest_position);
             pause(3);
-            robot.disconnect(app, robot_co);
+            robot.disconnect(robot_co, app);
         end
 
     end

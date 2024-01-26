@@ -29,16 +29,16 @@ classdef (Abstract) LaserBase
             %end
         end
 
-        function state_string = lamp_on(laser,laser_co)
+        function state_string = lamp_on(laser, laser_co, ~)
             % insert code to turn the lamp on
         end
 
 
-        function state_string = lamp_off(laser,laser_co)
+        function state_string = lamp_off(laser, laser_co, ~)
             % insert code to turn the lamp off
         end
 
-        function  disconnect(laser,laser_co)
+        function  disconnect(laser, laser_co, ~)
             % insert code to turn the laser off
         end
 
@@ -46,15 +46,15 @@ classdef (Abstract) LaserBase
             % insert code to set the laser voltage
         end
 
-        function [state_text, state_double] = choose_state_text(laser,state)
+        function [state_text, state_double] = choose_state_text(laser, state, ~)
             % insert code to choose the state text
         end
 
-        function tir_continu_ON(laser,laser_co)
+        function tir_continu_ON(laser, laser_co, ~)
             % insert code to open the mirror that let the laser get out
         end
 
-        function tir_continu_OFF(laser,laser_co)
+        function tir_continu_OFF(laser, laser_co, ~)
             % insert code to close the mirror, to stop continue laser shooting
         end
     end

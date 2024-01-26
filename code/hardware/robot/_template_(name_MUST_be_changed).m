@@ -11,7 +11,7 @@ classdef RobotBase
            % insert code to init connexion with the robot % init_tcp for MECA500
         end
 
-        function disconnect(robot, robot_co) 
+        function disconnect(robot, robot_co, ~) 
            % insert code to stop connexion with the robot % close_tcp_r.m for MECA500
         end
         

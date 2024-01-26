@@ -1,4 +1,4 @@
-function calibration_array = sensor_calibration(app, robot,sensor)
+function calibration_array = sensor_calibration(robot, sensor, app)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % Better handling of criticals values
@@ -40,7 +40,7 @@ pause(7)
 
 while calibration_finished == 0
 
-    value = sensor.class.get_value(app, sensor.connexion);
+    value = sensor.class.get_value(sensor.connexion, app);
 
     if going_down == 0 % Determines if the robot is traveling upwards or downwards
         current_height = current_height + calibration_resolution;
