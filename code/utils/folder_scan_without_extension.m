@@ -1,5 +1,5 @@
 function OptionTab = folder_scan_without_extension(folder_name)
-% Récupère le nom des fichiers ET dossiers 
+% Recovers the names of files and folders
 str = folder_scan(folder_name);
 si =  size(str);
 for i = 1 : si(2)

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1817760529" file="C:\Users\guiot\Downloads\OMG_MSI.prj" location="C:\Users\guiot\Downloads" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Downloads\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="4233718423" file="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>OMG_MSI</param.appname>
     <param.icon />
     <param.icons />
@@ -24,8 +24,8 @@
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
     <param.support.packages />
-    <param.web.mcr>false</param.web.mcr>
-    <param.package.mcr>true</param.package.mcr>
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
     <param.no.mcr>false</param.no.mcr>
     <param.web.mcr.name>OMG_MSI_Installer_Web</param.web.mcr.name>
     <param.package.mcr.name>OMG_MSI_Installer_Local</param.package.mcr.name>
@@ -61,6 +61,8 @@
       <param.user.defined.mcr.options />
       <param.target.type />
       <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
       <param.no.mcr />
       <param.no.mcr.name />
       <param.create.log />
@@ -70,25 +72,75 @@
       <param.example />
     </unset>
     <fileset.main>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.mlapp</file>
+      <file>${PROJECT_ROOT}\OMG_MSI.mlapp</file>
     </fileset.main>
-    <fileset.resources>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\code</file>
-    </fileset.resources>
+    <fileset.resources />
     <fileset.package>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\3d_export</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\code</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\code\code_python\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\files</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\READ_BEFORE_FIRST_USE.txt</file>
+      <file>${PROJECT_ROOT}\3d_export</file>
+      <file>${PROJECT_ROOT}\code\code_python\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat</file>
+      <file>${PROJECT_ROOT}\files</file>
+      <file>${PROJECT_ROOT}\READ_BEFORE_FIRST_USE.txt</file>
     </fileset.package>
     <fileset.depfun>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\test_func.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\biologic_2D_acquisition.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\biologic_3D_acquisition.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\for_sensing\fix_calibration_array.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\for_sensing\get_rectified_data.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\mapping_time_estimation.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\topographic_acquisition.m</file>
+      <file>${PROJECT_ROOT}\code\for_acquisition\trigger_spectro_time.m</file>
+      <file>${PROJECT_ROOT}\code\for_image_building\data_on_map.m</file>
+      <file>${PROJECT_ROOT}\code\for_image_building\get_median.m</file>
+      <file>${PROJECT_ROOT}\code\for_image_building\intensity_selection.m</file>
+      <file>${PROJECT_ROOT}\code\for_image_building\map_from_spectra.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\bining.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\bining_fixed_size.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\create_data_array_from_peak_detection.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\extract_one_spectra.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\extract_spectra_zone.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\fusion_part_C.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\preprocess.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\time_estimation.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\time_from_peaks.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\compute_new_height.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\edge_detection.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\false_neighbor_detection.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\map_rectification.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\poly_2nd_ordre.m</file>
+      <file>${PROJECT_ROOT}\code\for_processing\topographic\polynomial_interpolation.m</file>
+      <file>${PROJECT_ROOT}\code\utils\check_isempty.m</file>
+      <file>${PROJECT_ROOT}\code\utils\extract_TIC.m</file>
+      <file>${PROJECT_ROOT}\code\utils\extract_time.m</file>
+      <file>${PROJECT_ROOT}\code\utils\find_folders_and_subfolders.m</file>
+      <file>${PROJECT_ROOT}\code\utils\folder_scan.m</file>
+      <file>${PROJECT_ROOT}\code\utils\folder_scan_without_extension.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\clean_time.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\compute_all_spectra.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\fix_ms_data.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\raw_to_time.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\time_list_to_time_gap.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\time_to_indice.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_casting\time_to_list.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\display_mz_map.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\fix_border.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\plot_all_spectra.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\plot_chromatogram.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\plot_multiple_spectra.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_display\real_time_topography_display.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_loading\load_map_fcn.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_logging\update_log.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_recording\csv_extractor.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_recording\export_spectra_to_csv.m</file>
+      <file>${PROJECT_ROOT}\code\utils\for_recording\record_map.m</file>
+      <file>${PROJECT_ROOT}\code\utils\path_editor.m</file>
+      <file>${PROJECT_ROOT}\code\utils\replace_NaN_by_zero.m</file>
+      <file>${PROJECT_ROOT}\code\utils\sort_folders_and_files.m</file>
+      <file>${PROJECT_ROOT}\test_func.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">C:\Users\guiot\Downloads\OMG_MSI\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">C:\Users\guiot\Downloads\OMG_MSI\for_testing\readme.txt</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">C:\Users\guiot\Downloads\OMG_MSI\for_testing\OMG_MSI.exe</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\OMG_MSI.exe</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
