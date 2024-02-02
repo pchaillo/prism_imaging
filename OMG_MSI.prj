@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="4233718423" file="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="934923522" file="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>OMG_MSI</param.appname>
     <param.icon />
     <param.icons />
@@ -74,67 +74,19 @@
     <fileset.main>
       <file>${PROJECT_ROOT}\OMG_MSI.mlapp</file>
     </fileset.main>
-    <fileset.resources />
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\3d_export</file>
+      <file>${PROJECT_ROOT}\code</file>
+      <file>${PROJECT_ROOT}\files</file>
+    </fileset.resources>
     <fileset.package>
       <file>${PROJECT_ROOT}\3d_export</file>
       <file>${PROJECT_ROOT}\code\code_python\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat</file>
       <file>${PROJECT_ROOT}\files</file>
+      <file>${PROJECT_ROOT}\modular_hardware</file>
       <file>${PROJECT_ROOT}\READ_BEFORE_FIRST_USE.txt</file>
     </fileset.package>
     <fileset.depfun>
-      <file>${PROJECT_ROOT}\code\for_acquisition\biologic_2D_acquisition.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\biologic_3D_acquisition.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\for_sensing\fix_calibration_array.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\for_sensing\get_rectified_data.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\mapping_time_estimation.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\topographic_acquisition.m</file>
-      <file>${PROJECT_ROOT}\code\for_acquisition\trigger_spectro_time.m</file>
-      <file>${PROJECT_ROOT}\code\for_image_building\data_on_map.m</file>
-      <file>${PROJECT_ROOT}\code\for_image_building\get_median.m</file>
-      <file>${PROJECT_ROOT}\code\for_image_building\intensity_selection.m</file>
-      <file>${PROJECT_ROOT}\code\for_image_building\map_from_spectra.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\bining.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\bining_fixed_size.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\create_data_array_from_peak_detection.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\extract_one_spectra.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\extract_spectra_zone.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\fusion_part_C.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\preprocess.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\time_estimation.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\time_from_peaks.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\compute_new_height.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\edge_detection.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\false_neighbor_detection.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\map_rectification.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\poly_2nd_ordre.m</file>
-      <file>${PROJECT_ROOT}\code\for_processing\topographic\polynomial_interpolation.m</file>
-      <file>${PROJECT_ROOT}\code\utils\check_isempty.m</file>
-      <file>${PROJECT_ROOT}\code\utils\extract_TIC.m</file>
-      <file>${PROJECT_ROOT}\code\utils\extract_time.m</file>
-      <file>${PROJECT_ROOT}\code\utils\find_folders_and_subfolders.m</file>
-      <file>${PROJECT_ROOT}\code\utils\folder_scan.m</file>
-      <file>${PROJECT_ROOT}\code\utils\folder_scan_without_extension.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\clean_time.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\compute_all_spectra.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\fix_ms_data.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\raw_to_time.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\time_list_to_time_gap.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\time_to_indice.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_casting\time_to_list.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\display_mz_map.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\fix_border.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\plot_all_spectra.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\plot_chromatogram.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\plot_multiple_spectra.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_display\real_time_topography_display.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_loading\load_map_fcn.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_logging\update_log.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_recording\csv_extractor.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_recording\export_spectra_to_csv.m</file>
-      <file>${PROJECT_ROOT}\code\utils\for_recording\record_map.m</file>
-      <file>${PROJECT_ROOT}\code\utils\path_editor.m</file>
-      <file>${PROJECT_ROOT}\code\utils\replace_NaN_by_zero.m</file>
-      <file>${PROJECT_ROOT}\code\utils\sort_folders_and_files.m</file>
       <file>${PROJECT_ROOT}\test_func.m</file>
     </fileset.depfun>
     <build-deliverables>

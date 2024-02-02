@@ -1,4 +1,4 @@
-function OptionTab = folder_scan_without_extension(folder_name)
+function OptionTab = folder_scan_without_extension(folder_name, ~)
 % Recovers the names of files and folders
 str = folder_scan(folder_name);
 si =  size(str);
