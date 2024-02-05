@@ -34,7 +34,7 @@ for i = sensor_types_tab
    end
 end
 
-robot_types_tab = folder_scan_without_extension('./code/hardware/sensor/*.m');
+robot_types_tab = folder_scan_without_extension('./code/hardware/robot/*.m');
 robot_types = [];
 for i = robot_types_tab
    if i ~= "_template_(name_MUST_be_changed)"
