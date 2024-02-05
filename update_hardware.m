@@ -1,5 +1,14 @@
 % Launch this whenever a new hardware class is added!
+% Note: I have really tried to make something cleaner, however scanning
+% folders is not supported for compilation. As such, the next best thing I
+% have found is to generate text files containing the names of each class
+% before compilation. The contents of these files are used to populate
+% dropdown menus for the various software methods and hardware classes.
 % paths = ['./code/hardware/laser/*.m', '/code/hardware/robot/*.m', './code/hardware/sensor/*.m', './code/method/scan_selection/*.m'];
+
+addpath(genpath('3d_export/'))
+addpath(genpath('code'))
+addpath(genpath('files'))
 
 scan_methods_tab = folder_scan_without_extension('./code/method/scan_selection/*.m');
 scan_methods = [];
@@ -33,10 +42,10 @@ for i = robot_types_tab
    end
 end
 
-scan_methods_names = fopen(strcat(pwd, "/files/method/scan_methods.txt"), 'W');
-laser_types_names = fopen(strcat(pwd, "/files/hatdware/laser_types.txt"), 'W');
-sensor_types_names = fopen(strcat(pwd, "/files/hatdware/sensor_types.txt"), 'W');
-robot_types_names = fopen(strcat(pwd, "/files/hatdware/robot_types.txt"), 'W');
+scan_methods_names = fopen(strcat(pwd, "/code/method/scan_methods.txt"), 'W');
+laser_types_names = fopen(strcat(pwd, "/code/hardware/laser_types.txt"), 'W');
+sensor_types_names = fopen(strcat(pwd, "/code/hardware/sensor_types.txt"), 'W');
+robot_types_names = fopen(strcat(pwd, "/code/hardware/robot_types.txt"), 'W');
 
 for i = scan_methods
     fprintf(scan_methods_names, '%s\n', i);
