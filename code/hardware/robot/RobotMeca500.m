@@ -14,7 +14,7 @@ classdef RobotMeca500
 
         function robot_co = connect(robot, app)   % init_tcp for MECA500
             % Connexion
-            robot_co = tcpip(robot.IP_adress,10000,'NetworkRole','client');
+            robot_co = tcpip(robot.IP_adress,10000, 'NetworkRole', 'client');
             fopen(robot_co);
             pause(0.1);
 
@@ -36,7 +36,7 @@ classdef RobotMeca500
             %Activation
             %disp('Activation of the robot')
             data = ['ActivateRobot' char(0)];
-            fwrite(robot_co,data)
+            fwrite(robot_co, data)
             pause(0.1);
             %pause(5);
             while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
@@ -48,7 +48,7 @@ classdef RobotMeca500
             m2 = convertContainedStringsToChars(m1);
             m3 = m2(2 : 5 );
             if m3 == '2000'
-                update_log(app, 'Robot Activated')
+                update_log(app, 'Robot activated')
             elseif m3 == '1011'
                 update_log(app, 'Robot in error state')
                 ok = 0;
@@ -56,7 +56,7 @@ classdef RobotMeca500
 
             % Home
             data = ['Home' char(0)];
-            fwrite(robot_co,data)
+            fwrite(robot_co, data)
             %pause(8); % 10
             pause(0.1);
             while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
@@ -72,10 +72,10 @@ classdef RobotMeca500
             end
 
             data = ['SetJointVel(15)' char(0)]; % Set the percentage of maximum velocity, at 25% by default.
-            fwrite(robot_co,data)
+            fwrite(robot_co, data)
 
             data = ['SetBlending(90)' char(0)]; % Disable trajectory optimisation
-            fwrite(robot_co,data)
+            fwrite(robot_co, data)
 
             %%% Empty the buffer %%%
             if robot_co.BytesAvailable ~= 0 % && h < 100 % Wait for robot message

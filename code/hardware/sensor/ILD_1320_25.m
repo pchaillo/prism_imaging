@@ -16,11 +16,11 @@ classdef ILD_1320_25
 
         end
 
-        function calibration_array = calibration(sensor, robot)
+        function calibration_array = calibration(sensor, robot, app)
             calibration_array = sensor_calibration(robot, sensor, app);
         end
 
-        function height = get_data(sensor,robot) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
+        function height = get_data(sensor, robot) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
             k_pos = robot.class.current_x;
             j = robot.class.current_y;
             % delta et opo_flag % #TODO

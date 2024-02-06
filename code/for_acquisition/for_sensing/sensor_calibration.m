@@ -34,7 +34,7 @@ current_height = init_height;
 pos_x = zone.dec - 10;
 pos_y = 0;
 
-pos = [pos_x pos_y current_height 180 0 180 ];
+pos = [pos_x pos_y current_height 180 0 180];
 robot.class.set_position(robot.connexion, pos);
 pause(7)
 
