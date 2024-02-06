@@ -11,8 +11,8 @@ classdef ILD_1320_25
 
     methods
         function sensor_co = connect(sensor)
-            % insert laser connexion and return connection object variable
-            sensor_co = arduino(); % connect the arduino sensor acquisition
+            % Insert laser connexion and return connection object variable
+            sensor_co = arduino(); % Connect the arduino sensor acquisition
 
         end
 

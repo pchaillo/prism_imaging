@@ -7,12 +7,12 @@ classdef RobotMeca500
         current_x = 0;
         current_y = 0;
         current_z = 0;
-        % #TODO ajouter current_x, y and z for sensor usage ?
+        % #TODO Add current_x, y and z for sensor usage ?
     end
 
     methods
 
-        function robot_co = connect(app, robot)   % init_tcp for MECA500
+        function robot_co = connect(robot, app)   % init_tcp for MECA500
             % Connexion
             robot_co = tcpip(robot.IP_adress,10000,'NetworkRole','client');
             fopen(robot_co);
@@ -20,7 +20,7 @@ classdef RobotMeca500
 
             ok = 1;
 
-            while robot_co.BytesAvailable == 0 % && h < 100 % wait robot message
+            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
             data = fread(robot_co, robot_co.BytesAvailable);
@@ -39,7 +39,7 @@ classdef RobotMeca500
             fwrite(robot_co,data)
             pause(0.1);
             %pause(5);
-            while robot_co.BytesAvailable == 0 % && h < 100 % wait robot message
+            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
             data = fread(robot_co, robot_co.BytesAvailable);
@@ -59,7 +59,7 @@ classdef RobotMeca500
             fwrite(robot_co,data)
             %pause(8); % 10
             pause(0.1);
-            while robot_co.BytesAvailable == 0 % && h < 100 % wait robot message
+            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
             data = fread(robot_co, robot_co.BytesAvailable);
@@ -71,15 +71,15 @@ classdef RobotMeca500
                 update_log(app, 'Robot Homed')
             end
 
-            data = ['SetJointVel(15)' char(0)]; % set the percentage of maximum velocity, at 25% by default.
+            data = ['SetJointVel(15)' char(0)]; % Set the percentage of maximum velocity, at 25% by default.
             fwrite(robot_co,data)
 
-            data = ['SetBlending(90)' char(0)]; % deactivate trajectory optimisation
+            data = ['SetBlending(90)' char(0)]; % Disable trajectory optimisation
             fwrite(robot_co,data)
 
-            %%% Vide le buffer %%%
-            if robot_co.BytesAvailable ~= 0 % && h < 100 % wait robot message
-                data_r = fread(robot_co, robot_co.BytesAvailable); %vide le buffer
+            %%% Empty the buffer %%%
+            if robot_co.BytesAvailable ~= 0 % && h < 100 % Wait for robot message
+                data_r = fread(robot_co, robot_co.BytesAvailable); % Empty the buffer
             end
 
             if ok == 0
@@ -121,7 +121,7 @@ classdef RobotMeca500
             % insert code to remove error state of the robot % reset_error.m for MECA500
         end
 
-        function set_position(robot, robot_co,pos)
+        function set_position(robot, robot_co, pos)
             % pos is a list that contain 6 value : 3 position and 3
             % orientation
 
@@ -166,7 +166,7 @@ classdef RobotMeca500
 
         function go_to_rest_position(robot, robot_co) % utile ?
             % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
-            robot.set_position(robot_co,robot.rest_position);
+            robot.set_position(robot_co, robot.rest_position);
             pause(3);
             robot.disconnect(robot_co, app);
         end
