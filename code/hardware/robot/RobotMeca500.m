@@ -14,7 +14,7 @@ classdef RobotMeca500
 
         function robot_co = connect(robot, app)   % init_tcp for MECA500
             % Connexion
-            robot_co = tcpip(robot.IP_adress,10000, 'NetworkRole', 'client');
+            robot_co = tcpip(robot.IP_adress, 10000, 'NetworkRole', 'client');
             fopen(robot_co);
             pause(0.1);
 
