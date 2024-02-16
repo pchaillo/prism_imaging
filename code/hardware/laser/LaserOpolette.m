@@ -8,21 +8,21 @@ classdef LaserOpolette < LaserBase
     end
     
     methods
-        function laser_co = init(laser, ~)
-           laser_co = serialport(laser.USB_port,laser.Baudrate);
-           laser_co.configureTerminator("CR/LF");
+        function init(self, ~)
+           self.laser_communication = serialport(self.USB_port,self.Baudrate);
+           self.laser_communication.configureTerminator("CR/LF");
         end
         
-        function [state_text, state_double] = get_state(laser, laser_co, ~)
-            flush(laser_co);
-            writeline(laser_co, "QI");
-            state_string = read(laser_co,15,'string');
-            flush(laser_co);
-            writeline(laser_co, "ST");
-            state_string = read(laser_co,15,'string');
+        function [state_text, state_double] = get_state(self, ~)
+            flush(self.laser_communication);
+            writeline(self.laser_communication, "QI");
+            state_string = read(self.laser_communication,15,'string');
+            flush(self.laser_communication);
+            writeline(self.laser_communication, "ST");
+            state_string = read(self.laser_communication,15,'string');
 %             disp(state_string);
             if length(state_string) > 0 
-                [state_text, state_double] = laser.choose_state_text(state_string, app);
+                [state_text, state_double] = self.choose_state_text(state_string, app);
             else
                 state_text = 'Empty State String - No communication';
                 state_double = 2;
@@ -30,49 +30,49 @@ classdef LaserOpolette < LaserBase
 %             state_text = state_string;
         end
         
-        function  temp = get_temp(laser, laser_co, app)
+        function  temp = get_temp(self, app)
             temp = 404;
             update_log(app, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
-        function tir(laser, laser_co, nb_shot, app)
+        function tir(self, nb_shot, app)
 %             disp("tir") % for tests 
             for i=1:nb_shot
                 
-                flush(laser_co)
-%                 writeline(laser_co, "QSP")
-                writeline(laser_co, "OP");
-                state_string = read(laser_co,15,'string');
+                flush(self.laser_communication)
+%                 writeline(self.laser_communication, "QSP")
+                writeline(self.laser_communication, "OP");
+                state_string = read(self.laser_communication,15,'string');
                 update_log(app, "LASER SHOT")
                 pause(0.1)
             end
         end
         
-        function state_string = lamp_on(laser, laser_co, ~)
-            flush(laser_co);
-            writeline(laser_co, "A");
-            state_string = read(laser_co,15,'string');
+        function state_string = lamp_on(self, ~)
+            flush(self.laser_communication);
+            writeline(self.laser_communication, "A");
+            state_string = read(self.laser_communication,15,'string');
         end
         
-        function state_string = lamp_off(laser, laser_co, ~)
-            flush(laser_co);
-            writeline(laser_co, "S");
-            state_string = read(laser_co,15,'string');
+        function state_string = lamp_off(self, ~)
+            flush(self.laser_communication);
+            writeline(self.laser_communication, "S");
+            state_string = read(self.laser_communication,15,'string');
         end
 
-        function disconnect(laser, laser_co, app)
+        function disconnect(self, app)
             % insert code to turn the laser off
-            delete(laser_co);
-            clear laser;
+            delete(self.laser_communication);
+            clear self;
             update_log(app, "Opolette Laser disconnected")
         end
         
-        function set_voltage(laser, laser_co, voltage_value, app)
+        function set_voltage(self, voltage_value, app)
             % insert code to set the laser voltage
             update_log(app, 'Warning: Cannot chose voltage with the Opolette laser.')
         end
 
-        function [state_text, state_double] = choose_state_text(laser, state, app)
+        function [state_text, state_double] = choose_state_text(self, state, app)
             s = state;
             n = strtrim(s);
 
@@ -115,19 +115,19 @@ classdef LaserOpolette < LaserBase
 
         end
 
-        function tir_continu_ON(laser, laser_co, app) % This name should get translated
+        function tir_continu_ON(self, app) % This name should get translated
             % insert code to open the mirror that let the laser get out
             
-            writeline(laser_co, "CC");
-            state_string = read(laser_co,15,'string');
+            writeline(self.laser_communication, "CC");
+            state_string = read(self.laser_communication,15,'string');
             update_log(app, 'Warning: The mirror is open. The laser is now continuously firing!');
         end
 
-        function tir_continu_OFF(laser, laser_co, app) % This name should get translated
+        function tir_continu_OFF(self, app) % This name should get translated
             % insert code to close the mirror, to stop continue laser shooting
             
-            writeline(laser_co, "CS"); % ferme le laser
-            msg_qsw_0 = readline(laser_co); % #TODO renommer cette variable
+            writeline(self.laser_communication, "CS"); % ferme le laser
+            msg_qsw_0 = readline(self.laser_communication); % #TODO renommer cette variable
             update_log(app, 'Warning: Mirror closed. End of continuous laser firing.');
         
         end

@@ -1,9 +1,9 @@
-function sample_height = get_rectified_data(app, sensor,robot,k_pos,j,delta,opo_flag,parameters)
+function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,delta,opo_flag,parameters)
 
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 
 % #TODO : what is delta variable in input ? 
-% #TODO : rename k_pos as x_pos and j as y_pos ?
+% #TODO : rename x_pos as x_pos and y_pos as y_pos ?
 
 % global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
@@ -61,7 +61,7 @@ while u == 0  || is_measured == 0
                 %     state_double = get_state(app, opotek);
                 % end
                                 
-                a = [k_pos j scan.dh+delta+shift 180 0 180];
+                a = [x_pos y_pos scan.dh+delta+shift 180 0 180];
                 robot.class.set_position(robot.connexion,a); 
               %  set_pos(a,t);
                 if shift > max_shift

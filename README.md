@@ -20,6 +20,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 # TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
+	- Impacter les templates apres le debug hardware
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
 - Robot => Effector ?

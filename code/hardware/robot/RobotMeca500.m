@@ -12,18 +12,18 @@ classdef RobotMeca500
 
     methods
 
-        function robot_co = connect(robot, app)   % init_tcp for MECA500
+        function connect(self, app)   % init_tcp for MECA500
             % Connexion
-            robot_co = tcpip(robot.IP_adress, 10000, 'NetworkRole', 'client');
-            fopen(robot_co);
+            self.robot_communication = tcpip(self.IP_adress, 10000, 'NetworkRole', 'client');
+            fopen(self.robot_communication);
             pause(0.1);
 
             ok = 1;
 
-            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
-            data = fread(robot_co, robot_co.BytesAvailable);
+            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
             m = char(data);
             m1 = convertCharsToStrings(m);
             m2 = convertContainedStringsToChars(m1);
@@ -36,13 +36,13 @@ classdef RobotMeca500
             %Activation
             %disp('Activation of the robot')
             data = ['ActivateRobot' char(0)];
-            fwrite(robot_co, data)
+            fwrite(self.robot_communication, data)
             pause(0.1);
             %pause(5);
-            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
-            data = fread(robot_co, robot_co.BytesAvailable);
+            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
             m = char(data);
             m1 = convertCharsToStrings(m);
             m2 = convertContainedStringsToChars(m1);
@@ -56,13 +56,13 @@ classdef RobotMeca500
 
             % Home
             data = ['Home' char(0)];
-            fwrite(robot_co, data)
+            fwrite(self.robot_communication, data)
             %pause(8); % 10
             pause(0.1);
-            while robot_co.BytesAvailable == 0 % && h < 100 % Wait for robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % Wait for robot message
                 % h = h + 1;
             end
-            data = fread(robot_co, robot_co.BytesAvailable);
+            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
             m = char(data);
             m1 = convertCharsToStrings(m);
             m2 = convertContainedStringsToChars(m1);
@@ -72,37 +72,37 @@ classdef RobotMeca500
             end
 
             data = ['SetJointVel(15)' char(0)]; % Set the percentage of maximum velocity, at 25% by default.
-            fwrite(robot_co, data)
+            fwrite(self.robot_communication, data)
 
             data = ['SetBlending(90)' char(0)]; % Disable trajectory optimisation
-            fwrite(robot_co, data)
+            fwrite(self.robot_communication, data)
 
             %%% Empty the buffer %%%
-            if robot_co.BytesAvailable ~= 0 % && h < 100 % Wait for robot message
-                data_r = fread(robot_co, robot_co.BytesAvailable); % Empty the buffer
+            if self.robot_communication.BytesAvailable ~= 0 % && h < 100 % Wait for robot message
+                data_r = fread(self.robot_communication, self.robot_communication.BytesAvailable); % Empty the buffer
             end
 
             if ok == 0
-                robot_co = 0;
+                self.robot_communication = 0;
             end
 
         end
 
-        function disconnect(robot, robot_co, app)  % close_tcp_r.m for MECA500
+        function disconnect(self, app)  % close_tcp_r.m for MECA500
             % Pour desactiver le MECA500 et fermer sa connecion TCP/IP
 
-            if robot_co.BytesAvailable ~= 0 % && h < 100 % wait robot message
-                data_r = fread(robot_co, robot_co.BytesAvailable); %vide le buffer
+            if self.robot_communication.BytesAvailable ~= 0 % && h < 100 % wait robot message
+                data_r = fread(self.robot_communication, self.robot_communication.BytesAvailable); %vide le buffer
             end
 
             data = ['DeactivateRobot' char(0)];
-            fwrite(robot_co,data)
+            fwrite(self.robot_communication,data)
             pause(0.1)
 
-            while robot_co.BytesAvailable == 0 % && h < 100 % wait robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % wait robot message
                 % h = h + 1;
             end
-            data = fread(robot_co, robot_co.BytesAvailable);
+            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
             m = char(data);
             m1 = convertCharsToStrings(m);
             m2 = convertContainedStringsToChars(m1);
@@ -113,15 +113,15 @@ classdef RobotMeca500
             end
 
             pause(0.01)
-            fclose(robot_co);
+            fclose(self.robot_communication);
 
         end
 
-        function reset_error(robot, robot_co) % utile ?
+        function reset_error(self) % utile ?
             % insert code to remove error state of the robot % reset_error.m for MECA500
         end
 
-        function set_position(robot, robot_co, pos)
+        function set_position(self, pos)
             % pos is a list that contain 6 value : 3 position and 3
             % orientation
 
@@ -137,15 +137,15 @@ classdef RobotMeca500
             state.arret = security_check(a(1),a(2),a(3));
 
             %    if state.arret == 0
-            fwrite(robot_co,data);
+            fwrite(self.robot_communication,data);
             %  pause(0.01); % ?
             % h = 0;
-            while robot_co.BytesAvailable == 0 % && h < 100 % wait robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % wait robot message
                 % h = h + 1;
             end
 
             % read robot message
-            data = fread(robot_co, robot_co.BytesAvailable);
+            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
             m = char(data);
             m1 = convertCharsToStrings(m);
             m2 = convertContainedStringsToChars(m1);
@@ -153,7 +153,7 @@ classdef RobotMeca500
             u = str2double(m3);
 
             if u ~= 3012 && length(m) == 22
-                robot.arret = 1;
+                state.stop_flag = 1;
             end
             %             else
             %                 disp('robot arrêté par sécurité');
@@ -164,11 +164,11 @@ classdef RobotMeca500
             robot.current_z = a(3);
         end
 
-        function go_to_rest_position(robot, robot_co) % utile ?
+        function go_to_rest_position(self) % utile ?
             % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
-            robot.set_position(robot_co, robot.rest_position);
+            self.set_position(self.robot_communication, self.rest_position);
             pause(3);
-            robot.disconnect(robot_co, app);
+            self.disconnect(self.robot_communication, app);
         end
 
     end

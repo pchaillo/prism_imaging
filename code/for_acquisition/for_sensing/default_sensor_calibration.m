@@ -1,4 +1,4 @@
-function calibration_array = sensor_calibration(robot, sensor, app)
+function calibration_array = default_sensor_calibration(robot, sensor, app)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % Better handling of criticals values

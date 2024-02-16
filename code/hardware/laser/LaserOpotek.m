@@ -8,46 +8,46 @@ classdef LaserOpotek < LaserBase
     end
     
     methods %(Static)
-        function laser_co = init(laser, app)
-            laser_co = tcpclient(laser.IP_address,laser.Port);
+        function init(self, app)
+            self.laser_communication = tcpclient(self.IP_address,self.Port);
             
             %% Ces commandes servent a verifier que la communication fonctionne bien
-%             flush(laser_co)
-            writeline(laser_co, "ECHO 0") % ECHO 1 active le retour commande
-            echo = readline(laser_co);
+%             flush(self.laser_communication)
+            writeline(self.laser_communication, "ECHO 0") % ECHO 1 active le retour commande
+            echo = readline(self.laser_communication);
             update_log(app, echo)
             %pvers_ok = readline(opotek)
             
             % flush(opotek)
-            writeline(laser_co, "PSVERS")
-            pvers = readline(laser_co);
+            writeline(self.laser_communication, "PSVERS")
+            pvers = readline(self.laser_communication);
             update_log(app, pvers)
-            pvers_ok = readline(laser_co);
+            pvers_ok = readline(self.laser_communication);
             update_log(app, pvers_ok)
             
             % flush(opotek)
-            writeline(laser_co, "LVERS")
-            lvers = readline(laser_co);
+            writeline(self.laser_communication, "LVERS")
+            lvers = readline(self.laser_communication);
             update_log(app, lvers)
-            lvers_ok = readline(laser_co);
+            lvers_ok = readline(self.laser_communication);
             update_log(app, lvers_ok)
             % flush(opotek)
-            writeline(laser_co, "STATE")
-            state = readline(laser_co);
+            writeline(self.laser_communication, "STATE")
+            state = readline(self.laser_communication);
             update_log(app, state)
-            state_ok = readline(laser_co);
+            state_ok = readline(self.laser_communication);
             update_log(app, state_ok)
             % 2 - ready for the RUN command
             
             %% parameters
-            flush(laser_co)
-            writeline(laser_co, "TRIG II") % set internal triggering
+            flush(self.laser_communication)
+            writeline(self.laser_communication, "TRIG II") % set internal triggering
             % pause(0.1)
-            trig = readline(laser_co);
+            trig = readline(self.laser_communication);
         end
         
-        function [state_string, state_double] = get_state(laser, laser_co, app)
-            opotek = laser_co;
+        function [state_string, state_double] = get_state(laser, app)
+            opotek = self.laser_communication;
             writeline(opotek, "STATE")
             state_raw = readline(opotek);
             update_log(app, state_raw)
@@ -65,8 +65,8 @@ classdef LaserOpotek < LaserBase
             state_string = laser.choose_state_text(state_double, app);
         end
         
-        function temp = get_temp(laser, laser_co, app)
-            opotek = laser_co;
+        function temp = get_temp(laser, app)
+            opotek = self.laser_communication;
             
             temp_limit = 38; % limit celsius temperature under that you canot shot
             
@@ -97,8 +97,8 @@ classdef LaserOpotek < LaserBase
             str_temp_ok = readline(opotek);
         end
         
-        function tir(laser, laser_co, nb_shot, app) % Translate this name
-            opotek = laser_co;
+        function tir(laser, nb_shot, app) % Translate this name
+            opotek = self.laser_communication;
             % Déclenche un "tir" pour la désorbtion de la surface à analyser
             % Equivalent au "burst mode" du logiciel Opotek
             
@@ -118,8 +118,8 @@ classdef LaserOpotek < LaserBase
             update_log(app, 'Firing...');
         end
         
-        function state_string = lamp_on(laser, laser_co, app)
-            opotek = laser_co;
+        function state_string = lamp_on(laser, app)
+            opotek = self.laser_communication;
             %% Turning the lamp on
             
             writeline(opotek, "STATE")
@@ -143,8 +143,8 @@ classdef LaserOpotek < LaserBase
             end
         end
         
-        function state_string = lamp_off(laser, laser_co, app)
-            opotek = laser_co;
+        function state_string = lamp_off(laser, app)
+            opotek = self.laser_communication;
             
             writeline(opotek, "STOP")
             pause(0.1)
@@ -167,15 +167,15 @@ classdef LaserOpotek < LaserBase
             update_log(app, 'The state ID shoud be 2.');
         end
 
-        function disconnect(laser, laser_co, app)
+        function disconnect(laser, app)
             % insert code to turn the laser off
-            delete(laser_co);
+            delete(self.laser_communication);
             clear laser;
             update_log(app, "Opotek Laser Disconnected")
         end
 
-        function set_voltage(laser, laser_co, voltage_value, app)
-            opotek = laser_co;
+        function set_voltage(laser, voltage_value, app)
+            opotek = self.laser_communication;
             %% set the voltage
             writeline(opotek, "CAPVSET"); % CAPVSET ### program the flashlamp voltage
             capvset = readline(opotek);
@@ -253,9 +253,9 @@ classdef LaserOpotek < LaserBase
             state_text = strcat('State : ',state_text);
         end
 
-        function tir_continu_ON(laser, laser_co, app)
+        function tir_continu_ON(laser, app)
             % insert code to open the mirror that let the laser get out
-            opotek = laser_co;
+            opotek = self.laser_communication;
             
             writeline(opotek, "QSW 1")  % ouvre le laser
             msg_qsw_1 = readline(opotek);
@@ -263,11 +263,11 @@ classdef LaserOpotek < LaserBase
             update_log(app, 'Warning: The mirror is open. The laser is now continuosuly firing!');
         end
 
-        function tir_continu_OFF(laser, laser_co, app)
+        function tir_continu_OFF(laser, app)
             % insert code to close the mirror, to stop continue laser shooting
             
-            writeline(opotek, "QSW 0") % ferme le laser
-            msg_qsw_0 = readline(opotek);
+            writeline(self.laser_communication, "QSW 0") % ferme le laser
+            msg_qsw_0 = readline(self.laser_communication);
             update_log(app, msg_qsw_0)
             update_log(app, 'Warning: Closing the mirror. End of continuous firing.')
         end
