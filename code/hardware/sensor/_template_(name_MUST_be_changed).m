@@ -15,7 +15,5 @@ classdef SensorTemplate
            % insert laser connexion and return connection object variable
         end
         
-
-
    end
 end
