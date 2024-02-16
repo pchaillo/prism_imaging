@@ -20,7 +20,6 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 # TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
-
 - tab => array
 - alls_scans => all_scans
 - faire un choix pour l'ajout des fichier au workspace
@@ -31,8 +30,17 @@ Globalement, traduire tout le francais
 
 Aussi deporter ce aui peut l'etre dans des fonctions et ne pas laisser dans mlapp => rend les merge plus faciles
 
+Supprimer les egalites inutiles ? 
+Exemple :
+a = B + c
+a_final = a
+return a_final
+=>
+return b + C
+
 # Fonction avec des noms a revoir (Faire des suggestions ici ?)
-- set_peaks_norm() => intensity_selection ?
+- deiso_fusion_reccur() => ?
+- list_fold_reccur() => ?
 
 # Cleaned :
 - bio_dat => pixels_scans

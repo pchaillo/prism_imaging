@@ -1,6 +1,6 @@
-function indices_fusion = deiso_fusion_reccur(fusion_tab)
+function indices_fusion_list = deiso_fusion_reccur(scans_fusion_list)
 
-tab = fusion_tab;
-tab_fin = [];
-[tab tab_fin] = tab_fold_reccur(tab,tab_fin );
-indices_fusion = tab_fin;
+list = scans_fusion_list;
+final_list = [];
+[list final_list] = list_fold_reccur(list,final_list );
+indices_fusion_list = final_list;

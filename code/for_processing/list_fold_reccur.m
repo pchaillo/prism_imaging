@@ -1,4 +1,4 @@
-function [raw_array final_array] = tab_fold_reccur(raw_array, final_array)
+function [raw_array final_array] = list_fold_reccur(raw_array, final_array)
 
 fusion_indice = 0 ;
 for i = 1 : length(raw_array)-1
@@ -46,7 +46,7 @@ if exist('mask_list')
     end
     
     if fusion_indice > 1
-        [raw_array final_array] = tab_fold_reccur(array_for_reccursive, final_array);
+        [raw_array final_array] = list_fold_reccur(array_for_reccursive, final_array);
     end
 else 
     final_array = raw_array;
