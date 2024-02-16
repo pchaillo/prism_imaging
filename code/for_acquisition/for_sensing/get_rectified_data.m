@@ -23,7 +23,7 @@ nb_boucle_repeat = 100; % 1200
 shift = 0; % height shift for the robot repositioning 
 max_shift = 5; % maximal height shift
 
-calibration_tab = sensor.tab_etal; % #TODO : rename tab_etal to calibration_tab
+calibration_array = sensor.calibration_array; 
 
 while u == 0  || is_measured == 0
     loop_counter = loop_counter + 1;
@@ -32,13 +32,13 @@ while u == 0  || is_measured == 0
         
         d_y = sensor.class.get_data(sensor.connexion); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
         
-        si = size(calibration_tab);
+        si = size(calibration_array);
         
         for z = 1 : si(2)-3
-            if abs(d_y) > abs(calibration_tab(2,z+1)) && abs(d_y) < abs(calibration_tab(2,z+2))
-                %       measured_distance = ( calibration_tab(1,z) + calibration_tab(1,z+1) ) / 2; % to get raw value directly
-                y = [ calibration_tab(1,z) calibration_tab(1,z+1)  calibration_tab(1,z+2) calibration_tab(1,z+3) ];
-                x = [ calibration_tab(2,z) calibration_tab(2,z+1) calibration_tab(2,z+2) calibration_tab(2,z+3)];
+            if abs(d_y) > abs(calibration_array(2,z+1)) && abs(d_y) < abs(calibration_array(2,z+2))
+                %       measured_distance = ( calibration_array(1,z) + calibration_array(1,z+1) ) / 2; % to get raw value directly
+                y = [ calibration_array(1,z) calibration_array(1,z+1)  calibration_array(1,z+2) calibration_array(1,z+3) ];
+                x = [ calibration_array(2,z) calibration_array(2,z+1) calibration_array(2,z+2) calibration_array(2,z+3)];
                 p = polyfit(x,y,3);
                 measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration tab
                 sample_height = scan.dh + shift - measured_distance  + delta ;
@@ -47,7 +47,7 @@ while u == 0  || is_measured == 0
         end
         
         %% nouveau repos
-        if d_y < calibration_tab(2,1)% || d_y == 0
+        if d_y < calibration_array(2,1)% || d_y == 0
             if scan.fast == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter

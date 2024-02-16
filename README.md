@@ -15,3 +15,9 @@ Created by Paul Chaillou - 2021 / 2023
 pchaillo - paul.chaillou@inria.fr
 
 Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / Yanis Zirem (yanis.zirem@univ-lille.fr)
+
+
+#TODO :
+- Laser => Source
+- sensor => self (coller a la typo python pour etre plus comprehensible)
+- tab_etal => calibration tab
