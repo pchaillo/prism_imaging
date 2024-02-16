@@ -20,4 +20,14 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 #TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
-- tab_etal => calibration tab
+- bio_dat => pixels_scans
+- carte => map
+- tab => array
+- alls_scans => all_scans
+- faire un choix pour l'ajout des fichier au workspace
+- remplacer les diodes par quelquechose de plus elegant
+- Robot => Effector ?
+
+Globalement, traduire tout le francais
+
+Aussi deporter ce aui peut l'etre dans des fonctions et ne pas laisser dans mlapp => rend les merge plus faciles

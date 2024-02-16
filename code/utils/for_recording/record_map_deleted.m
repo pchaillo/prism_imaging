@@ -41,7 +41,7 @@ axis equal
 
 folder_name = 'files/map files';
 
-chemin = choix_chemin(folder_name,name);
+chemin = path_editor(folder_name,name);
 
 punto = fopen(chemin,'w');
 
