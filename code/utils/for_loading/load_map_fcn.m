@@ -1,4 +1,4 @@
-function carte = load_map_fcn(nom)
+function map = load_map_fcn(nom)
 
 out = load(nom);
 
@@ -17,35 +17,35 @@ if si(2) > 3
     for i = 1 : si_1
         for j = 1 : si_2
             u = u + 1;
-            carte_x(i,j) = out(u,1);
-            carte_y(i,j) = out(u,2);
-            carte_z(i,j) = out(u,3);
-            carte_time(i,j) = out(u,4);
+            map_x(i,j) = out(u,1);
+            map_y(i,j) = out(u,2);
+            map_z(i,j) = out(u,3);
+            map_time(i,j) = out(u,4);
         end
     end
 else
     for i = 1 : si_1
         for j = 1 : si_2
             u = u + 1;
-            carte_x(i,j) = out(u,1);
-            carte_y(i,j) = out(u,2);
-            carte_z(i,j) = out(u,3);
+            map_x(i,j) = out(u,1);
+            map_y(i,j) = out(u,2);
+            map_z(i,j) = out(u,3);
         end
     end
 end
 
 % figure()
-% %surf(carte_x,carte_y,carte_z);
-% mesh(carte_x,carte_y,carte_z);
+% %surf(map_x,map_y,map_z);
+% mesh(map_x,map_y,map_z);
 % % colormap(autumn);
 % axis equal
 % grid off
 % axis off
 
-carte.x = carte_x;
-carte.y = carte_y;
-carte.z = carte_z;
+map.x = map_x;
+map.y = map_y;
+map.z = map_z;
 
-if exist('carte_time') % to be compatible with map file without time recording
-    carte.time = carte_time;
+if exist('map_time') % to be compatible with map file without time recording
+    map.time = map_time;
 end

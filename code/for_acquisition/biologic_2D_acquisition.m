@@ -8,7 +8,7 @@ function biologic_2D_acquisition(app, robot,laser,nb_shot,t_b,time_ref)
 upate_log(app, app.info_log, 'Biometric Scan')
 
 % global robot
-global carte
+global map
 global scan
 global state
 global zone
@@ -30,16 +30,16 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
             end
-            carte.x(v,u) = k;
-            carte.y(v,u) = j;
-            carte.i(v,u) =  0 ;
+            map.x(v,u) = k;
+            map.y(v,u) = j;
+            map.i(v,u) =  0 ;
 
             if laser.continuous_flag == 0
                 laser.class.tir(laser.connexion, nb_shot, app)
             end
 
             pause(t_b);
-            carte.time(v,u) = toc(time_ref);
+            map.time(v,u) = toc(time_ref);
         end
     else
         u =  ( zone.dim_y  ) / scan.pas +2  ;
@@ -50,9 +50,9 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
             end
-            carte.x(v,u) = k;
-            carte.y(v,u) = j;
-            carte.i(v,u) =  0 ;
+            map.x(v,u) = k;
+            map.y(v,u) = j;
+            map.i(v,u) =  0 ;
 
             if laser.continuous_flag == 0
                 laser.class.tir(laser.connexion, nb_shot, app)
@@ -60,7 +60,7 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
             
             pause(t_b);
             
-            carte.time(v,u) = toc(time_ref);
+            map.time(v,u) = toc(time_ref);
         end
     end
 end

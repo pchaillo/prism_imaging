@@ -10,7 +10,7 @@ classdef ScanSelectionMethodBase
 
         end
 
-        function [pixels_scans, time, g] = selection(method, mzXML_data, carte_time)
+        function [pixels_scans, time, g] = selection(method, mzXML_data, map_time)
                 % insert your method function here
         end
     end

@@ -8,7 +8,7 @@ function biologic_3D_acquisition(app, robot,sensor,laser,t_b,nb_shot,time_ref)
 % cartographie la zone et non l'objet
 % avec enregistrement des temps
 
-global carte % Try to remove those implicit dependencies
+global map % Try to remove those implicit dependencies
 global scan
 global zone
 global state
@@ -24,8 +24,8 @@ for k = zone.dec : scan.pas : zone.dim_x+zone.dec
     u = 0;
     for j = 2 : scan.pas : zone.dim_y +2
         u = u + 1 ;
-        carte.x(v,u) = k;
-        carte.y(v,u) = j;
+        map.x(v,u) = k;
+        map.y(v,u) = j;
     end
 end
 
@@ -33,8 +33,8 @@ if laser.continuous_flag == 1
     laser.class.tir_continu_ON(laser.connexion, app)
 end
 
-si_c = size(carte.x);
-carte.i = zeros(si_c(1),si_c(2));
+si_c = size(map.x);
+map.i = zeros(si_c(1),si_c(2));
 v = 0;
 delta = 0;
 
@@ -49,10 +49,10 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 [k j ] % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(robot.connexion,a);
             end
-            carte.x(v,u) = k;
-            carte.y(v,u) = j;
+            map.x(v,u) = k;
+            map.y(v,u) = j;
             h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
-            carte.i(v,u) =  h_m ;
+            map.i(v,u) =  h_m ;
 
             % state_double = get_state(app, opotek); % pour watchdog
 
@@ -67,7 +67,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 if laser.continuous_flag == 0
                     laser.class.tir(laser.connexion, nb_shot, app)
                 end
-                carte.time(v,u) = toc(time_ref);
+                map.time(v,u) = toc(time_ref);
                 pause(t_b);
             end
 
@@ -81,10 +81,10 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 [k j ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(robot.connexion,a);
             end
-            carte.x(v,u) = k;
-            carte.y(v,u) = j;
+            map.x(v,u) = k;
+            map.y(v,u) = j;
             h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
-            carte.i(v,u) =  h_m ;
+            map.i(v,u) =  h_m ;
 
             % state_double = get_state(app, opotek); % pour watchdog
 
@@ -99,7 +99,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
                 if laser.continuous_flag == 0
                     laser.class.tir(laser.connexion, nb_shot, app)
                 end                
-                carte.time(v,u) = toc(time_ref);
+                map.time(v,u) = toc(time_ref);
                 pause(t_b);
             end
         end

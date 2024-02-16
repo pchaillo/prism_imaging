@@ -1,29 +1,29 @@
 % A supprimer
-function time_diff_med = record_map_deleted(carte_x,carte_y,carte_z,name,seuil,carte_time)
+function time_diff_med = record_map_deleted(map_x,map_y,map_z,name,seuil,map_time)
 
-% Pour enregistrer la carte .map dans le fichier correspondant
+% Pour enregistrer la map .map dans le fichier correspondant
 % record the threshold
 % record the time ! -> with time output
 
-objet.x = carte_x;
-objet.y = carte_y;
-objet.z = carte_z;
-objet.time = carte_time;
+objet.x = map_x;
+objet.y = map_y;
+objet.z = map_z;
+objet.time = map_time;
 
 
 
-size_time = size(carte_time);
+size_time = size(map_time);
 u = 0;
 for i = 1 : size_time(1)
     if ( mod(i,2) ~= 0 )
         for j = 1 : size_time(2)
             u = u + 1;
-            tab_time(u) = carte_time(i,j) ;
+            tab_time(u) = map_time(i,j) ;
         end
     else
         for j = size_time(2) : -1 : 1 % décalage de deux millimètres pour éviter les bloquages
             u = u + 1;
-            tab_time(u) = carte_time(i,j) ;
+            tab_time(u) = map_time(i,j) ;
         end
     end
 end

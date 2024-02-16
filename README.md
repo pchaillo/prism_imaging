@@ -20,7 +20,6 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 # TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
-- bio_dat => pixels_scans
 - carte => map
 - tab => array
 - alls_scans => all_scans
@@ -34,3 +33,6 @@ Aussi deporter ce aui peut l'etre dans des fonctions et ne pas laisser dans mlap
 
 # Fonction avec des noms a revoir (Faire des suggestions ici ?)
 - set_peaks_norm() => intensity_selection ?
+
+# Cleaned :
+- bio_dat => pixels_scans

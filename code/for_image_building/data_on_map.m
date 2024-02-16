@@ -1,9 +1,12 @@
-% Permet de remettre les informations des pics d'ionisation dans la forme
+% FR : Permet de remettre les informations des pics d'ionisation dans la forme
 % d'un tableau superposable aux tableau d'informations topographiques
 % Pour permettre l'affichage des informations biométriques sur la carte
 % topographique
+% ENG : Allows you to put the information on ionization peaks in the form of a table that can be superimposed on the topographical information table
+% To allow biometric information to be displayed on the topographic map
 
-% indépendant du pattern, se base sur map_time
+% FR : indépendant du pattern, se base sur map_time
+% ENG : Independant of pattern, based on the time (map_time varaiable)
 
 % avec une médiane plus juste pour la normalisation (ne prend en compte que
 % les totIonCurrent des peaks) + totIonCurrent additionné pour avoir une

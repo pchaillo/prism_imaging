@@ -1,11 +1,11 @@
 % A supprimer
-function record_map_without_time_deleted(carte_x,carte_y,carte_z,name,seuil)
+function record_map_without_time_deleted(map_x,map_y,map_z,name,seuil)
 
 % To store map files without time
 
-objet.x = carte_x;
-objet.y = carte_y;
-objet.z = carte_z;
+objet.x = map_x;
+objet.y = map_y;
+objet.z = map_z;
 
 figure()
 mesh(objet.x,objet.y,objet.z)

@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,carte_time,aspiration_time)
+function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time)
 
 all_scans_raw = mzXMLStruct.scan ;
 
@@ -27,9 +27,9 @@ l = length(alls_scans);
 TIC_list = extract_TIC(alls_scans);
 scan_time_list = extract_time(alls_scans);
 
-carte_time = carte_time + aspiration_time;
+map_time = map_time + aspiration_time;
 
-topography_time_list = time_to_list(carte_time);
+topography_time_list = time_to_list(map_time);
 
 % remplir ind_f_new
 Final_selected_indices_list = corresponding_time(scan_time_list, topography_time_list); % Indentify intensities by temporal correlation
