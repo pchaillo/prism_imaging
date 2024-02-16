@@ -46,7 +46,7 @@ if si_time(1) ~= 1
             indices = sort(indices);
             
             ind_a = ind_a + 1 ;
-            ind_add_tab(ind_a) = time_ind;
+            ind_add_array(ind_a) = time_ind;
         end
     end
     
@@ -55,13 +55,13 @@ if si_time(1) ~= 1
 
     if ind_a > 0 && length(all_ind_in_timelist) > 1
         all_ind_in_timelist(1) = []; % suppression du 0 ajouté pour pas que la variable soit vide si aucun point n'est ajouté
-        ind_add_tab_final = unique([ind_add_tab all_ind_in_timelist]);
-        for i = 1 : length(ind_add_tab_final)
-            alls_scans(ind_add_tab_final(i)) = to_add_pt(alls_scans(ind_add_tab_final(i)));
+        ind_add_array_final = unique([ind_add_array all_ind_in_timelist]);
+        for i = 1 : length(ind_add_array_final)
+            alls_scans(ind_add_array_final(i)) = to_add_pt(alls_scans(ind_add_array_final(i)));
         end
     end
     
-    for i = 1 : length(indices)
+    for i = 1 : length(indices) %utile ? #TODO
         time_tab_final_2(i) = alls_scans(indices(i)).retentionTime;
     end
     

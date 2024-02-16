@@ -12,7 +12,7 @@ global zone
 update_log(app, 'Starting calibration')
 
 calibration_finished = 0;
-calib_tab_ind = 0;
+calibration_array_indice = 0;
 going_down = 0;
 
 calibration_resolution = sensor.class.calibration_step;
@@ -62,30 +62,30 @@ while calibration_finished == 0
     pos = [pos_x pos_y current_height 180 0 180 ];
     robot.class.set_position(robot.connexion,pos);
 
-    calib_tab_ind = calib_tab_ind + 1;
-    full_tab(:,calib_tab_ind) = [current_height ; value]; % full tab contains both going up and going down value
+    calibration_array_indice = calibration_array_indice + 1;
+    full_array(:,calibration_array_indice) = [current_height ; value]; % full array contains both going up and going down value
 
     if current_height == final_height % pour avoir un beau tableau bien symetrique
-        calib_tab_ind = calib_tab_ind+1;
-        full_tab(:,calib_tab_ind) = [current_height ; value];
+        calibration_array_indice = calibration_array_indice+1;
+        full_array(:,calibration_array_indice) = [current_height ; value];
     end
 
 end
 
-final_tab_length = (final_height - init_height)/calibration_resolution ; % récupération de la taille attendue du tableau
+final_array_length = (final_height - init_height)/calibration_resolution ; % récupération de la taille attendue du tableau
 
-up_tab = tab(:,1: final_tab_length); % division en deux tableaux équivalents (un pour la montée, un pour la descente)
-down_tab_raw = tab(:,final_tab_length+1:2*final_tab_length);
-down_tab = fliplr(down_tab_raw);
+up_array = full_array(:,1: final_array_length); % division en deux tableaux équivalents (un pour la montée, un pour la descente) tab ligne 77 et 78 eq to full array ? #TODO
+down_array_raw = full_array(:,final_array_length+1:2*final_array_length);
+down_array = fliplr(down_array_raw);
 
 error = 0.1; % Tolerance margin in volts
-final_tab_ind = 0;
+final_array_ind = 0;
 
-si = size(up_tab);
+si = size(up_array);
 for j = 1 : si(2) - 1
-        % if up_tab(2,j+1) > up_tab(2,j) - error && up_tab(2,j+1) < up_tab(2,j) + error % je compare une valeur et sa suivante, si les deux se suivent d'une valeur inferieure à l'erreur, je garde le point comme moyenne de la valeur en montée et en descente
-    if up_tab(2,j+1) > down_tab(2,j) - error && up_tab(2,j+1) < down_tab(2,j) + error % je compare les tableaux de montée et de descente point par point,  si les valeurs correspondent je les garde dans le tableau final
-        final_tab_ind = final_tab_ind + 1;
-        calibration_array(:,final_tab_ind) =  [ (up_tab(1,j)+down_tab(1,j+1))/2 ; (up_tab(2,j)+down_tab(2,j+1))/2 ];
+        % if up_array(2,j+1) > up_array(2,j) - error && up_array(2,j+1) < up_array(2,j) + error % je compare une valeur et sa suivante, si les deux se suivent d'une valeur inferieure à l'erreur, je garde le point comme moyenne de la valeur en montée et en descente
+    if up_array(2,j+1) > down_array(2,j) - error && up_array(2,j+1) < down_array(2,j) + error % je compare les tableaux de montée et de descente point par point,  si les valeurs correspondent je les garde dans le tableau final
+        final_array_ind = final_array_ind + 1;
+        calibration_array(:,final_array_ind) =  [ (up_array(1,j)+down_array(1,j+1))/2 ; (up_array(2,j)+down_array(2,j+1))/2 ];
     end
 end

@@ -30,15 +30,15 @@ while supp ~= 0
         
     end
     c_sup = c_sup +1 ;
-    tab_sup(c_sup) = supp;
+    supp_array(c_sup) = supp;
 end
 
-t_sup = sum(tab_sup);
-update_log(app, string(t_sup))
+deleted_value_numer = sum(supp_array);
+update_log(app, string(deleted_value_numer))
 
 to_supp = -1;
 
-if t_sup > 100
+if deleted_value_numer > 100
     update_log(app, 'Warning: Biased table');
 end
 

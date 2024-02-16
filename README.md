@@ -20,7 +20,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 # TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
-- carte => map
+
 - tab => array
 - alls_scans => all_scans
 - faire un choix pour l'ajout des fichier au workspace
@@ -36,3 +36,4 @@ Aussi deporter ce aui peut l'etre dans des fonctions et ne pas laisser dans mlap
 
 # Cleaned :
 - bio_dat => pixels_scans
+- carte => map

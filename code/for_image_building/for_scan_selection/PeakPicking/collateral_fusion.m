@@ -35,13 +35,13 @@ for i = 1 : length(selected_over_noise_inds)
         scan = alls_scans(selected_over_noise_inds(i));
         time = scan.retentionTime;  % Without recording times in a table
         indices_in_time_list(ind) = find_closest_point(app, time,selected_time_list,t_step);
-        p_ind_tab(ind) = i;
+        p_ind_array (ind) = i; % donner un meilleur nom a cette variable # TODO
     end
 end
 
 if ind > 0
     to_fusion_array(:,1) = selected_indices(indices_in_time_list);
-    to_fusion_array(:,2) = selected_over_noise_inds(p_ind_tab) ;
+    to_fusion_array(:,2) = selected_over_noise_inds(p_ind_array ) ;
         
     size_coll_fus = size(to_fusion_array);
     for i = 1 : size_coll_fus(1)

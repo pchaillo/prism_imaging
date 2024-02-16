@@ -40,7 +40,7 @@ while u == 0  || is_measured == 0
                 y = [ calibration_array(1,z) calibration_array(1,z+1)  calibration_array(1,z+2) calibration_array(1,z+3) ];
                 x = [ calibration_array(2,z) calibration_array(2,z+1) calibration_array(2,z+2) calibration_array(2,z+3)];
                 p = polyfit(x,y,3);
-                measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration tab
+                measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration array
                 sample_height = scan.dh + shift - measured_distance  + delta ;
                 is_measured = 1;
             end

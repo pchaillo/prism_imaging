@@ -5,7 +5,6 @@ function point_to_add_indices =  fill_empty_parts(app, t_step,data_array,intern_
 big_space_indices =  find(data_array(3,:) > 2*t_step - t_step/10); % ajoute un point dans les grands espaces
 big_space_indices_shifted = big_space_indices -1;
 time_gap_list = data_array(3,big_space_indices);
-% selected_time_list = tab(2,big_space_indices);
 selected_time_list = data_array(2,big_space_indices_shifted);
 u = 0;
 for i = 1 : length(big_space_indices)
