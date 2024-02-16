@@ -1,24 +1,16 @@
 % Move to peak_selection function => intensity_selection
 
-% Permet d'isoler la valeur utiles entre les bornes de masses d'ionisation
-% qui ont été fixées
+% FR : Permet d'isoler la valeur utiles entre les bornes de masses d'ionisation qui ont été fixées
+% ENG : Allows you to isolate the useful value between the choosen ionization mass band
 
 % system('set username');
 
 function value = set_peaks_norm(app, limits,scan) % pick peak
 
 update_log(app, "Obsolete_function: Use intensity_selection instead! (for_image_building) ")
-% Why is this not a comment?
-
-% mxXML_on_map_norm7
-%main_reconstruct
-
-% bio_line = bio_dat(1);
+% Why is this not a comment? #TODO
 
 peak_tab = scan.peaks.mz;
-
-% e_tab = find(peak_tab(:,2) == 0); %already done 
-% peak_tab(e_tab,:) = [];
 
 v = 0;
 l = length(peak_tab);
