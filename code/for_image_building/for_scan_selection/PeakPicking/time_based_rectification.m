@@ -62,11 +62,11 @@ if si_time(1) ~= 1
     end
     
     for i = 1 : length(indices) %utile ? #TODO
-        time_tab_final_2(i) = alls_scans(indices(i)).retentionTime;
+        time_array_final_2(i) = alls_scans(indices(i)).retentionTime;
     end
     
     for i = 1 : length( corrected_topography_time_list)
-        time_tab_diff_2(i) = time_tab_final_2(i) - corrected_topography_time_list(i);
+        time_array_diff_2(i) = time_array_final_2(i) - corrected_topography_time_list(i);
     end
     
     debug = 0;

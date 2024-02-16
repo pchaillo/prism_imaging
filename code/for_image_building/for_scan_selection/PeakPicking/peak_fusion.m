@@ -78,7 +78,7 @@ end
 filtered_selected_indices = data_array(1,:); % indices des peaks detectés
 si = size(data_array);
 time_gap_list = time_list_to_time_gap(data_array(2,:));
-data_array(3,:) = time_gap_list; % pour remettre les bons écarts dans tab
+data_array(3,:) = time_gap_list; % pour remettre les bons écarts dans data_array
 
 fusionned_indices = to_fusion_ind;
 deleted_indices = to_delete_indices;
