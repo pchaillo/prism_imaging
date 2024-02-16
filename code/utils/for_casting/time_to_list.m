@@ -6,9 +6,9 @@ function time_list = time_to_list(map_time)
 
 si = size(map_time);
 
-time_tab = map_time(1,:);
+raw_time_list = map_time(1,:);
 for i = 2 : si(1) 
-    time_tab = [time_tab map_time(i,:)];
+    raw_time_list = [raw_time_list map_time(i,:)];
 end
 
-[time_list,I] = sort(time_tab);
+[time_list,I] = sort(raw_time_list);

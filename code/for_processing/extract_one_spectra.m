@@ -8,7 +8,7 @@ else
 end
 
 loud_flag = 0; % #TODO
-[ pixels_ind, scans_ind, pixels_mz, fusion_tab] = data_on_map(app, pixels_scans,map,limits,map.time,time_flag,loud_flag);
+[ pixels_ind, ~, pixels_mz, ~] = data_on_map(app, pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);
 

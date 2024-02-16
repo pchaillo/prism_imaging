@@ -1,12 +1,12 @@
 
-function scan = fusion_part_B(scan_1,scan_2,fusion_tab)
+function scan = fusion_part_B(scan_1,scan_2,fusion_list)
  
  % Second part of the fusion_partA function
 scan = scan_1; % de base je fusionne sur le 1er point
 
 scan.peaks.mz = [ scan_1.peaks.mz ; scan_2.peaks.mz ];
 
-scan.deisotoped = fusion_tab;
+scan.deisotoped = fusion_list;
 
 scan.ionisationEnergy = scan_1.ionisationEnergy + scan_2.ionisationEnergy ;
 

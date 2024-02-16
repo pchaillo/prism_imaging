@@ -1,4 +1,4 @@
-function [map_out, nb_err ]= map_rectification_multi(map,min_threshold,max_threshold,x_tab,y_tab)
+function [map_out, nb_err ]= map_rectification_multi(map,min_threshold,max_threshold,x_list,y_list)
 
 % x_d et y_d coordonnées des points à déturire
 
@@ -16,20 +16,20 @@ map_out = map;
 
 nb_err = 0;
 
-l = length(x_tab);
+l = length(x_list);
 
 for ind = 1 : l
     
-    i = x_tab(ind);
-    j = y_tab(ind);
+    x = x_list(ind);
+    y = y_list(ind);
     
-    edge_flags = edge_detection(i,j,dim_map);
+    edge_flags = edge_detection(x,y,dim_map);
 
-    neighbor_flag = false_neighbor_detection(i,j,edge_flags,min_threshold,max_threshold,map,map_out);
+    neighbor_flag = false_neighbor_detection(x,y,edge_flags,min_threshold,max_threshold,map,map_out);
     
-    neighbor_flag = add_selected_neighbor(i,j,neighbor_flag,ind,x_tab,y_tab,l);
+    neighbor_flag = add_selected_neighbor(x,y,neighbor_flag,ind,x_list,y_list,l);
     
-    map_out(i,j) = compute_new_height(i,j,edge_flags,neighbor_flag,map_out);
+    map_out(x,y) = compute_new_height(x,y,edge_flags,neighbor_flag,map_out);
     
 end
 

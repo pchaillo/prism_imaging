@@ -26,10 +26,10 @@ if l ~= 0
         selected_x_pos = cursor_info(i).Position(1);
         selected_y_pos = cursor_info(i).Position(2);
 
-        [v_list_raw,u_list_useless] = find (map.x == selected_x_pos);% && map.y == selected_y_pos);
-        v = unique(v_list_raw);
-        [v_list_useless,u_list_raw] = find (map.y == selected_y_pos);
-        u = unique(u_list_raw);
+        [x_list_raw,~] = find (map.x == selected_x_pos);% && map.y == selected_y_pos);
+        x = unique(x_list_raw);
+        [~,y_list_raw] = find (map.y == selected_y_pos);
+        y = unique(y_list_raw);
        
         if length(v) > 1 % old security check => should be useless now ?
             v = v(1);
@@ -38,12 +38,12 @@ if l ~= 0
             update_log(app, 'Warning: The exact value is false. It may remove an unselected point');
         end
 
-        v_tab(i) = v;
-        u_tab(i) = u;
+        x_list(i) = x;
+        y_list(i) = y;
         
     end
 
-    [map_out, nb_err] = map_rectification_multi(map_z,min_threshold,max_threshold,v_tab,u_tab);
+    [map_out, nb_err] = map_rectification_multi(map_z,min_threshold,max_threshold,x_list,y_list);
 end
 close(fig);
 

@@ -105,14 +105,14 @@ classdef LaserOpotek < LaserBase
             time_stop = nb_shot*0.1;
             
             writeline(opotek, "QSW 1")  % ouvre le laser
-            tab_qsw_1 = readline(opotek);
-            update_log(app, tab_qsw_1)
+            msg_qsw_1 = readline(opotek);
+            update_log(app, msg_qsw_1)
             
             pause(time_stop);
             
             writeline(opotek, "QSW 0") % ferme le laser
-            tab_qsw_0 = readline(opotek);
-            update_log(app, tab_qsw_0)
+            msg_qsw_0 = readline(opotek);
+            update_log(app, msg_qsw_0)
             
             
             update_log(app, 'Firing...');
@@ -258,8 +258,8 @@ classdef LaserOpotek < LaserBase
             opotek = laser_co;
             
             writeline(opotek, "QSW 1")  % ouvre le laser
-            tab_qsw_1 = readline(opotek);
-            update_log(app, tab_qsw_1)
+            msg_qsw_1 = readline(opotek);
+            update_log(app, msg_qsw_1)
             update_log(app, 'Warning: The mirror is open. The laser is now continuosuly firing!');
         end
 
@@ -267,8 +267,8 @@ classdef LaserOpotek < LaserBase
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(opotek, "QSW 0") % ferme le laser
-            tab_qsw_0 = readline(opotek);
-            update_log(app, tab_qsw_0)
+            msg_qsw_0 = readline(opotek);
+            update_log(app, msg_qsw_0)
             update_log(app, 'Warning: Closing the mirror. End of continuous firing.')
         end
     end

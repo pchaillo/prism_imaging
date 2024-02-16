@@ -38,9 +38,12 @@ return a_final
 =>
 return b + C
 
-# Fonction avec des noms a revoir (Faire des suggestions ici ?)
+# Noms a revoir (Faire des suggestions ici ?)
+Fonctions :
 - deiso_fusion_reccur() => ?
 - list_fold_reccur() => ?
+Variables :
+- tab_qsw_0 
 
 # Cleaned :
 - bio_dat => pixels_scans
