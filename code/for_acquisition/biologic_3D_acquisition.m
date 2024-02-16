@@ -18,41 +18,41 @@ update_log(app, 'Creating the map');
 opo_flag = 0 ; % Message sent upon repositioning to deal with the watchdog
 
 %% Creation of the empty map variable (useful for real_display of the topographic map)
-v = 0;
-for k = zone.dec : scan.pas : zone.dim_x+zone.dec
-    v = v + 1 ;
-    u = 0;
-    for j = 2 : scan.pas : zone.dim_y +2
-        u = u + 1 ;
-        map.x(v,u) = k;
-        map.y(v,u) = j;
+x_ind = 0;
+for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
+    x_ind = x_ind + 1 ;
+    y_ind = 0;
+    for pos_y = 2 : scan.pas : zone.dim_y +2
+        y_ind = y_ind + 1 ;
+        map.x(x_ind,y_ind) = pos_x;
+        map.y(x_ind,y_ind) = pos_y;
     end
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(laser.connexion, app)
+    laser.class.tir_continu_ON(app)
 end
 
 si_c = size(map.x);
 map.i = zeros(si_c(1),si_c(2));
-v = 0;
+x_ind = 0;
 delta = 0;
 
-for k = zone.dec : scan.pas : zone.dim_x + zone.dec
-    v = v + 1 ;
-    if ( mod(v,2) ~= 0 )
-        u = 0;
-        for j = 2 : scan.pas : zone.dim_y +2
-            u = u +1;
-            a = [k  j  scan.dh+delta 180 0 180];
+for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
+    x_ind = x_ind + 1 ;
+    if ( mod(x_ind,2) ~= 0 )
+        y_ind = 0;
+        for pos_y = 2 : scan.pas : zone.dim_y +2
+            y_ind = y_ind +1;
+            position = [pos_x  pos_y  scan.dh+delta 180 0 180];
             if state.arret == 0
-                [k j ] % Shows the current position of the robot. May be useless (Comment it)
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % Shows the current position of the robot. May be useless (Comment it)
+                robot.class.set_position(position);
             end
-            map.x(v,u) = k;
-            map.y(v,u) = j;
-            h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
-            map.i(v,u) =  h_m ;
+            map.x(x_ind,y_ind) = pos_x;
+            map.y(x_ind,y_ind) = pos_y;
+            h_m = get_rectified_data(app, sensor,robot,pos_x,pos_y,delta,opo_flag);
+            map.i(x_ind,y_ind) =  h_m ;
 
             % state_double = get_state(app, opotek); % pour watchdog
 
@@ -60,31 +60,31 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 
             delta = h_m;
 
-            a = [k  j  scan.dh+delta 180 0 180]; % Repositions the robot to ensure that it remains at a proper distance (scan.dh) of the surface
+            position = [pos_x  pos_y  scan.dh+delta 180 0 180]; % Repositions the robot to ensure that it remains at a proper distance (scan.dh) of the surface
             if state.arret == 0
-                [k j ] % Shows the current position of the robot. May be useless (Comment it)
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % Shows the current position of the robot. May be useless (Comment it)
+                robot.class.set_position(position);
                 if laser.continuous_flag == 0
-                    laser.class.tir(laser.connexion, nb_shot, app)
+                    laser.class.tir(nb_shot, app)
                 end
-                map.time(v,u) = toc(time_ref);
+                map.time(x_ind,y_ind) = toc(time_ref);
                 pause(t_b);
             end
 
         end
     else
-        u =  ( zone.dim_y  ) / scan.pas +2  ;
-        for j = zone.dim_y+2 : -scan.pas : 2 % décalage de deux millimètres pour éviter les bloquages
-            u = u - 1;
-            a = [k  j  scan.dh+delta 180 0 180];
+        y_ind =  ( zone.dim_y  ) / scan.pas +2  ;
+        for pos_y = zone.dim_y+2 : -scan.pas : 2 % décalage de deux millimètres pour éviter les bloquages
+            y_ind = y_ind - 1;
+            position = [pos_x  pos_y  scan.dh+delta 180 0 180];
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                robot.class.set_position(position);
             end
-            map.x(v,u) = k;
-            map.y(v,u) = j;
-            h_m = get_rectified_data(app, sensor,robot,k,j,delta,opo_flag);
-            map.i(v,u) =  h_m ;
+            map.x(x_ind,y_ind) = pos_x;
+            map.y(x_ind,y_ind) = pos_y;
+            h_m = get_rectified_data(app, sensor,robot,pos_x,pos_y,delta,opo_flag);
+            map.i(x_ind,y_ind) =  h_m ;
 
             % state_double = get_state(app, opotek); % pour watchdog
 
@@ -92,14 +92,14 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 
             delta = h_m;
 
-            a = [k  j  scan.dh+delta 180 0 180]; %replace le robot pour s'assurer d'etre a la distance scan.dh de la surface
+            position = [pos_x  pos_y  scan.dh+delta 180 0 180]; %replace le robot pour s'assurer d'etre a la distance scan.dh de la surface
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                robot.class.set_position(position);
                 if laser.continuous_flag == 0
-                    laser.class.tir(laser.connexion, nb_shot, app)
+                    laser.class.tir(nb_shot, app)
                 end                
-                map.time(v,u) = toc(time_ref);
+                map.time(x_ind,y_ind) = toc(time_ref);
                 pause(t_b);
             end
         end
@@ -108,7 +108,7 @@ for k = zone.dec : scan.pas : zone.dim_x + zone.dec
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(laser.connexion, app)
+    laser.class.tir_continu_OFF(app)
 end
 
 end

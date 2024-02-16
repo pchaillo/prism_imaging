@@ -13,60 +13,60 @@ global scan
 global state
 global zone
 
-v = 0;
+x_ind = 0;
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(laser.connexion, app)
+    laser.class.tir_continu_ON(app)
 end
 
-for k = zone.dec : scan.pas : zone.dim_x+zone.dec
-    v = v + 1 ;
-    if ( mod(v,2) ~= 0 )
-        u = 0;
-        for j = 2 : scan.pas : zone.dim_y +2
-            u = u +1;
-            a = [k  j  scan.dh 180 0 180];
+for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
+    x_ind = x_ind + 1 ;
+    if ( mod(x_ind,2) ~= 0 )
+        y_ind = 0;
+        for pos_y = 2 : scan.pas : zone.dim_y +2
+            y_ind = y_ind +1;
+            position = [pos_x  pos_y  scan.dh 180 0 180];
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                robot.class.set_position(position);
             end
-            map.x(v,u) = k;
-            map.y(v,u) = j;
-            map.i(v,u) =  0 ;
+            map.x(x_ind,y_ind) = pos_x;
+            map.y(x_ind,y_ind) = pos_y;
+            map.i(x_ind,y_ind) =  0 ;
 
             if laser.continuous_flag == 0
-                laser.class.tir(laser.connexion, nb_shot, app)
+                laser.class.tir(nb_shot, app)
             end
 
             pause(t_b);
-            map.time(v,u) = toc(time_ref);
+            map.time(x_ind,y_ind) = toc(time_ref);
         end
     else
-        u =  ( zone.dim_y  ) / scan.pas +2  ;
-        for j = zone.dim_y+2 : -scan.pas : 2 % décalage de deux millimètres pour éviter les bloquages
-            u = u - 1;
-            a = [k  j  scan.dh 180 0 180];
+        y_ind =  ( zone.dim_y  ) / scan.pas +2  ;
+        for pos_y = zone.dim_y+2 : -scan.pas : 2 % décalage de deux millimètres pour éviter les bloquages
+            y_ind = y_ind - 1;
+            position = [pos_x  pos_y  scan.dh 180 0 180];
             if state.arret == 0
-                [k j ] % show the current position of the robot / may be useless ( comment it )
-                robot.class.set_position(robot.connexion,a);
+                [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                robot.class.set_position(position);
             end
-            map.x(v,u) = k;
-            map.y(v,u) = j;
-            map.i(v,u) =  0 ;
+            map.x(x_ind,y_ind) = pos_x;
+            map.y(x_ind,y_ind) = pos_y;
+            map.i(x_ind,y_ind) =  0 ;
 
             if laser.continuous_flag == 0
-                laser.class.tir(laser.connexion, nb_shot, app)
+                laser.class.tir( nb_shot, app)
             end
             
             pause(t_b);
             
-            map.time(v,u) = toc(time_ref);
+            map.time(x_ind,y_ind) = toc(time_ref);
         end
     end
 end
 
 if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(laser.connexion, app)
+    laser.class.tir_continu_OFF( app)
 end
 
 end

@@ -35,12 +35,12 @@ pos_x = zone.dec - 10;
 pos_y = 0;
 
 pos = [pos_x pos_y current_height 180 0 180];
-robot.class.set_position(robot.connexion, pos);
+robot.class.set_position(pos);
 pause(7)
 
 while calibration_finished == 0
 
-    value = sensor.class.get_value(sensor.connexion, app);
+    value = sensor.class.get_value(app);
 
     if going_down == 0 % Determines if the robot is traveling upwards or downwards
         current_height = current_height + calibration_resolution;
@@ -60,7 +60,7 @@ while calibration_finished == 0
     end
 
     pos = [pos_x pos_y current_height 180 0 180 ];
-    robot.class.set_position(robot.connexion,pos);
+    robot.class.set_position(pos);
 
     calibration_array_indice = calibration_array_indice + 1;
     full_array(:,calibration_array_indice) = [current_height ; value]; % full array contains both going up and going down value

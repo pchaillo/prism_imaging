@@ -30,7 +30,7 @@ while u == 0  || is_measured == 0
     %    if  mod(loop_counter,100) == 0 && k> 500
     if  loop_counter >= nb_boucle_mesure && mod(loop_counter,nb_boucle_repeat) == 0
         
-        d_y = sensor.class.get_data(sensor.connexion); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
+        d_y = sensor.class.get_data(); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
         
         si = size(calibration_array);
         
@@ -61,8 +61,8 @@ while u == 0  || is_measured == 0
                 %     state_double = get_state(app, opotek);
                 % end
                                 
-                a = [x_pos y_pos scan.dh+delta+shift 180 0 180];
-                robot.class.set_position(robot.connexion,a); 
+                position = [x_pos y_pos scan.dh+delta+shift 180 0 180];
+                robot.class.set_position(position); 
               %  set_pos(a,t);
                 if shift > max_shift
                     shift = 0;
