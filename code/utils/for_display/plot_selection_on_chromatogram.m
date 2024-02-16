@@ -1,4 +1,4 @@
-function plot_peak_time(pixels_scans,t_i,ion,time_tab_map)
+function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_list)
 % Function that display the selected peaks on the chromatogram for visual checking
 
 %avec meilleure fusion
@@ -39,11 +39,11 @@ for i = 1 :length(pixels_scans)
     end
     %% pour plot les lignes d'écarts temporels
     
-    if time_tab_map ~= 0
+    if topography_time_list ~= 0
         
     int = pixels_scans(i).totIonCurrent;
     time_dat = pixels_scans(i).retentionTime;
-    time_map = time_tab_map(i);
+    time_map = topography_time_list(i);
     
 %     time_line_x(i,:) = [time_dat int ];
 %     time_line_y(i,:) = [time_map int ];
