@@ -16,17 +16,17 @@ function [pixels_scans, estimated_time_gap] = Peak_picking(app, mzXMLStruct, thr
 
 
 all_scans_raw = mzXMLStruct.scan ;
-alls_scans = clean_time(all_scans_raw); % Function that convert all the time value in retentionTime variable from char to double 
-alls_scans = clean_fusion_list(alls_scans);
+all_scans = clean_time(all_scans_raw); % Function that convert all the time value in retentionTime variable from char to double 
+all_scans = clean_fusion_list(all_scans);
 
 % VARIABLES  %
 time_res = 0.5 ; % Faire remonter en argument de la fonction ?
 aspiration_time = 0.35; % This probably should be set in the GUI instead
 
-TIC_list = extract_TIC(alls_scans);
-Scan_time_list = extract_time(alls_scans);
+TIC_list = extract_TIC(all_scans);
+Scan_time_list = extract_time(all_scans);
 
-[data_array,first_point_indice] = create_data_array_from_peak_detection(alls_scans,threshold_begin,TIC_list,Scan_time_list);
+[data_array,first_point_indice] = create_data_array_from_peak_detection(all_scans,threshold_begin,TIC_list,Scan_time_list);
 
 estimated_time_gap = time_estimation(data_array, noise_threshold);
 
@@ -46,9 +46,9 @@ filtered_time_gap_list = time_list_to_time_gap(filtered_data_array(2,:));
 filtered_data_array(3,:) = filtered_time_gap_list;
 
 %% Fusion of selected peaks that are too close to each other
-[alls_scans, filtered_data_array, filtered_selected_indices, fusionned_indices, deleted_indices] = peak_fusion(filtered_data_array, fusion_percentage ,alls_scans, t_step);
+[all_scans, filtered_data_array, filtered_selected_indices, fusionned_indices, deleted_indices] = peak_fusion(filtered_data_array, fusion_percentage ,all_scans, t_step);
 
-fusionned_Scan_time = extract_time(alls_scans);
+fusionned_Scan_time = extract_time(all_scans);
 
 %% Slope detection like a peak % #TODO
 % ajouter dans la dernière version
@@ -58,12 +58,12 @@ if intern_flag == 1
 end
 
 %% Add points in empty space (like shooting on glass = no data) %% Ajout des points dans les espaces
-point_to_add_indices =  fill_empty_parts(app, t_step, filtered_data_array, intern_flag, alls_scans, time_res, fusionned_Scan_time, first_point_indice);
+point_to_add_indices =  fill_empty_parts(app, t_step, filtered_data_array, intern_flag, all_scans, time_res, fusionned_Scan_time, first_point_indice);
 
 %% Generation of the good indices %% Génération des bon indices
 if exist('point_to_add_indices')
     for i = 1 : length(point_to_add_indices)
-        alls_scans(point_to_add_indices(i)) = Set_scan_as_empty(alls_scans(point_to_add_indices(i)));
+        all_scans(point_to_add_indices(i)) = Set_scan_as_empty(all_scans(point_to_add_indices(i)));
     end
     filtered_selected_indices = [ filtered_selected_indices point_to_add_indices];
 end
@@ -85,12 +85,12 @@ end
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 last_selected_point_indice = filtered_data_array(1,end);
-alls_scans = collateral_fusion(app, alls_scans, first_point_indice, last_selected_point_indice, noise_threshold, filtered_selected_indices, fusionned_indices, t_step, deleted_indices);
+all_scans = collateral_fusion(app, all_scans, first_point_indice, last_selected_point_indice, noise_threshold, filtered_selected_indices, fusionned_indices, t_step, deleted_indices);
 
 %% Pour comparer le temps des points finaux avec les temps enregistrés lors de la cartographie
-[Final_selected_indices_list,corrected_topography_time_list] = time_based_rectification(app, alls_scans,map_time,sorted_selected_indices,t_step,fusionned_Scan_time,aspiration_time);
+[Final_selected_indices_list,corrected_topography_time_list] = time_based_rectification(app, all_scans,map_time,sorted_selected_indices,t_step,fusionned_Scan_time,aspiration_time);
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
-pixels_scans(:) = alls_scans(Final_selected_indices_list);
+pixels_scans(:) = all_scans(Final_selected_indices_list);
 plot_selection_on_chromatogram(pixels_scans,Scan_time_list,TIC_list,corrected_topography_time_list); % Function that display the selected peaks on the chromatogram for visual checking

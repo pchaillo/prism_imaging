@@ -20,8 +20,6 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 # TODO :
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
-- tab => array
-- alls_scans => all_scans
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
 - Robot => Effector ?
@@ -48,3 +46,5 @@ Variables :
 # Cleaned :
 - bio_dat => pixels_scans
 - carte => map
+- tab => array / list
+- alls_scans => all_scans
