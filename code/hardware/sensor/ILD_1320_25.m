@@ -11,7 +11,7 @@ classdef ILD_1320_25
     end
 
     methods
-        function sensor_co = connect(self) %, arduino, pin)
+        function sensor_co = connect(self) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
 %             self.pin = pin
 %             self.arduino = arduino
             % Insert laser connexion and return connection object variable

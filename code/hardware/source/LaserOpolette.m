@@ -1,4 +1,4 @@
-classdef LaserOpolette < LaserBase
+classdef LaserOpolette % < LaserBase
     
     properties
 %         USB_port = "/dev/ttyUSB0" % for linux

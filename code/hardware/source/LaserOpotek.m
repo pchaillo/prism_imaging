@@ -1,4 +1,4 @@
-classdef LaserOpotek < LaserBase
+classdef LaserOpotek % < LaserBase
     
     properties
         IP_address = '192.168.0.59'
