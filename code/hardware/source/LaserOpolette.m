@@ -2,14 +2,15 @@ classdef LaserOpolette % < LaserBase
     
     properties
 %         USB_port = "/dev/ttyUSB0" % for linux
-        USB_port = "COM10" % for windows
+        USB_port = "COM5" % Set accordingly by verifying with serialportslist
         Baudrate = 9600
         Temp_limit = 38
+        laser_communication = [] 
     end
     
     methods
         function init(self, ~) % app ici ? #TODO
-           self.laser_communication = serialport(self.USB_port,self.Baudrate);
+           self.laser_communication = serialport(self.USB_port, self.Baudrate);
            self.laser_communication.configureTerminator("CR/LF");
         end
         
@@ -108,7 +109,7 @@ classdef LaserOpolette % < LaserBase
 %                 state_double = 2; % ONLY FOR TEST !!!!
             end
 
-            state_text = strcat('State : ',state_text);
+            state_text = strcat('State : ', state_text);
 %             disp("Debug process : ")
             update_log(app, state_text);
 %             disp("Debug end /")
