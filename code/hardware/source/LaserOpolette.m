@@ -16,12 +16,13 @@ classdef LaserOpolette < LaserBase
         function [state_text, state_double] = get_state(self, app)
             flush(self.laser_communication);
             writeline(self.laser_communication, "QI");
-            state_string = read(self.laser_communication,15,'string');
+            state_string = read(self.laser_communication, 15, 'string');
             flush(self.laser_communication);
             writeline(self.laser_communication, "ST");
-            state_string = read(self.laser_communication,15,'string');
+            state_string = read(self.laser_communication, 15, 'string');
 %             disp(state_string);
             if length(state_string) > 0 
+%           if isempty(state_string) == 0 is supposedly faster      
                 [state_text, state_double] = self.choose_state_text(state_string, app);
             else
                 state_text = 'Empty State String - No communication';
@@ -35,10 +36,9 @@ classdef LaserOpolette < LaserBase
             update_log(app, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
-        function trigger(self, nb_shot, app)
-%             disp("tir") % for tests 
+        function trigger(self, nb_shot, app)  % Should be translated to 'fire'
+%             disp("Firing...") % for tests 
             for i=1:nb_shot
-                
                 flush(self.laser_communication)
 %                 writeline(self.laser_communication, "QSP")
                 writeline(self.laser_communication, "OP");
@@ -124,10 +124,12 @@ classdef LaserOpolette < LaserBase
         end
 
         function STOP_continuous_trigerring(self, app) % This name should get translated % tir_continu_OFF
-            % insert code to close the mirror, to stop continue laser shooting
+            % insert code to close the mirror, to stop continue laser
+            % firing
             
-            writeline(self.laser_communication, "CS"); % ferme le laser
+            writeline(self.laser_communication, "CS"); % Shuts the laser down
             msg_qsw_0 = readline(self.laser_communication); % #TODO renommer cette variable
+%           is "laser_msg" a better name? 
             update_log(app, 'Warning: Mirror closed. End of continuous laser firing.');
         
         end

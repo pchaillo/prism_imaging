@@ -7,6 +7,7 @@ classdef RobotMeca500
         current_x = 0;
         current_y = 0;
         current_z = 0;
+        robot_communication = "" % Needed to avoid error on L18
         % #TODO Add current_x, y and z for sensor usage ?
     end
 

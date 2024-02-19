@@ -1,4 +1,4 @@
-function calibration_array = default_sensor_calibration(robot, sensor,parameters, app)
+function calibration_array = default_sensor_calibration(robot, sensor, parameters, app)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % Better handling of criticals values
@@ -11,7 +11,10 @@ calibration_finished = 0;
 calibration_array_indice = 0;
 going_down = 0;
 
-calibration_resolution = sensor.class.calibration_step;
+% calibration_resolution = sensor.class.calibration_step; It looks like the
+% 'sensor' passed as an argument here is different from the global sensor
+% in the interface. Be careful.
+calibration_resolution = sensor.calibration_step;
 
 calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argument ? #TODO
 
@@ -22,8 +25,9 @@ calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argume
 % camera and the laser pointer. The closer they are, the lower we can start
 % the calibration.
 
-init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece
-final_height = init_height + calibration_band + 3 ;%-5 ; %-5 to offset the aforementioned +5
+% init_height = 71 - 0.75 ;% The surface offset must be recovered from the interface as an argument
+init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece 
+final_height = init_height + calibration_band + 3 ;%-5 to offset the aforementioned +5
 
 current_height = init_height;
 
