@@ -81,7 +81,7 @@ end
 % final_data_array(3,:) = final_time_gap_list;
 % final_data_array(4,:) = TIC_list(sorted_selected_indices) ;
 % too_short = find(final_data_array(3,:) < t_step - t_step/3); % pas utilisé ailleurs => Supprimer #TODO ? Utile pour debug ?
-% too_long = find(final_data_array(3,:) > t_step + t_step/5);
+% too_long = find(final_data_array(3,:) > t_step + t_step/5); %TOCHOOSE
 
 %% pour trouver les lignes vectrices d'informations non prises en compte et les fusionner au peak le plus proche
 last_selected_point_indice = filtered_data_array(1,end);

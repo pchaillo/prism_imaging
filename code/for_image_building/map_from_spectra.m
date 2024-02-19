@@ -1,5 +1,5 @@
 
-function map_from_spectra(app, pixels_scans,map,compute_flag)
+function map_from_spectra(app, pixels_scans,map,loud_flag)
 
 % compute_flag : booleen qui détermine s'il faut recalculer un spectre
 % global. 0 => rien en mémoire / 1 => reprendre le tableau en mémoire
@@ -22,7 +22,6 @@ else
     time_flag = 0;
 end
 
-loud_flag = 0; % faire propre #TODO
 [ pixels_ind, ~, pixels_mz, ~] = data_on_map(app, pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
 [ map.x,map.y,map.z,pixels_mz  ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);

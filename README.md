@@ -18,6 +18,8 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+- csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone
+- Le format BioMap sert encore a quelquechose ?
 - Remove useles "code_" in folder name (code_for_segmentation; code_python; code_java)
 - Repasser sur les #TODO dans le code
 - sensor => self (coller a la typo python pour etre plus comprehensible)
@@ -42,6 +44,7 @@ return b + C
 
 # TOCHOOSE : (Repasser sur ceux du code) 
 - Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
+- Garder commentees des variables utiles pour le debug ? (Peak Picking ligne 77)
 
 
 # Noms a revoir (Faire des suggestions ici ?)

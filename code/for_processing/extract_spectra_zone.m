@@ -1,4 +1,4 @@
-function extract_spectra_zone(app, pixels_scans,map,limits)
+function extract_spectra_zone(app, pixels_scans,map,limits,loud_flag)
 
 if isfield(map,'time')
     time_flag = 1;
@@ -8,7 +8,6 @@ end
 
 pixels_scans = fix_ms_data(pixels_scans);
 
-loud_flag = 0; % #TODO
 [ pixels_ind, ~, pixels_mz, ~] = data_on_map(app, pixels_scans,map,limits,map.time,time_flag,loud_flag);
 
 [ map.x,map.y,map.z,pixels_mz ] = fix_border(map.x,map.y,map.z,pixels_mz,pixels_ind);

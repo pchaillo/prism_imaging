@@ -127,7 +127,7 @@ classdef LaserOpolette < LaserBase
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(self.laser_communication, "CS"); % ferme le laser
-            msg_qsw_0 = readline(self.laser_communication); % #TODO renommer cette variable
+            msg_qsw_0 = readline(self.laser_communication);
             update_log(app, 'Warning: Mirror closed. End of continuous laser firing.');
         
         end

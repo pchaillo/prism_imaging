@@ -3,7 +3,7 @@ function display_mz_map(map,pixels_mz,title_str)
 
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 
-figure() % fonction d'affichage a factoriser #TODO
+figure() % fonction d'affichage a factoriser
 % hold on
 s = surf(map.x,map.y,map.z,pixels_mz);
 s.FaceColor = 'flat'; % set color interpolqtion

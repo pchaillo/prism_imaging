@@ -30,7 +30,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
         y_ind = 0;
         for pos_y = parameters.y_offset : parameters.mapping_step : parameters.dim_y + parameters.y_offset
             y_ind = y_ind +1;
-            position = [pos_x  pos_y  parameters.initial_height+delta 180 0 180];
+            position = [pos_x  pos_y  parameters.initial_height+sample_height 180 0 180];
             if robot.arret == 0
                 [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(a);
@@ -38,11 +38,10 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             map.x(x_ind,y_ind) = pos_x;
             map.y(x_ind,y_ind) = pos_y;
 %             measured_height = get_rectified_data(app, sensor,t,pos_x,pos_y,delta,watchdog_flag);
-            measured_height = sensor.class.get_data(robot,pos_x,pos_y,delta,watchdog_flag,parameters);
-            map.i(x_ind,y_ind) =  measured_height ;
+            sample_height = sensor.class.get_data(robot,pos_x,pos_y,sample_height,watchdog_flag,parameters);
+            map.i(x_ind,y_ind) =  sample_height ;
             real_time_topography_display(map)
             
-            delta =  measured_height ;
             
             if first_point == 1
                 first_point = 0;
@@ -55,19 +54,18 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
         y_ind =  ( parameters.dim_y  ) / parameters.mapping_step +2  ;
         for pos_y = parameters.dim_y + parameters.y_offset : - parameters.mapping_step : parameters.y_offset % 2mm offset to avoid stoppages
             y_ind = y_ind - 1;
-            a = [pos_x  pos_y  parameters.initial_height + delta 180 0 180];
+            a = [pos_x  pos_y  parameters.initial_height+sample_height 180 0 180];
             if robot.arret == 0
                 update_log(app, string([pos_x pos_y])) % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(a);
             end
             map.x(x_ind,y_ind) = pos_x;
             map.y(x_ind,y_ind) = pos_y;
-%             measured_height = get_rectified_data(app, sensor,t,pos_x,pos_y,delta,watchdog_flag);
-            measured_height = sensor.class.get_data(robot,pos_x,pos_y,delta,watchdog_flag,parameters);
-            map.i(x_ind,y_ind) =  measured_height ;
+%             sample_height = get_rectified_data(app, sensor,t,pos_x,pos_y,delta,watchdog_flag);
+            sample_height = sensor.class.get_data(robot,pos_x,pos_y,sample_height,watchdog_flag,parameters);
+            map.i(x_ind,y_ind) =  sample_height ;
             real_time_topography_display(map)
             
-            delta = measured_height;
             map.time(x_ind,y_ind) = toc;
         end
     end

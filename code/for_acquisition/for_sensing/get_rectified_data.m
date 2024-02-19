@@ -1,14 +1,11 @@
-function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,delta,watchdog_flag,parameters)
+function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,sample_height,watchdog_flag,parameters)
 
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
-
-% #TODO : what is delta variable in input ? 
-% #TODO : rename x_pos as x_pos and y_pos as y_pos ?
 
 % global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
 % # TODO : Remove the two useless variables
-u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it)
+u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it, or rename it with better name)
 measured_distance = 0; % initialize the variable => useful ? (#TODO : suppress it)
 
 loop_counter = 0; 
@@ -28,24 +25,24 @@ while u == 0  || is_measured == 0
     %    if  mod(loop_counter,100) == 0 && k> 500
     if  loop_counter >= nb_boucle_mesure && mod(loop_counter,nb_boucle_repeat) == 0
         
-        d_y = sensor.class.get_data(); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
+        value = sensor.class.get_data(); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
         
         si = size(calibration_array);
         
         for z = 1 : si(2)-3
-            if abs(d_y) > abs(calibration_array(2,z+1)) && abs(d_y) < abs(calibration_array(2,z+2))
+            if abs(value) > abs(calibration_array(2,z+1)) && abs(value) < abs(calibration_array(2,z+2))
                 %       measured_distance = ( calibration_array(1,z) + calibration_array(1,z+1) ) / 2; % to get raw value directly
                 y = [ calibration_array(1,z) calibration_array(1,z+1)  calibration_array(1,z+2) calibration_array(1,z+3) ];
                 x = [ calibration_array(2,z) calibration_array(2,z+1) calibration_array(2,z+2) calibration_array(2,z+3)];
                 p = polyfit(x,y,3);
-                measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration array
-                sample_height = parameters.initial_height + shift - measured_distance  + delta ;
+                measured_distance = p(1)*value^3 + p(2)*value^2 + p(3)*value + p(4); % use polynomial interpolation to get measured value from calibration array
+                sample_height = parameters.initial_height + shift - measured_distance  + sample_height ;
                 is_measured = 1;
             end
         end
         
         %% nouveau repos
-        if d_y < calibration_array(2,1)% || d_y == 0
+        if value < calibration_array(2,1)% || value == 0
             if parameters.fast_flag == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter
@@ -59,7 +56,7 @@ while u == 0  || is_measured == 0
                 %     state_double = get_state(app, opotek);
                 % end
                                 
-                position = [x_pos y_pos parameters.initial_height+delta+shift 180 0 180];
+                position = [x_pos y_pos parameters.initial_height+sample_height+shift 180 0 180];
                 robot.class.set_position(position); 
               %  set_pos(a,t);
                 if shift > max_shift

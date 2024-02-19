@@ -5,7 +5,8 @@ function all_peaks = plot_all_spectra(app, pixels_scans, compute_flag, all_peaks
 
 if compute_flag == 0 
     all_peaks = compute_all_spectra(app, pixels_scans);
-    compute_flag = 1; % useful ? #TODO
+    % compute_flag = 1; % intuile, ici on se base sur la fait que c'est le
+    % meme nom plusieurs fois de suite
 end
 
 parsed_all_peaks = zeros(length(all_peaks), 2);
