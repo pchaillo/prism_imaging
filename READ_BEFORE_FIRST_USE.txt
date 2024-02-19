@@ -21,6 +21,10 @@ _ Matlab v.2022b:
 	- Statistics and Machine Learning Toolbox
 	- Symbolic Math Toolbox
 _ Windows (10+, 7/8 could work) or Linux-based computer
+_ MATLAB Support Package for Arduino Hardware
+	- mathworks.com/matlabcentral/fileexchange/47522-matlab-support-package-for-arduino-hardware
+	- Requires providing an email adress for installation
+	- Only used to communicate with the depth sensor as of now
 
 For first use : 
 _ Launch the 'LAUNCH_FOR_FIRST_USE.bat' file included at the root of the source code. 
