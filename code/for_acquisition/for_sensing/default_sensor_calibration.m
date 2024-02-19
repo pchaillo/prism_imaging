@@ -6,7 +6,8 @@ function calibration_array = default_sensor_calibration(robot, sensor, app)
 % Will go one way up, then one way down, and will only keep the similar value for the same height => security to remove all false point on the calibration_array
 
 global scan
-global zone
+global zone % This is very likely deprecated
+global parameters
 % global robot % passe en argument
 
 update_log(app, 'Starting calibration')
@@ -15,7 +16,10 @@ calibration_finished = 0;
 calibration_array_indice = 0;
 going_down = 0;
 
-calibration_resolution = sensor.class.calibration_step;
+% calibration_resolution = sensor.class.calibration_step; It looks like the
+% 'sensor' passed as an argument here is different from the global sensor
+% in the interface. Be careful.
+calibration_resolution = sensor.calibration_step;
 
 calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argument ? #TODO
 
@@ -26,12 +30,13 @@ calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argume
 % camera and the laser pointer. The closer they are, the lower we can start
 % the calibration.
 
-init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece
-final_height = init_height + calibration_band + 3 ;%-5 ; %-5 to offset the aforementioned +5
+% init_height = 71 - 0.75 ;% The surface offset must be recovered from the interface as an argument
+init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece 
+final_height = init_height + calibration_band + 3 ;%-5 to offset the aforementioned +5
 
 current_height = init_height;
 
-pos_x = zone.dec - 10;
+pos_x = parameters.x_offset - 10;
 pos_y = 0;
 
 pos = [pos_x pos_y current_height 180 0 180];
