@@ -8,12 +8,12 @@ classdef LaserOpolette < LaserBase
     end
     
     methods
-        function init(self, ~)
+        function init(self, ~) % app ici ? #TODO
            self.laser_communication = serialport(self.USB_port,self.Baudrate);
            self.laser_communication.configureTerminator("CR/LF");
         end
         
-        function [state_text, state_double] = get_state(self, ~)
+        function [state_text, state_double] = get_state(self, app)
             flush(self.laser_communication);
             writeline(self.laser_communication, "QI");
             state_string = read(self.laser_communication,15,'string');
@@ -35,7 +35,7 @@ classdef LaserOpolette < LaserBase
             update_log(app, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
-        function tir(self, nb_shot, app)
+        function trigger(self, nb_shot, app)
 %             disp("tir") % for tests 
             for i=1:nb_shot
                 
@@ -115,7 +115,7 @@ classdef LaserOpolette < LaserBase
 
         end
 
-        function tir_continu_ON(self, app) % This name should get translated
+        function continuous_trigerring(self, app) % This name should get translated (tir_continu_ON)
             % insert code to open the mirror that let the laser get out
             
             writeline(self.laser_communication, "CC");
@@ -123,7 +123,7 @@ classdef LaserOpolette < LaserBase
             update_log(app, 'Warning: The mirror is open. The laser is now continuously firing!');
         end
 
-        function tir_continu_OFF(self, app) % This name should get translated
+        function STOP_continuous_trigerring(self, app) % This name should get translated % tir_continu_OFF
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(self.laser_communication, "CS"); % ferme le laser

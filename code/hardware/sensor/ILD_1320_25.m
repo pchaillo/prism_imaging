@@ -11,8 +11,8 @@ classdef ILD_1320_25
 
     methods
         function connect(self,arduino,pin)
-            self.pin = pin
-            self.arduino = arduino
+            self.pin = pin;
+            self.arduino = arduino;
             % Insert laser connexion and return connection object variable
             % sensor_co = arduino(); % Connect the arduino sensor acquisition
 

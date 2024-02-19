@@ -21,7 +21,8 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 - Laser => Source
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
-	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro
+	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
+- verifier que la variable globale state est bien fonctionelle
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
 - Robot => Effector ?
@@ -46,6 +47,8 @@ Variables :
 - tab_qsw_0 
 
 # Cleaned :
+Variables :
+- tab_qsw_0 => msg_qsw_0
 - bio_dat => pixels_scans
 - carte => map
 - tab => array / list

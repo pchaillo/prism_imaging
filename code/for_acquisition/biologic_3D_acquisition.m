@@ -1,4 +1,4 @@
-function biologic_3D_acquisition(app, robot,sensor,laser,t_b,nb_shot,time_ref)
+function biologic_3D_acquisition(app, robot,sensor,source,t_b,nb_shot,time_ref)
 
 % with spectro time_ref
 
@@ -8,9 +8,9 @@ function biologic_3D_acquisition(app, robot,sensor,laser,t_b,nb_shot,time_ref)
 % cartographie la zone et non l'objet
 % avec enregistrement des temps
 
-global map % Try to remove those implicit dependencies
-global scan
-global zone
+% global map % Try to remove those implicit dependencies
+% global scan
+% global zone
 global state
 
 update_log(app, 'Creating the map');
@@ -29,8 +29,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
     end
 end
 
-if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(app)
+if source.continuous_flag == 1
+    source.class.continuous_trigerring(app)
 end
 
 si_c = size(map.x);
@@ -56,7 +56,7 @@ for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
 
             % state_double = get_state(app, opotek); % pour watchdog
 
-            real_time_topography_display()
+            real_time_topography_display(map)
 
             delta = h_m;
 
@@ -64,8 +64,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
             if state.arret == 0
                 [pos_x pos_y ] % Shows the current position of the robot. May be useless (Comment it)
                 robot.class.set_position(position);
-                if laser.continuous_flag == 0
-                    laser.class.tir(nb_shot, app)
+                if source.continuous_flag == 0
+                    source.class.trigger(nb_shot, app)
                 end
                 map.time(x_ind,y_ind) = toc(time_ref);
                 pause(t_b);
@@ -88,7 +88,7 @@ for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
 
             % state_double = get_state(app, opotek); % pour watchdog
 
-            real_time_topography_display()
+            real_time_topography_display(map)
 
             delta = h_m;
 
@@ -96,8 +96,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
             if state.arret == 0
                 [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(position);
-                if laser.continuous_flag == 0
-                    laser.class.tir(nb_shot, app)
+                if source.continuous_flag == 0
+                    source.class.trigger(nb_shot, app)
                 end                
                 map.time(x_ind,y_ind) = toc(time_ref);
                 pause(t_b);
@@ -107,8 +107,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x + zone.dec
 
 end
 
-if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF(app)
+if source.continuous_flag == 1
+    source.class.STOP_continuous_trigerring(app)
 end
 
 end

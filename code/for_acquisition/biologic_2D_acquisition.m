@@ -1,5 +1,5 @@
 
-function biologic_2D_acquisition(app, robot,laser,nb_shot,t_b,time_ref)
+function biologic_2D_acquisition(app, robot,source,nb_shot,t_b,time_ref)
 
 %with spectro time_ref
 
@@ -15,8 +15,8 @@ global zone
 
 x_ind = 0;
 
-if laser.continuous_flag == 1
-    laser.class.tir_continu_ON(app)
+if source.continuous_flag == 1
+    source.class.continuous_trigerring(app)
 end
 
 for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
@@ -34,8 +34,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
             map.y(x_ind,y_ind) = pos_y;
             map.i(x_ind,y_ind) =  0 ;
 
-            if laser.continuous_flag == 0
-                laser.class.tir(nb_shot, app)
+            if source.continuous_flag == 0
+                source.class.trigger(nb_shot, app)
             end
 
             pause(t_b);
@@ -54,8 +54,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
             map.y(x_ind,y_ind) = pos_y;
             map.i(x_ind,y_ind) =  0 ;
 
-            if laser.continuous_flag == 0
-                laser.class.tir( nb_shot, app)
+            if source.continuous_flag == 0
+                source.class.trigger( nb_shot, app)
             end
             
             pause(t_b);
@@ -65,8 +65,8 @@ for pos_x = zone.dec : scan.pas : zone.dim_x+zone.dec
     end
 end
 
-if laser.continuous_flag == 1
-    laser.class.tir_continu_OFF( app)
+if source.continuous_flag == 1
+    source.class.STOP_continuous_trigerring( app)
 end
 
 end
