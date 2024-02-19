@@ -134,7 +134,7 @@ classdef RobotMeca500
             data = "MovePose("+a(1)+","+a(2)+","+a(3)+","+a(4)+","+a(5)+","+a(6)+")"+char(0);
             data = char(data);
 
-            state.arret = security_check(a(1),a(2),a(3));
+            state.stop_flag = security_check(a(1),a(2),a(3));
 
             %    if state.arret == 0
             fwrite(self.robot_communication,data);

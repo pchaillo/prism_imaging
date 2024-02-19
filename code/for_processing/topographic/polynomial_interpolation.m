@@ -76,7 +76,7 @@ for v = 1 : 1 : si0(1)
             f = 1;
         end
         
-        for k = u + f*(1/multiplier): 1/multiplier : u + 1 %- 1/scan.pre
+        for k = u + f*(1/multiplier): 1/multiplier : u + 1 
             g = g + 1 ;
             b = p(u,1)*k^3 + p(u,2)*k^2 + p(u,3)*k + p(u,4);
             if b~= 0
@@ -106,10 +106,10 @@ end
 carte_o2 = poly_2nd_ordre(map,multiplier);
 
 x = 0;
-for i = map.x(1 , 1 ) : scanning_step/multiplier: map.x( si(1) , 1 )% + scan.pas/scan.pre
+for i = map.x(1 , 1 ) : scanning_step/multiplier: map.x( si(1) , 1 )
     x = x + 1;
     y = 0;
-    for j = map.y(1,1) : scanning_step/multiplier : map.y(1,si(2))% + scan.pas/scan.pre
+    for j = map.y(1,1) : scanning_step/multiplier : map.y(1,si(2))
         y = y + 1;
         if interpolated_map.z(x,y) == 0
            interpolated_map.z(x,y) = carte_o2(x,y);

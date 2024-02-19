@@ -22,6 +22,9 @@ classdef RobotBase
         function set_position(robot, robot_co,pos)
             % pos is a list that contain 6 value : 3 positions and 3 orientations
            % insert code to set the robot position by sensing a frame % set_pos.m for MECA500
+
+            global state
+            state.stop_flag = security_check(a(1),a(2),a(3));
         end
 
         function go_to_rest_position(robot, robot_co) % utile ?

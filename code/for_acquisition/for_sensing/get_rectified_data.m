@@ -1,4 +1,4 @@
-function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,delta,opo_flag,parameters)
+function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,delta,watchdog_flag,parameters)
 
 % This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 
@@ -6,8 +6,6 @@ function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,delta,
 % #TODO : rename x_pos as x_pos and y_pos as y_pos ?
 
 % global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
-
-global scan; % need to be deleted #TODO
 
 % # TODO : Remove the two useless variables
 u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it)
@@ -41,14 +39,14 @@ while u == 0  || is_measured == 0
                 x = [ calibration_array(2,z) calibration_array(2,z+1) calibration_array(2,z+2) calibration_array(2,z+3)];
                 p = polyfit(x,y,3);
                 measured_distance = p(1)*d_y^3 + p(2)*d_y^2 + p(3)*d_y + p(4); % use polynomial interpolation to get measured value from calibration array
-                sample_height = scan.dh + shift - measured_distance  + delta ;
+                sample_height = parameters.initial_height + shift - measured_distance  + delta ;
                 is_measured = 1;
             end
         end
         
         %% nouveau repos
         if d_y < calibration_array(2,1)% || d_y == 0
-            if scan.fast == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
+            if parameters.fast_flag == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter
                     first_loop = 0;
@@ -57,11 +55,11 @@ while u == 0  || is_measured == 0
                 shift = shift + 1;
                 update_log(app, string(shift))
                 
-                % if opo_flag == 1 % #TODO
+                % if watchdog_flag == 1 % #TODO
                 %     state_double = get_state(app, opotek);
                 % end
                                 
-                position = [x_pos y_pos scan.dh+delta+shift 180 0 180];
+                position = [x_pos y_pos parameters.initial_height+delta+shift 180 0 180];
                 robot.class.set_position(position); 
               %  set_pos(a,t);
                 if shift > max_shift

@@ -9,8 +9,6 @@ function interpolated_map = poly_2nd_ordre(map,scan_pre)
 
 map.r = map.z;
 
-scan.n = 2;
-
 si_r = size(map.r);
 % polynome en u
 
@@ -79,7 +77,7 @@ for u = 1 : si0(2)
 end
 
 % map en u
-for u = 1 : 1 : si0(2) %+ scan.pas - 2*scan.pas/scan.pre %ajout du 2 avec le -
+for u = 1 : 1 : si0(2) 
 
     g = 0;
     for v = 2 : 2 : si0(1) - 1

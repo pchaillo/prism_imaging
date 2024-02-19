@@ -18,7 +18,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
-- Laser => Source
+- Remove useles "code_" in folder name (code_for_segmentation; code_python; code_java)
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
@@ -48,6 +48,7 @@ Variables :
 
 # Cleaned :
 Variables :
+- Laser => Source
 - tab_qsw_0 => msg_qsw_0
 - bio_dat => pixels_scans
 - carte => map

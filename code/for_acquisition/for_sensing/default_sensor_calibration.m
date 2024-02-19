@@ -1,13 +1,9 @@
-function calibration_array = default_sensor_calibration(robot, sensor, app)
+function calibration_array = default_sensor_calibration(robot, sensor,parameters, app)
 
 % do the calibration of the new sensor (ILD1320-25 Microepsilon)
 % Better handling of criticals values
 
 % Will go one way up, then one way down, and will only keep the similar value for the same height => security to remove all false point on the calibration_array
-
-global scan
-global zone
-% global robot % passe en argument
 
 update_log(app, 'Starting calibration')
 
@@ -31,7 +27,7 @@ final_height = init_height + calibration_band + 3 ;%-5 ; %-5 to offset the afore
 
 current_height = init_height;
 
-pos_x = zone.dec - 10;
+pos_x = parameters.x_offset - 10;
 pos_y = 0;
 
 pos = [pos_x pos_y current_height 180 0 180];

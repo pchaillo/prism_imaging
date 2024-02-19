@@ -1,7 +1,7 @@
 function all_peaks = plot_all_spectra(app, pixels_scans, compute_flag, all_peaks, valmin, valmax)
 
-% compute_flag : booleen qui détermine s'il faut recalculer un spectre
-% global
+% FR : compute_flag = booleen qui détermine s'il faut recalculer un spectre
+% ENG : compute_flag = boolean to check if there is a need to compute again spectra sum
 
 if compute_flag == 0 
     all_peaks = compute_all_spectra(app, pixels_scans);
