@@ -19,10 +19,11 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 # TODO :
 - Remove useles "code_" in folder name (code_for_segmentation; code_python; code_java)
+- Repasser sur les #TODO dans le code
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
-- verifier que la variable globale state est bien fonctionelle
+- verifier que la variable globale state est bien fonctionelle + test de la fonction de securite
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
 - Robot => Effector ?
@@ -38,6 +39,10 @@ a_final = a
 return a_final
 =>
 return b + C
+
+# TOCHOOSE : (Repasser sur ceux du code) 
+- Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
+
 
 # Noms a revoir (Faire des suggestions ici ?)
 Fonctions :
