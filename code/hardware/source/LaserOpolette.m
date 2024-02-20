@@ -1,27 +1,29 @@
-classdef LaserOpolette < LaserBase
+classdef LaserOpolette % < LaserBase
     
     properties
 %         USB_port = "/dev/ttyUSB0" % for linux
-        USB_port = "COM10" % for windows
+        USB_port = "COM5" % Set accordingly by verifying with serialportslist
         Baudrate = 9600
         Temp_limit = 38
+        laser_communication = [] 
     end
     
     methods
         function init(self, ~) % app ici ? #TODO
-           self.laser_communication = serialport(self.USB_port,self.Baudrate);
+           self.laser_communication = serialport(self.USB_port, self.Baudrate);
            self.laser_communication.configureTerminator("CR/LF");
         end
         
         function [state_text, state_double] = get_state(self, app)
             flush(self.laser_communication);
             writeline(self.laser_communication, "QI");
-            state_string = read(self.laser_communication,15,'string');
+            state_string = read(self.laser_communication, 15, 'string');
             flush(self.laser_communication);
             writeline(self.laser_communication, "ST");
-            state_string = read(self.laser_communication,15,'string');
+            state_string = read(self.laser_communication, 15, 'string');
 %             disp(state_string);
             if length(state_string) > 0 
+%           if isempty(state_string) == 0 is supposedly faster      
                 [state_text, state_double] = self.choose_state_text(state_string, app);
             else
                 state_text = 'Empty State String - No communication';
@@ -35,10 +37,9 @@ classdef LaserOpolette < LaserBase
             update_log(app, "Warning: Cannot obtain the temperature trough the serial port with Opolette laser")
         end
         
-        function trigger(self, nb_shot, app)
-%             disp("tir") % for tests 
+        function trigger(self, nb_shot, app)  % Should be translated to 'fire'
+%             disp("Firing...") % for tests 
             for i=1:nb_shot
-                
                 flush(self.laser_communication)
 %                 writeline(self.laser_communication, "QSP")
                 writeline(self.laser_communication, "OP");
@@ -108,7 +109,7 @@ classdef LaserOpolette < LaserBase
 %                 state_double = 2; % ONLY FOR TEST !!!!
             end
 
-            state_text = strcat('State : ',state_text);
+            state_text = strcat('State : ', state_text);
 %             disp("Debug process : ")
             update_log(app, state_text);
 %             disp("Debug end /")
@@ -124,9 +125,10 @@ classdef LaserOpolette < LaserBase
         end
 
         function STOP_continuous_trigerring(self, app) % This name should get translated % tir_continu_OFF
-            % insert code to close the mirror, to stop continue laser shooting
+            % insert code to close the mirror, to stop continue laser
+            % firing
             
-            writeline(self.laser_communication, "CS"); % ferme le laser
+            writeline(self.laser_communication, "CS"); % Shuts the laser down
             msg_qsw_0 = readline(self.laser_communication);
             update_log(app, 'Warning: Mirror closed. End of continuous laser firing.');
         

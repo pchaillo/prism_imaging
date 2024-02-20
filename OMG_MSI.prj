@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1415234916" file="C:\Users\guiot\Downloads\OMG_MSI.prj" location="C:\Users\guiot\Downloads" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Downloads\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3374689732" file="E:\prism_imaging-I-O_temp\OMG_MSI.prj" location="E:\prism_imaging-I-O_temp" name="OMG_MSI" preferred-package-location="E:\prism_imaging-I-O_temp\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>OMG_MSI</param.appname>
     <param.icon />
     <param.icons />
@@ -15,7 +15,8 @@
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
     <param.install.notes>Please make sure to launch the LAUNCH_AS_ADMIN_BEFORE_FIRST_USE file before trying to export data as PLY files. This will ensure that Python is properly installed and that every required library is present.</param.install.notes>
-    <param.target.install.notes />
+    <param.target.install.notes>* This program requires:
+-- Arduino from &lt;a href="https://downloads.arduino.cc/arduino-1.8.19-windows.zip"&gt;https://downloads.arduino.cc/arduino-1.8.19-windows.zip&lt;/a&gt;</param.target.install.notes>
     <param.intermediate>${PROJECT_ROOT}\OMG_MSI\for_testing</param.intermediate>
     <param.files.only>${PROJECT_ROOT}\OMG_MSI\for_redistribution_files_only</param.files.only>
     <param.output>${PROJECT_ROOT}\OMG_MSI\for_redistribution</param.output>
@@ -23,7 +24,11 @@
     <param.enable.clean.build>false</param.enable.clean.build>
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
-    <param.support.packages />
+    <param.support.packages>
+      <item>&lt;package displayname="MATLAB Support Package for Arduino Hardware" enabled="true" name="MATLAB Support Package for Arduino Hardware" product="MATLAB"&gt;
+   &lt;thirdparty downloadurl="" name="Arduino" url="https://downloads.arduino.cc/arduino-1.8.19-windows.zip"/&gt;
+&lt;/package&gt;</item>
+    </param.support.packages>
     <param.web.mcr>false</param.web.mcr>
     <param.package.mcr>true</param.package.mcr>
     <param.no.mcr>false</param.no.mcr>
@@ -52,7 +57,6 @@
       <param.installpath.string />
       <param.installpath.combo />
       <param.logo />
-      <param.target.install.notes />
       <param.intermediate />
       <param.files.only />
       <param.output />
@@ -60,7 +64,6 @@
       <param.enable.clean.build />
       <param.user.defined.mcr.options />
       <param.target.type />
-      <param.support.packages />
       <param.no.mcr />
       <param.no.mcr.name />
       <param.create.log />
@@ -70,42 +73,188 @@
       <param.example />
     </unset>
     <fileset.main>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.mlapp</file>
+      <file>${PROJECT_ROOT}\OMG_MSI.mlapp</file>
     </fileset.main>
     <fileset.resources>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\code</file>
+      <file>${PROJECT_ROOT}\code</file>
     </fileset.resources>
     <fileset.package>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\3d_export</file>
       <file>C:\Users\guiot\Documents\PRISM\prism_imaging\code\code_python\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\files</file>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\modular_hardware</file>
       <file>C:\Users\guiot\Documents\PRISM\prism_imaging\READ_BEFORE_FIRST_USE.txt</file>
+      <file>${PROJECT_ROOT}\3d_export</file>
+      <file>${PROJECT_ROOT}\files</file>
+      <file>${PROJECT_ROOT}\LAUNCH_AS_ADMIN_BEFORE_FIRST_USE.bat - Raccourci.lnk</file>
     </fileset.package>
     <fileset.depfun>
-      <file>C:\Users\guiot\Documents\PRISM\prism_imaging\test_func.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+adc\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+adc\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+addon\AddonBase.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+addon\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+addon\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+addon\LibraryBase.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+can\Channel.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+can\ChannelProvider.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+can\Node.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+dio\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+dio\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\ActiveLevelEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\base.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\BitOrderEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\BluetoothDeviceTypeEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\ConnectionTypeEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\endsWith.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\findSubClasses.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\footer.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\InterfaceEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\localizedError.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\localizedWarning.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\precisions.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderArrayOfIntsToCharVector.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderArrayOfIntsToString.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderArrayOfPinStringsToRangedCharacterVector.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderArrayOfPinStringsToRangedString.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderArrayOfStringsToString.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderCellArrayOfCharVectorsToCharVector.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\renderCellArrayOfStringsToString.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\sizeof.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateDigitalParameter.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateDoubleParameterPos.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateDoubleParameterRanged.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateHexParameterRanged.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateIntArrayParameterRanged.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateIntParameter.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\validateIntParameterRanged.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\WiFiEncryptionTypeEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\+internal\WiFiStatusEnum.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+hwsdk\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+i2c\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+i2c\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+i2c\device.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+pwm\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+pwm\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+rawDevice\device.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+serial\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+serial\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+serial\device.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+spi\controller.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+spi\controller_base.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\hwsdk\+matlabshared\+spi\device.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\+internal\Accessor.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\+internal\localizedWarning.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\discardZeros.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\gpsHardware.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\GPSUtilities.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\isTraceEnabled.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\MultiStreamingUtilities.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\parsePosition.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+matlabshared\+sensors\sensorInterface.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\shared\sensors\+sensors\+internal\gpsdev.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\AnalogInput.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\DigitalIO.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\I2C.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\PlayTone.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\PWM.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\RotaryEncoder.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\SCI.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\Servo.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\ShiftRegister.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\SPI.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\+debug\Ultrasonic.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\ArduinoDataUtilityHelper.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\ArduinoDataUtilityParser.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\ArduinoHWInfo.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\debugMessage.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\getPortBoardIDE.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\MLCompiler_Arduino.mlapp</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\ResourceManager.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+internal\TabCompletionHelper.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\DCMotor.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\DCMotorBase.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\MotorCarrier.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\PIDMotor.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\PIDMotorPosition.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\PIDMotorSpeed.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\RotaryEncoder.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+motorcarrier\Servo.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+sensors\+apds9960\APDS9960.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+sensors\+apds9960\ColorConfiguration.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+sensors\+apds9960\GestureConfiguration.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+sensors\+apds9960\Gestures.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+sensors\+apds9960\ProximityConfiguration.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\+setup\+internal\HardwareInterface.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\ArduinoMCP2515.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\FilePath.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\MCP2515.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\MotorBase.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\RotaryEncoder.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\Servo.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\ServoMotorBase.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\ShiftRegister.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\SPPKGRoot.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\+arduinoio\Ultrasonic.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+descriptors\BluetoothDeviceDescriptor.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+descriptors\USBDeviceDescriptor.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+descriptors\WiFiDeviceDescriptor.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+internal\ArduinoAppConstants.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+internal\FormFactorTypesEnum.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+internal\Utility.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\apps\arduinoexplorer\+arduinoioapplet\+modules\+interfaces\ArduinoManager.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\arduino.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\arduinoio\listArduinoLibraries.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoDigitalIO.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoDigitalIO.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoI2C.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoI2C.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoSPI.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinodriver\ArduinoSPI.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\accessor.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\ArduinoConstants.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\BoardInfo.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\CopyServerToTemp.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\getDefaultLibraryPropertyValue.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\LinuxUtility.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\MacUtility.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\searchDefaultPropertyValue.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\Utility.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\UtilityCreator.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\+internal\WindowsUtility.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\IDERoot.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+arduinoio\SharedArduinoRoot.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+matlab\+hwmgr\+providers\ArduinoDeviceProvider.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+simulinkio\arduinoioserver.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+simulinkio\arduinoioserver.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+simulinkio\getBaudRate.m</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\matlab\hardware\supportpackages\sharedarduino\+simulinkio\getBaudRate.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\realtime\targets\arduinoide\+ide\+internal\getArduinoIDERootDir.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+internal\getIOServerRootDir.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\AnalogInput.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\DigitalIO.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\I2C.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\PWM.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\SCI.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+peripherals\SPI.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\+transport\TransportLayerUtility.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\debugMessage.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\debugPeripheralClass.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\ioserver\+matlabshared\+ioclient\IOProtocol.p</file>
+      <file>C:\ProgramData\MATLAB\SupportPackages\R2022b\toolbox\target\shared\svd\+matlabshared\+svd\+internal\getRootDir.p</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">C:\Users\guiot\Downloads\OMG_MSI\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">C:\Users\guiot\Downloads\OMG_MSI\for_testing\readme.txt</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">C:\Users\guiot\Downloads\OMG_MSI\for_testing\OMG_MSI.exe</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">E:\prism_imaging-I-O_temp\OMG_MSI\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">E:\prism_imaging-I-O_temp\OMG_MSI\for_testing\OMG_MSI.exe</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">E:\prism_imaging-I-O_temp\OMG_MSI\for_testing\splash.png</file>
     </build-deliverables>
     <workflow />
     <matlab>
       <root>C:\Program Files\MATLAB\R2022b</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
-        <toolbox name="gpucoder" />
       </toolboxes>
       <toolbox>
         <matlabcoder>
           <enabled>true</enabled>
         </matlabcoder>
-      </toolbox>
-      <toolbox>
-        <gpucoder>
-          <enabled>true</enabled>
-        </gpucoder>
       </toolbox>
     </matlab>
     <platform>
