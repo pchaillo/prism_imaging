@@ -40,16 +40,21 @@ pause(7)
 
 while calibration_finished == 0
 
-    value = sensor.class.get_value(app);
+    value = sensor.get_value(app);
+
+    disp("Current height :")
+    disp(current_height)
+    disp("final_height")
+    disp(final_height)
 
     if going_down == 0 % Determines if the robot is traveling upwards or downwards
         current_height = current_height + calibration_resolution;
-        if current_height == final_height % When final height is reached, the robot starts descending 
+        if current_height == final_height || current_height > final_height % When final height is reached, the robot starts descending 
             going_down = 1;
         end
     else
         current_height = current_height - calibration_resolution;
-        if current_height == init_height + 0.25% lorsqu'on est revenu à la position initiale, l'étalonnage s'arrete
+        if current_height == init_height || current_height < init_height  % lorsqu'on est revenu à la position initiale, l'étalonnage s'arrete
             calibration_finished = 1;
         end
     end

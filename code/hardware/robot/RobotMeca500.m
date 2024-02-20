@@ -88,7 +88,7 @@ classdef RobotMeca500 < handle
                 self.robot_communication = 0;
             end
 
-            disp("RObot object :")
+            disp("Robot communication object :")
             disp(self.robot_communication)
 
         end
@@ -141,9 +141,9 @@ classdef RobotMeca500 < handle
 
             state.stop_flag = security_check(a(1),a(2),a(3));
 
-            %    if state.arret == 0
-            disp("RObot object :")
-            disp(self.robot_communication)
+%             disp("RObot object :") % usefull for debug
+%             disp(self.robot_communication)
+
             fwrite(self.robot_communication,data);
             %  pause(0.01); % ?
             % h = 0;

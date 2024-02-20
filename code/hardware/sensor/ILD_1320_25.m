@@ -37,7 +37,7 @@ classdef ILD_1320_25 < handle
             nb_err = 0; % error counter
             nb_err_threshold= 10; % threshold that will stop trying measurement if the error counter reach it
             while stop == 0
-                pause(sensor.wait_time)
+                pause(self.wait_time)
                 u = readVoltage(self.sensor_connexion , self.pin); % get analog voltage
                 if u < 0.75 % Pourquoi 0.75 ? % #TODO
                     nb_err = nb_err + 1 ;
