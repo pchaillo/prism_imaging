@@ -30,7 +30,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
         y_ind = 0;
         for pos_y = parameters.y_offset : parameters.mapping_step : parameters.dim_y + parameters.y_offset
             y_ind = y_ind +1;
-            position = [pos_x  pos_y  parameters.initial_height+sample_height 180 0 180];
+            position = [pos_x,  pos_y, parameters.initial_height + parameters.maximal_height, 180, 0, 180];
             if robot.arret == 0
                 [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
                 robot.class.set_position(a);

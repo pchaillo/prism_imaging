@@ -128,7 +128,7 @@ classdef RobotMeca500 < handle
 
         function set_position(self, pos)
             % pos is a list that contain 6 value : 3 position and 3
-            % orientation
+            % orientationzon
 
             % insert code to set the robot position by sensing a frame % set_pos.m for MECA500
             global state
