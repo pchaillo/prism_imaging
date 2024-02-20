@@ -19,13 +19,14 @@ shift = 0; % height shift for the robot repositioning
 max_shift = 5; % maximal height shift
 
 calibration_array = sensor.calibration_array; 
+disp(calibration_array)
 
 while u == 0  || is_measured == 0
     loop_counter = loop_counter + 1;
     %    if  mod(loop_counter,100) == 0 && k> 500
     if  loop_counter >= nb_boucle_mesure && mod(loop_counter,nb_boucle_repeat) == 0
         
-        value = sensor.class.get_data(); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
+        value = sensor.get_value(app); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
         
         si = size(calibration_array);
         
@@ -42,7 +43,7 @@ while u == 0  || is_measured == 0
         end
         
         %% nouveau repos
-        if value < calibration_array(2,1)% || value == 0
+        if value < calibration_array(2,1) % || value == 0
             if parameters.fast_flag == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
                     shift = -3; % The sensor will first get a bit closer to see if it help the sensor, then it will move one millimetter by one millimetter

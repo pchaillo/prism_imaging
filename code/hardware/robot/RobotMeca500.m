@@ -136,6 +136,9 @@ classdef RobotMeca500 < handle
             %a(6) = 180 % we should not do that !!
             %disp('dirty fix here')
             a = pos ;
+            self.current_x = a(1);
+            self.current_y = a(2);
+            self.current_z = a(3);
             data = "MovePose("+a(1)+","+a(2)+","+a(3)+","+a(4)+","+a(5)+","+a(6)+")"+char(0);
             data = char(data);
 
@@ -166,9 +169,7 @@ classdef RobotMeca500 < handle
             %                 disp('robot arrêté par sécurité');
             %             end
 
-            robot.current_x = a(1);
-            robot.current_y = a(2);
-            robot.current_z = a(3);
+
         end
 
         function go_to_rest_position(self) % utile ?
