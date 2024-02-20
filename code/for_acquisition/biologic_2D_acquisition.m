@@ -5,7 +5,7 @@ function biologic_2D_acquisition(app, robot,source,parameters,time_ref)
 
 %pas d'adaptation angulaire
 
-upate_log(app, app.info_log, 'Biometric Scan')
+update_log(app, 'Biometric Scan')
 
 global state
 
@@ -31,10 +31,10 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             map.i(x_ind,y_ind) =  0 ;
 
             if source.continuous_flag == 0
-                source.class.trigger(nb_shot, app)
+                source.class.trigger(source.nb_shot, app)
             end
 
-            pause(t_b);
+            pause(source.t_b);
             map.time(x_ind,y_ind) = toc(time_ref);
         end
     else
@@ -51,10 +51,10 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             map.i(x_ind,y_ind) =  0 ;
 
             if source.continuous_flag == 0
-                source.class.trigger( nb_shot, app)
+                source.class.trigger( source.nb_shot, app)
             end
             
-            pause(t_b);
+            pause(source.t_b);
             
             map.time(x_ind,y_ind) = toc(time_ref);
         end

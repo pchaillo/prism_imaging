@@ -172,7 +172,7 @@ classdef RobotMeca500 < handle
 
         end
 
-        function go_to_rest_position(self) % utile ?
+        function go_to_rest_position(self,app) % utile ?
             % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
             self.set_position(self.robot_communication, self.rest_position);
             pause(3);

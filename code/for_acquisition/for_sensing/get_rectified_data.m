@@ -79,7 +79,7 @@ end
 %     sample_height = 0.01;
 % end
 
-if sample_height > parameters.surface_offset + parameters.mapping_step
+if sample_height > parameters.surface_offset + parameters.maximal_height
     sample_height = 0.02;
 end
 

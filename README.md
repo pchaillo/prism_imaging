@@ -18,6 +18,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+- source.t_b => truc mieux
 - Change trigger_sprectro_time function name
 - unify connexion/initilisation in hardawre component (from connect() to init() )
 - csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone

@@ -7,13 +7,13 @@ classdef ILD_1320_25 < handle
         need_calibration = 1; % bool, 0 = no // 1 = yes  
         pin = "A1"; % Analogic sensor, send a voltage between 0 qnd 5V, analog to a distance. A1 is the pin of the arduino that is connected to the analog sensor
         wait_time = 0.05 
-        calibration_step = 0.1 % In mm, used for sensor calibration DEBUG
+        calibration_step = 0.5 % In mm, used for sensor calibration DEBUG
         sensor_connexion = "";
         calibration_array = 0;
     end
 
     methods
-        function sensor_co = connect(self,arduino_object) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
+        function connect(self,arduino_object) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
 %             self.pin = pin
 %             self.arduino = arduino
             % Insert laser connexion and return connection object variable
