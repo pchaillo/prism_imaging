@@ -1,13 +1,14 @@
-classdef RobotMeca500
+classdef RobotMeca500 < handle
+   ...
 
-    properties
+    properties (SetAccess = public)
         % Nb_shoot_per_burst = 0
         IP_adress = '192.168.0.100';
         rest_position = [ 137.7 0.1 119.5 180 0 180 ];
         current_x = 0;
         current_y = 0;
         current_z = 0;
-        robot_communication = "" % Needed to avoid error on L18
+        robot_communication = "default" % Needed to avoid error on L18
         % #TODO Add current_x, y and z for sensor usage ?
     end
 
@@ -87,6 +88,9 @@ classdef RobotMeca500
                 self.robot_communication = 0;
             end
 
+            disp("RObot object :")
+            disp(self.robot_communication)
+
         end
 
         function disconnect(self, app)  % close_tcp_r.m for MECA500
@@ -138,6 +142,8 @@ classdef RobotMeca500
             state.stop_flag = security_check(a(1),a(2),a(3));
 
             %    if state.arret == 0
+            disp("RObot object :")
+            disp(self.robot_communication)
             fwrite(self.robot_communication,data);
             %  pause(0.01); % ?
             % h = 0;

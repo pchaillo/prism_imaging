@@ -1,4 +1,4 @@
-classdef ILD_1320_25
+classdef ILD_1320_25 < handle
     % (Analogic)
     % ILD1320-25 renvoie la tension lu sur l'Arduino, qd le VL6180x renvoie directement la distance => comment combiner les deux ?
     % => Mettre la conversion tension / distance dans le code orienté objet
@@ -8,15 +8,16 @@ classdef ILD_1320_25
         pin = "A1"; % Analogic sensor, send a voltage between 0 qnd 5V, analog to a distance. A1 is the pin of the arduino that is connected to the analog sensor
         wait_time = 0.05 
         calibration_step = 0.1 % In mm, used for sensor calibration DEBUG
+        sensor_connexion = "";
     end
 
     methods
-        function sensor_co = connect(self) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
+        function sensor_co = connect(self,arduino_object) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
 %             self.pin = pin
 %             self.arduino = arduino
             % Insert laser connexion and return connection object variable
-            sensor_co = arduino(); % Connect the arduino sensor acquisition
-
+%             sensor_co = arduino(); % Connect the arduino sensor acquisition
+            self.sensor_connexion = arduino_object;
         end
 
         function calibration_array = calibration(self, robot,parameters, app)
@@ -37,7 +38,7 @@ classdef ILD_1320_25
             nb_err_threshold= 10; % threshold that will stop trying measurement if the error counter reach it
             while stop == 0
                 pause(sensor.wait_time)
-                u = readVoltage(self.arduino , self.pin); % get analog voltage
+                u = readVoltage(self.sensor_connexion , self.pin); % get analog voltage
                 if u < 0.75 % Pourquoi 0.75 ? % #TODO
                     nb_err = nb_err + 1 ;
                     if nb_err > nb_err_threshold

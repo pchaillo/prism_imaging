@@ -1,4 +1,4 @@
-# prism_imaging
+﻿# prism_imaging
 
 
 Attention, penser à créer les répertoires "csv files", "map files", "mat files", "mzXML files", and "rgb map files" to use the interface.
@@ -18,6 +18,8 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+- Change trigger_sprectro_time function name
+- unify connexion/initilisation in hardawre component (from connect() to init() )
 - csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone
 - Le format BioMap sert encore a quelquechose ?
 - Remove useles "code_" in folder name (code_for_segmentation; code_python; code_java)
