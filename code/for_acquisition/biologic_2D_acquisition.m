@@ -1,5 +1,5 @@
 
-function biologic_2D_acquisition(app, robot,source,parameters,time_ref)
+function map = biologic_2D_acquisition(app, robot,source,parameters,time_ref)
 
 %with spectro time_ref
 

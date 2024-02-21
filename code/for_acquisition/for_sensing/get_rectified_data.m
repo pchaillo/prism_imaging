@@ -19,7 +19,7 @@ shift = 0; % height shift for the robot repositioning
 max_shift = 5; % maximal height shift
 
 calibration_array = sensor.calibration_array; 
-disp(calibration_array)
+% disp(calibration_array) $ useful for debug
 
 while u == 0  || is_measured == 0
     loop_counter = loop_counter + 1;
@@ -75,9 +75,9 @@ while u == 0  || is_measured == 0
     end 
 end
 
-% if sample_height < -3 % en donnant des valeurs fixes impossibles aux points faux, cela permet de les retrouver pour les corriger par la suite
-%     sample_height = 0.01;
-% end
+if sample_height < -3 % en donnant des valeurs fixes impossibles aux points faux, cela permet de les retrouver pour les corriger par la suite
+    sample_height = 0.01;
+end
 
 if sample_height > parameters.surface_offset + parameters.maximal_height
     sample_height = 0.02;

@@ -42,7 +42,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
 %             measured_height = get_rectified_data(app, sensor,t,pos_x,pos_y,delta,watchdog_flag);
             sample_height = sensor.class.get_data(robot,sample_height,watchdog_flag,parameters,app);
             map.i(x_ind,y_ind) =  sample_height ;
-            real_time_topography_display(map)
+            real_time_topography_display(map);
             
             
             if first_point == 1
@@ -66,7 +66,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
 %             sample_height = get_rectified_data(app, sensor,t,pos_x,pos_y,delta,watchdog_flag);
             sample_height = sensor.class.get_data(robot,sample_height,watchdog_flag,parameters,app);
             map.i(x_ind,y_ind) =  sample_height ;
-            real_time_topography_display(map)
+            real_time_topography_display(map);
             
             map.time(x_ind,y_ind) = toc;
         end
