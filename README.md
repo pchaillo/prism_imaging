@@ -18,6 +18,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+- Arrêt du laser continu => Arrêt total de l'imagerie 
 - source.t_b => truc mieux
 - Change trigger_sprectro_time function name
 - unify connexion/initilisation in hardawre component (from connect() to init() )
