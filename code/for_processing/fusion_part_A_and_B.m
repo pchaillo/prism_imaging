@@ -11,10 +11,12 @@ if scan_1.totIonCurrent > scan_2.totIonCurrent
     scan.retentionTime = scan_1.retentionTime;
     scan.totIonCurrent = scan_1.totIonCurrent; 
     scan.num = scan_1.num;
+    scan_2.centroided = -1;
 else
     scan.retentionTime = scan_2.retentionTime;
     scan.totIonCurrent = scan_2.totIonCurrent;
     scan.num = scan_2.num;
+    scan_1.centroided = -1;
 end
 
 scan.peaks.mz = [ scan_1.peaks.mz ; scan_2.peaks.mz ];

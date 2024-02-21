@@ -15,10 +15,12 @@ if scan_1.totIonCurrent > scan_2.totIonCurrent
     scan.retentionTime = scan_1.retentionTime;
     scan.totIonCurrent = scan_1.totIonCurrent;
     scan.num = scan_1.num;
+    scan_2.centroided = -1; % Comment faire ca de maniere propre ?
 else
     scan.retentionTime = scan_2.retentionTime;
     scan.totIonCurrent = scan_2.totIonCurrent;
     scan.num = scan_2.num;
+    scan_1.centroided = -1;
 end
 
 % scan.msLevel = scan_1.msLevel + 1; % Sinon c'est fait en double ? =>

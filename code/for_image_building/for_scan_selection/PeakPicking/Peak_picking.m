@@ -93,4 +93,4 @@ all_scans = collateral_fusion(app, all_scans, first_point_indice, last_selected_
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
 pixels_scans(:) = all_scans(Final_selected_indices_list);
-plot_selection_on_chromatogram(pixels_scans,Scan_time_list,TIC_list,corrected_topography_time_list); % Function that display the selected peaks on the chromatogram for visual checking
+plot_selection_on_chromatogram(pixels_scans,Scan_time_list,TIC_list,corrected_topography_time_list,all_scans); % Function that display the selected peaks on the chromatogram for visual checking

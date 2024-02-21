@@ -41,7 +41,7 @@ all_scans  = add_neighbourgh_scan(all_scans , Final_selected_indices_list);
 
 pixels_scans(:) = all_scans (Final_selected_indices_list);
 
-plot_selection_on_chromatogram(pixels_scans, scan_time_list, TIC_list, topography_time_list);
+plot_selection_on_chromatogram(pixels_scans, scan_time_list, TIC_list, topography_time_list,all_scans);
 
 estimated_time_gap = 0;
 
