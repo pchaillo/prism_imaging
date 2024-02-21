@@ -31,12 +31,12 @@ if l ~= 0
         [~,y_list_raw] = find (map.y == selected_y_pos);
         y = unique(y_list_raw);
        
-        if length(v) > 1 % old security check => should be useless now ?
-            v = v(1);
-            u = u(1);
-            update_log(app, string(y_v))
-            update_log(app, 'Warning: The exact value is false. It may remove an unselected point');
-        end
+        % if length(v) > 1 % old security check => should be useless now ?
+        %     v = v(1);
+        %     u = u(1);
+        %     update_log(app, string(y_v))
+        %     update_log(app, 'Warning: The exact value is false. It may remove an unselected point');
+        % end
 
         x_list(i) = x;
         y_list(i) = y;
