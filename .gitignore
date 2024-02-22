@@ -8,6 +8,8 @@
 *.ply
 *.biomap
 *.tmp
+*.png
+
 
 # *.csv
 
