@@ -27,15 +27,15 @@ end
 
 %fusion des lignes à fusionner
 
-%%% Supress all the empty data // Supprimme les valeurs nulles
+%%% Removes empty datapoints // Supprimme les valeurs nulles
 ind_to_supp = find(peak_array(:,2) == 0);
 peak_array(ind_to_supp,:) = [];
 
 %% Remise en place des lignes qui fusionnent
 peak_array = fusion_part_C(app, peak_array);
 
-%% bining ? #TODO
-% peak_tab3 = bining(peak_tab2,win);
+%% binning ? #TODO
+% peak_tab3 = binning(peak_tab2,win);
 
 processed_scan = scan;
 processed_scan.peaks.mz = peak_array;
