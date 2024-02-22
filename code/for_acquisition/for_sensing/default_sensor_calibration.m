@@ -16,7 +16,7 @@ going_down = 0;
 % in the interface. Be careful.
 calibration_resolution = sensor.calibration_step;
 
-calibration_band = 25; % plage de mesure du capteur en mm % a remonter en argument ? #TODO
+calibration_band = sensor.calibration_band; 
 
 % REFAIRE UNE NOUVELLE VERSION DE LA FONCTION D'ÉTALONNAGE, (NOUVEAU NOM)
 % AVEC CES VALEURS EXTRÊME EN ARGUMENT ?
@@ -79,7 +79,7 @@ end
 
 final_array_length = (final_height - init_height)/calibration_resolution ; % récupération de la taille attendue du tableau
 
-up_array = full_array(:,1: final_array_length); % division en deux tableaux équivalents (un pour la montée, un pour la descente) tab ligne 77 et 78 eq to full array ? #TODO
+up_array = full_array(:,1: final_array_length); 
 down_array_raw = full_array(:,final_array_length+1:2*final_array_length);
 down_array = fliplr(down_array_raw);
 

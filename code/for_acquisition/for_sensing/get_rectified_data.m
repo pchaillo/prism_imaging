@@ -5,15 +5,15 @@ function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,sample
 % global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
 % # TODO : Remove the two useless variables
-u = 0; % bool, to do the loop at least once => useless, reundant with meas_ok (#TODO : suppress and test it, or rename it with better name)
-measured_distance = 0; % initialize the variable => useful ? (#TODO : suppress it)
+get_first_value = 0; % bool, to do the loop at least once
+measured_distance = 0; % initialize the variable 
 
 loop_counter = 0; 
 is_measured = 0 ; % bool : if is_measured == 0 : no good value yet, continue the while loop // if is_measured == 1 : we get a value or we reach time limite, so we quit the while loop
 first_loop = 1; % bool, if 1, it's the first loop in while for repositioning, then set to 0
 
-nb_boucle_mesure = 1200; % 1200
-nb_boucle_repeat = 100; % 1200
+nb_boucle_mesure = 1200 ; % 1200 % Specifiaue au ILD1320_25 # TODO
+nb_boucle_repeat = 100 ; % 1200
 
 shift = 0; % height shift for the robot repositioning 
 max_shift = 5; % maximal height shift
@@ -21,12 +21,12 @@ max_shift = 5; % maximal height shift
 calibration_array = sensor.calibration_array; 
 % disp(calibration_array) $ useful for debug
 
-while u == 0  || is_measured == 0
+while get_first_value == 0  || is_measured == 0
     loop_counter = loop_counter + 1;
     %    if  mod(loop_counter,100) == 0 && k> 500
     if  loop_counter >= nb_boucle_mesure && mod(loop_counter,nb_boucle_repeat) == 0
         
-        value = sensor.get_value(app); % voltage send by the sensor #TODO => unifier le framework pour les réutilisation
+        value = sensor.get_value(app); 
         
         si = size(calibration_array);
         
@@ -71,7 +71,7 @@ while u == 0  || is_measured == 0
                 is_measured = 1;
             end
         end
-        u = 1;
+        get_first_value = 1;
     end 
 end
 

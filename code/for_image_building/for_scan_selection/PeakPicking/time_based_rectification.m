@@ -61,15 +61,15 @@ if si_time(1) ~= 1
         end
     end
     
-    for i = 1 : length(indices) %utile ? #TODO
-        time_array_final_2(i) = alls_scans(indices(i)).retentionTime;
-    end
-    
-    for i = 1 : length( corrected_topography_time_list)
-        time_array_diff_2(i) = time_array_final_2(i) - corrected_topography_time_list(i);
-    end
-    
-    debug = 0;
+%     for i = 1 : length(indices) %utile ? #TODO
+%         time_array_final_2(i) = alls_scans(indices(i)).retentionTime;
+%     end
+%     
+%     for i = 1 : length( corrected_topography_time_list)
+%         time_array_diff_2(i) = time_array_final_2(i) - corrected_topography_time_list(i);
+%     end
+%     
+%     debug = 0;
     
     indices = unique(indices);
     

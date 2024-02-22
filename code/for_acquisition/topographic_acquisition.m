@@ -1,4 +1,4 @@
-function map = topographic_acquisition(app, robot, sensor, parameters)
+function map = topographic_acquisition(app, robot, sensor, parameters,time_ref)
 % with time recording
 
 global state
@@ -44,12 +44,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             map.i(x_ind,y_ind) =  sample_height ;
             real_time_topography_display(map);
             
-            
-            if first_point == 1
-                first_point = 0;
-                tic;
-            end
-            map.time(x_ind,y_ind) = toc;
+            map.time(x_ind,y_ind) = toc(time_ref);
                     
         end
     else
@@ -68,7 +63,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             map.i(x_ind,y_ind) =  sample_height ;
             real_time_topography_display(map);
             
-            map.time(x_ind,y_ind) = toc;
+            map.time(x_ind,y_ind) = toc(time_ref);
         end
     end
 end

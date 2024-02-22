@@ -21,14 +21,12 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 - Ecrire la doc
 
 P :
-- arduino en startup => peu elegant... (Faire un truc plus robuste est necessaire)
-- Change trigger_sprectro_time function name
+- arduino en startup => peu elegant... (Faire un truc plus robuste est necessaire) + trigerring du spectrometre pour partage
 - unify connexion/initilisation in hardawre component (from connect() to init() ? )
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
-- deiso_fusion_reccur() => ?
-- list_fold_reccur() => ?
+- list_fold_reccur() => ? J'ai pas trouve mieux pour l'instant
 - Repasser sur les #TODO dans le code
 
 Vendredi : 
@@ -63,6 +61,8 @@ return a_final
 return b + C
 
 # TOCHOOSE : (Repasser sur ceux du code) 
+- WatchDog : On supprime ou on fait remonter dans l'interface
+- Rendre la modalite d'acquisition modulaire ? Ou juste le pattern de balayage ?
 - Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
 - Garder commentees des variables utiles pour le debug ? (Peak Picking ligne 77)
 - Robot => Effector ?
@@ -77,3 +77,5 @@ Variables :
 - carte => map
 - tab => array / list
 - alls_scans => all_scans
+- Change trigger_sprectro_time function name
+- deiso_fusion_reccur() => process_fusion_list

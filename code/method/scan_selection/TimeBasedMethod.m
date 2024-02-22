@@ -18,8 +18,8 @@ classdef TimeBasedMethod  < handle
 %         end
 
         function [pixels_scans ,estimated_time_gap] = selection( method, mzXML_data, map_time,app)
-
-            [pixels_scans ,estimated_time_gap] = time_based_selection(mzXML_data, map_time, method.aspiration_time); % take only the useful informations
+            neighbourgh_nb = app.NeighbourNumberEditField.Value;
+            [pixels_scans ,estimated_time_gap] = time_based_selection(mzXML_data, map_time, method.aspiration_time,neighbourgh_nb); % take only the useful informations
 
         end
     end

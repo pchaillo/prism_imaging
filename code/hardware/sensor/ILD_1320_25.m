@@ -10,6 +10,7 @@ classdef ILD_1320_25 < handle
         calibration_step = 0.5 % In mm, used for sensor calibration DEBUG
         sensor_connexion = "";
         calibration_array = 0;
+        calibration_band = 25; % in mm
     end
 
     methods

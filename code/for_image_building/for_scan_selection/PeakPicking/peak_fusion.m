@@ -50,7 +50,7 @@ if (~isempty(to_fusion_ind))
     end
     to_delete_indices = [];
     if fusion_ind > 0
-        processed_scans_fusion_list = deiso_fusion_reccur(scans_fusion_list);
+        processed_scans_fusion_list = process_fusion_list(scans_fusion_list);
         for i = 1 : length(processed_scans_fusion_list)
             clear fusion_list;
             clear Tot_Ion_list;

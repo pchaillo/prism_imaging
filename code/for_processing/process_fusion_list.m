@@ -1,4 +1,4 @@
-function indices_fusion_list = deiso_fusion_reccur(scans_fusion_list)
+function indices_fusion_list = process_fusion_list(scans_fusion_list)
 
 list = scans_fusion_list;
 final_list = [];

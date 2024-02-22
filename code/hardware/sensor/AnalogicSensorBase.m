@@ -3,6 +3,7 @@ classdef AnalogicSensorBase
     properties
         need_calibration = 1; % bool, 0 = no // 1 = yes   % if you set it to 0, no need to fill sensor_calibration funtcion (will not be called)
         calibration_step = 0.25;
+        calibration_band = 25; % in mm
     end
 
 

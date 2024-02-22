@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time)
+function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time,neighbourgh_nb)
 
 all_scans_raw = mzXMLStruct.scan ;
 
@@ -36,7 +36,7 @@ Final_selected_indices_list = corresponding_time(scan_time_list, topography_time
 
 %% Pour fusionner le point suivant
 % all_scans  = add_neighbourgh_scan(all_scans , Final_selected_indices_list);
-neighbourgh_nb = 2; % Remonter dans l'interface ? #TODO
+
 all_scans = add_multiple_neighbourgh_scan(all_scans,Final_selected_indices_list,neighbourgh_nb);
 
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
