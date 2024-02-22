@@ -11,13 +11,13 @@ classdef PeakPickingMethod < handle
     methods
         function init(method, app) % Liable to break if the corresponding names are every changed in the GUI
             method.threshold_begin = app.BeginThresholdEditField.Value; 
-            method.t_b = app.Timebetweentwolaserburstss.Value;
+            method.t_b = app.TimebetweentwolaserburstssEditField.Value;
             method.min_threshold = app.LoudThresholdEditField.Value;
             method.fusion_percentage = app.FusionpercentSlider.Value;
             method.intern_trig = app.InternalTriggeringSwitch.Value;
 
             update_log(app, method.intern_trig)
-            
+
         end
 
         function [pixels_scans ,time] = selection(method, mzXML_data , map_time, app)
@@ -32,7 +32,7 @@ classdef PeakPickingMethod < handle
             update_log(app, method.fusion_percentage)
             update_log(app, method.intern_trig)
 
-            [pixels_scans ,time] = Peak_picking(app, mzXML_data,method.threshold_begin,method.t_b,method.min_threshold,intern_flag,method.fusion_percentage,map_time); % take only the usefull informations
+            [pixels_scans ,time] = Peak_picking(app, mzXML_data, method.threshold_begin, method.t_b, method.min_threshold, intern_flag, method.fusion_percentage, map_time); % take only the useful informations
 
         end
     end
