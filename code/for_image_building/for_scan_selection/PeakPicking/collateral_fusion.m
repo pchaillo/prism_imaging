@@ -3,6 +3,14 @@ function all_scans = collateral_fusion(app, all_scans, first_point_indice, last_
 
 selected_scans = all_scans(first_point_indice:last_selected_point_indice);
 
+disp("Selected scans :")
+disp(selected_scans)
+disp("e")
+disp(first_point_indice)
+disp("f")
+disp(last_selected_point_indice)
+disp("fin")
+
 selected_scans_TIC = extract_TIC(selected_scans);
 selected_scans_num = extract_num(selected_scans);
 

@@ -16,32 +16,32 @@ for i = 1 :length(pixels_scans)
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
     if pixels_scans(i).centroided ~= 0
         ind_fus = ind_fus + 1 ;
-        pk_fus(ind_fus) = pixels_scans(i).totIonCurrent; % ou pixels_scans(i).centroided ?
+        pk_fus(ind_fus) = pixels_scans(i).ionisationEnergy; % ou pixels_scans(i).centroided ?
         %         loc_r= pixels_scans(i).retentionTime;
         %         loc_rond(ind_rond) = raw_to_time(loc_r);
         loc_fus(ind_fus) = pixels_scans(i).retentionTime;
     elseif pixels_scans(i).num < 0
         ind_ad = ind_ad + 1;
-        pk_ad(ind_ad) = pixels_scans(i).totIonCurrent;
+        pk_ad(ind_ad) = pixels_scans(i).ionisationEnergy;
         %         loc_r = pixels_scans(i).retentionTime;
         %         loc_x(ind_x) = raw_to_time(loc_r);
         loc_ad(ind_ad) = pixels_scans(i).retentionTime;
     elseif pixels_scans(i).msLevel > 1
         ind_coll = ind_coll + 1;
-        pk_coll(ind_coll) =  pixels_scans(i).totIonCurrent;
+        pk_coll(ind_coll) =  pixels_scans(i).ionisationEnergy;
         loc_coll(ind_coll) = pixels_scans(i).retentionTime;
     else
         ind_norm = ind_norm + 1 ;
         %         loc_r= pixels_scans(i).retentionTime;
         %         loc2(ind2) = raw_to_time(loc_r);
         loc_norm(ind_norm) = pixels_scans(i).retentionTime;
-        pk_norm(ind_norm) = pixels_scans(i).totIonCurrent;
+        pk_norm(ind_norm) = pixels_scans(i).ionisationEnergy;
     end
     %% pour plot les lignes d'écarts temporels
     
     if topography_time_list ~= 0
         
-    int = pixels_scans(i).totIonCurrent;
+    int = pixels_scans(i).ionisationEnergy;
     time_dat = pixels_scans(i).retentionTime;
     time_map = topography_time_list(i);
     
@@ -64,7 +64,7 @@ for i = 1 :length(all_scans)
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
     if all_scans(i).centroided ~= 0
         ind_fus = ind_fus + 1 ;
-        pk_fus(ind_fus) = all_scans(i).totIonCurrent; % ou pixels_scans(i).centroided ?
+        pk_fus(ind_fus) = all_scans(i).ionisationEnergy; % ou pixels_scans(i).centroided ?
         %         loc_r= pixels_scans(i).retentionTime;
         %         loc_rond(ind_rond) = raw_to_time(loc_r);
         loc_fus(ind_fus) = all_scans(i).retentionTime;

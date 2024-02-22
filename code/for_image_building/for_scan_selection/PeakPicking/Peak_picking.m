@@ -28,6 +28,10 @@ Scan_time_list = extract_time(all_scans);
 
 [data_array,first_point_indice] = create_data_array_from_peak_detection(all_scans,threshold_begin,TIC_list,Scan_time_list);
 
+disp("u")
+disp(first_point_indice)
+disp("u")
+
 estimated_time_gap = time_estimation(data_array, noise_threshold);
 
 %% Apply filtering using noise_threshold %% Application du filtrage min par threshold de bruit
