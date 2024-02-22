@@ -18,6 +18,8 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+- Ecrire la doc
+
 P :
 - arduino en startup => peu elegant... (Faire un truc plus robuste est necessaire)
 - Change trigger_sprectro_time function name
@@ -40,6 +42,7 @@ A :
 - Remove useless "file" in "map files" etc. (C'est redondant, c'est deja dans le dossier files)
 - Move .ply to file folder
 - faire un choix pour l'ajout des fichier au workspace
+- Refactor interface => retirer biomap
 - remplacer les diodes par quelquechose de plus elegant
 
 Y :
@@ -67,7 +70,6 @@ return b + C
 
 # Cleaned :
 - Le format BioMap sert encore a quelquechose ? => Non
-
 Variables :
 - Laser => Source
 - tab_qsw_0 => msg_qsw_0
