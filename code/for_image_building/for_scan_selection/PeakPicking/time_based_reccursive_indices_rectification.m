@@ -1,4 +1,4 @@
-function [new_indices_selection, all_ind_in_timelist ] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list)
+function [new_indices_selection, all_ind_in_timelist ] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list,app)
 
 % Fonction qui rajoute et retire des points en comparant les temps de
 % cartographies et issues du fichier mzXML
@@ -16,7 +16,7 @@ for i = 1 : length( time_list)
     if time_difference_list(i) < - t_step*0.8
         if alls_scans(indices(i)).num < 0 % pour ne pas supprimer les lignes des peaks
             indices(i) = [];
-            [new_indices_selection, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list);
+            [new_indices_selection, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list,app);
             ok = 1;
             break
         end
@@ -24,10 +24,10 @@ for i = 1 : length( time_list)
         time01 = alls_scans(indices(i-1)).retentionTime;
         time02 = alls_scans(indices(i)).retentionTime;
         time_val_i = (time01 + time02)/2 ;
-        ind_in_timelist = find_closest_point(time_val_i,scan_time_list, t_step);
+        ind_in_timelist = find_closest_point(app,time_val_i,scan_time_list, t_step);
         indices = [indices ind_in_timelist];
         indices = sort(indices);
-        [new_indices_selection, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list);
+        [new_indices_selection, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, time_list, t_step, scan_time_list,app);
         ok = 1;
 
         all_ind_in_timelist = [all_ind_in_timelist ind_in_timelist];

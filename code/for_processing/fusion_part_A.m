@@ -13,11 +13,11 @@ scan.deisotoped = [scan_1.deisotoped scan_2.deisotoped];
 % je place le point sur le plus gros pic temporellement :
 if scan_1.totIonCurrent > scan_2.totIonCurrent
     scan.retentionTime = scan_1.retentionTime;
-    scan.totIonCurrent = scan_1.totIonCurrent; 
+    scan.ionisationEnergy = scan_1.ionisationEnergy; 
     scan.num = scan_1.num;
 else
     scan.retentionTime = scan_2.retentionTime;
-    scan.totIonCurrent = scan_2.totIonCurrent;
+    scan.ionisationEnergy = scan_2.ionisationEnergy;
     scan.num = scan_2.num;
 end
 

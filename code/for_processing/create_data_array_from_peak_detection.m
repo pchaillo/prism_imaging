@@ -8,6 +8,11 @@ while first_peak_is_finded == 0
     if alls_scans(i).totIonCurrent > threshold_begin
         first_point_indice = i;
         first_peak_is_finded = 1;
+        disp("First Point indice") % usefull for debug
+        disp(first_point_indice)
+        if first_point_indice == 1
+            disp("Attention, begin threshold too low => 1st scan detected as 1 peak on chromatogram")
+        end
     end
 end
 
@@ -25,5 +30,8 @@ data_array(2,:) = selected_times; % old loc
 data_array(3,:) = time_gap_list; % old tab_loc
 data_array(4,:) = selected_peaks; % old pk
 
-first_point_indice = find(data_array(1,:) == first_point_indice); % Suppress all points before the 1st one
-data_array(:,1:first_point_indice-1) = [];
+first_point_index = find(data_array(1,:) == first_point_indice); % Suppress all points before the 1st one
+data_array(:,1:first_point_index-1) = [];
+
+% disp("First Point indice :") % usefull for debug
+% disp(first_point_indice)

@@ -41,7 +41,7 @@ if si_time(1) ~= 1
             time01 = alls_scans(indices(i)).retentionTime;
             time02 = alls_scans(indices(i+1)).retentionTime;
             time_val_i = (time01 + time02)/2 ;
-            time_ind = find_closest_point(time_val_i,scan_time_list, t_step);
+            time_ind = find_closest_point(app,time_val_i,scan_time_list, t_step);
             indices = [indices time_ind];
             indices = sort(indices);
             
@@ -50,14 +50,14 @@ if si_time(1) ~= 1
         end
     end
     
-    [indices, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, corrected_topography_time_list, t_step, scan_time_list);
+    [indices, all_ind_in_timelist] = time_based_reccursive_indices_rectification(indices, alls_scans, corrected_topography_time_list, t_step, scan_time_list,app);
     % new_indices_selection, all_ind_in_timelist
 
     if ind_a > 0 && length(all_ind_in_timelist) > 1
         all_ind_in_timelist(1) = []; % suppression du 0 ajouté pour pas que la variable soit vide si aucun point n'est ajouté
         ind_add_array_final = unique([ind_add_array all_ind_in_timelist]);
         for i = 1 : length(ind_add_array_final)
-            alls_scans(ind_add_array_final(i)) = to_add_pt(alls_scans(ind_add_array_final(i)));
+            alls_scans(ind_add_array_final(i)).num = -alls_scans(ind_add_array_final(i)).num; % put a negative num is a way to set this point as a filler
         end
     end
     
