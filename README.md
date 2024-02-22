@@ -27,11 +27,11 @@ P :
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
 - deiso_fusion_reccur() => ?
 - list_fold_reccur() => ?
+- Repasser sur les #TODO dans le code
 
 Vendredi : 
 - Arrêt du laser continu => Arrêt total de l'imagerie 
 - verifier que la variable globale state est bien fonctionelle + test de la fonction de securite
-
 
 - csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone
 
@@ -42,14 +42,14 @@ A :
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
 
-
-- Repasser sur les #TODO dans le code
-
-- Robot => Effector ?
+Y :
+- automatic mzML generation
+- imzML generation pipeline as clear as possible
+- remove code_for_segmentation ?
 
 Globalement, traduire tout le francais
 
-Aussi deporter ce aui peut l'etre dans des fonctions et ne pas laisser dans mlapp => rend les merge plus faciles
+Aussi deporter ce qui peut l'etre dans des fonctions et ne pas laisser dans mlapp => rend les merge plus faciles
 
 Supprimer les egalites inutiles ? 
 Exemple :
@@ -62,9 +62,7 @@ return b + C
 # TOCHOOSE : (Repasser sur ceux du code) 
 - Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
 - Garder commentees des variables utiles pour le debug ? (Peak Picking ligne 77)
-
-# Noms a revoir (Faire des suggestions ici ?)
-Fonctions :
+- Robot => Effector ?
 
 
 # Cleaned :
