@@ -18,22 +18,33 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 
 # TODO :
+P :
 - arduino en startup => peu elegant... (Faire un truc plus robuste est necessaire)
-- Arrêt du laser continu => Arrêt total de l'imagerie 
-- source.t_b => truc mieux
 - Change trigger_sprectro_time function name
-- unify connexion/initilisation in hardawre component (from connect() to init() )
-- csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone
-- Le format BioMap sert encore a quelquechose ?
-- Remove useless "code_" in folder name (code_for_segmentation; code_python; code_java)
-- Remove useless "file" in "map files" etc. (C'est redondant, c'est deja dans le dossier files)
-- Repasser sur les #TODO dans le code
+- unify connexion/initilisation in hardawre component (from connect() to init() ? )
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
+- deiso_fusion_reccur() => ?
+- list_fold_reccur() => ?
+
+Vendredi : 
+- Arrêt du laser continu => Arrêt total de l'imagerie 
 - verifier que la variable globale state est bien fonctionelle + test de la fonction de securite
+
+
+- csv_spectra_recorder => n'existe pas pour extraire une zone de l'image en .csv => voir export_spectra_zone
+
+A :
+- Remove useless "code_" in folder name (code_for_segmentation; code_python; code_java)
+- Remove useless "file" in "map files" etc. (C'est redondant, c'est deja dans le dossier files)
+- Move .ply to file folder
 - faire un choix pour l'ajout des fichier au workspace
 - remplacer les diodes par quelquechose de plus elegant
+
+
+- Repasser sur les #TODO dans le code
+
 - Robot => Effector ?
 
 Globalement, traduire tout le francais
@@ -52,15 +63,13 @@ return b + C
 - Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
 - Garder commentees des variables utiles pour le debug ? (Peak Picking ligne 77)
 
-
 # Noms a revoir (Faire des suggestions ici ?)
 Fonctions :
-- deiso_fusion_reccur() => ?
-- list_fold_reccur() => ?
-Variables :
-- tab_qsw_0 
+
 
 # Cleaned :
+- Le format BioMap sert encore a quelquechose ? => Non
+
 Variables :
 - Laser => Source
 - tab_qsw_0 => msg_qsw_0
