@@ -1,4 +1,4 @@
-function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_list)
+function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_list,all_scans)
 % Function that display the selected peaks on the chromatogram for visual checking
 
 %avec meilleure fusion
@@ -59,6 +59,18 @@ end
 
 %     plot(time_line_x,time_line_y);
 
+for i = 1 :length(all_scans)
+    %% pour scatter les points
+    %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
+    if all_scans(i).centroided ~= 0
+        ind_fus = ind_fus + 1 ;
+        pk_fus(ind_fus) = all_scans(i).totIonCurrent; % ou pixels_scans(i).centroided ?
+        %         loc_r= pixels_scans(i).retentionTime;
+        %         loc_rond(ind_rond) = raw_to_time(loc_r);
+        loc_fus(ind_fus) = all_scans(i).retentionTime;
+    end
+end
+
 
 if exist('loc_norm')
     scatter(loc_norm,pk_norm,'*','red');
@@ -67,7 +79,7 @@ if exist('loc_coll')
     scatter(loc_coll,pk_coll,'o','red');
 end
 if exist('loc_fus')
-    scatter(loc_fus,pk_fus,'o','m');
+    scatter(loc_fus,pk_fus,'*','m');
 end
 if exist('loc_ad')
     scatter(loc_ad,pk_ad,'d','b');
