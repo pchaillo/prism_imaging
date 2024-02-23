@@ -14,7 +14,7 @@ classdef ILD_1320_25 < handle
     end
 
     methods
-        function connect(self,arduino_object) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
+        function init(self,arduino_object) %, arduino, pin) % I'm confused as to how this is supposed to work. The logic behind this version is sound, so I'm not touching it for now.
 %             self.pin = pin
 %             self.arduino = arduino
             % Insert laser connexion and return connection object variable

@@ -5,7 +5,7 @@ classdef NumericSensorBase
     end
 
     methods
-        function  connect(self) 
+        function  init(self) 
             self.sensor_co = communication_initialisation % or you may put the communication object as an input variable of the sensor.connect function
            % insert laser connexion and return connection object variable
         end

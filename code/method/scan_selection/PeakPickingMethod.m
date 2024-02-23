@@ -9,30 +9,30 @@ classdef PeakPickingMethod < handle
     end
 
     methods
-        function init(method, app) % Liable to break if the corresponding names are every changed in the GUI
-            method.threshold_begin = app.BeginThresholdEditField.Value; 
-            method.t_b = app.TimebetweentwolaserburstssEditField.Value;
-            method.min_threshold = app.LoudThresholdEditField.Value;
-            method.fusion_percentage = app.FusionpercentSlider.Value;
-            method.intern_trig = app.InternalTriggeringSwitch.Value;
+        function init(self, app) % Liable to break if the corresponding names are every changed in the GUI
+            self.threshold_begin = app.BeginThresholdEditField.Value; 
+            self.t_b = app.TimebetweentwolaserburstssEditField.Value;
+            self.min_threshold = app.LoudThresholdEditField.Value;
+            self.fusion_percentage = app.FusionpercentSlider.Value;
+            self.intern_trig = app.InternalTriggeringSwitch.Value;
 
-            update_log(app, method.intern_trig)
+            update_log(app, self.intern_trig)
 
         end
 
-        function [pixels_scans ,time] = selection(method, mzXML_data , map_time, app)
-            if (method.intern_trig(1:2) == 'On')
+        function [pixels_scans ,time] = selection(self, mzXML_data , map_time, app)
+            if (self.intern_trig(1:2) == 'On')
                 intern_flag = 1;
             else
                 intern_flag = 0;
             end
-            update_log(app, method.threshold_begin)
-            update_log(app, method.t_b)
-            update_log(app, method.min_threshold)
-            update_log(app, method.fusion_percentage)
-            update_log(app, method.intern_trig)
+            update_log(app, self.threshold_begin)
+            update_log(app, self.t_b)
+            update_log(app, self.min_threshold)
+            update_log(app, self.fusion_percentage)
+            update_log(app, self.intern_trig)
 
-            [pixels_scans ,time] = Peak_picking(app, mzXML_data, method.threshold_begin, method.t_b, method.min_threshold, intern_flag, method.fusion_percentage, map_time); % take only the useful informations
+            [pixels_scans ,time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time); % take only the useful informations
 
         end
     end

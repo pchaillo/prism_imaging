@@ -8,7 +8,7 @@ classdef AnalogicSensorBase
 
 
     methods
-        function sensor_co = connect(sensor) 
+        function sensor_co = init(sensor) 
            % insert laser connexion and return connection object variable
         end
 

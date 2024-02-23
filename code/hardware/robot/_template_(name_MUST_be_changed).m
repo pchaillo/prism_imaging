@@ -7,7 +7,7 @@ classdef RobotBase
 
     methods
 
-        function robot_co = connect(robot) 
+        function robot_co = init(robot) 
            % insert code to init connexion with the robot % init_tcp for MECA500
         end
 

@@ -11,7 +11,7 @@ classdef SensorTemplate
     end
 
     methods
-        function sensor_co = connect(laser) 
+        function sensor_co = init(laser) 
            % insert laser connexion and return connection object variable
         end
         

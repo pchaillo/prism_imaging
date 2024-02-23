@@ -14,7 +14,7 @@ classdef RobotMeca500 < handle
 
     methods
 
-        function connect(self, app)   % init_tcp for MECA500
+        function init(self, app)   % init_tcp for MECA500
             % Connexion
             self.robot_communication = tcpip(self.IP_adress, 10000, 'NetworkRole', 'client');
             fopen(self.robot_communication);
