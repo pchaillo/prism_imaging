@@ -12,14 +12,18 @@ loop_counter = 0;
 is_measured = 0 ; % bool : if is_measured == 0 : no good value yet, continue the while loop // if is_measured == 1 : we get a value or we reach time limite, so we quit the while loop
 first_loop = 1; % bool, if 1, it's the first loop in while for repositioning, then set to 0
 
-nb_boucle_mesure = 1200 ; % 1200 % Specifiaue au ILD1320_25 # TODO
-nb_boucle_repeat = 100 ; % 1200
+nb_boucle_mesure = 200 ; % 1200 % Specifiaue au ILD1320_25 # TODO
+nb_boucle_repeat = 50 ; % 100
 
 shift = 0; % height shift for the robot repositioning 
 max_shift = 5; % maximal height shift
 
 calibration_array = sensor.calibration_array; 
 % disp(calibration_array) $ useful for debug
+
+if calibration_array == 0
+    disp("This analogic sensor require calibration");
+end
 
 while get_first_value == 0  || is_measured == 0
     loop_counter = loop_counter + 1;

@@ -20,6 +20,8 @@ classdef ILD_1320_25 < handle
             % Insert laser connexion and return connection object variable
 %             sensor_co = arduino(); % Connect the arduino sensor acquisition
             self.sensor_connexion = arduino_object;
+            disp("Sensor connexion :")
+            disp(self.sensor_connexion)
         end
 
         function calibration_array = calibration(self, robot,parameters, app)
@@ -46,12 +48,12 @@ classdef ILD_1320_25 < handle
                     nb_err = nb_err + 1 ;
                     if nb_err > nb_err_threshold
                         value = 0; % peut etre trouver une meilleure solution ? #TODO
-                        update_log(app, string(value))
+%                         update_log(app, string(value))
                         stop = 1;
                     end
                 else
                     value = u;
-                    update_log(app, string(value))
+%                     update_log(app, string(value))
                     stop = 1;
                 end
             end
