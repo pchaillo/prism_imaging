@@ -29,7 +29,7 @@ coreg_img = None
 def file_name_recovery(filepath):
     # This function returns a file's name and its extension as two separate entities in order to allow for easier
     # manipulation
-    global tgtnamefin, tgtext
+  #  global tgtnamefin, tgtext
     tgtname = ''
     rvstgtname = ''
     tgtnamefin = ''
@@ -58,6 +58,7 @@ def file_name_recovery(filepath):
 
     for i in reversed(rvstgtext):
         tgtext = tgtext + i  # Target extension
+
     return tgtnamefin, tgtext
 
 
@@ -87,6 +88,7 @@ def set_coreg():
 def set_interpol():
     global interpol
     interpol = sldr7.get()
+    #return sldr7.get()
 
 
 gui = tkinter.Tk()
@@ -383,7 +385,7 @@ else:
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
-file_name_recovery(filepath=filename)
+tgtnamefin, tgtext = file_name_recovery(filepath=filename)
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
