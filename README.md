@@ -22,7 +22,6 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 P :
 - arduino en startup => peu elegant... (Faire un truc plus robuste est necessaire) + trigerring du spectrometre pour partage
-- unify connexion/initilisation in hardawre component (from connect() to init() ? )
 - sensor => self (coller a la typo python pour etre plus comprehensible)
 	- Impacter les templates apres le debug hardware
 	- Mettre en place la connexion propre entre arduino pour capteur et pour trigger spectro => OK ?
@@ -69,6 +68,7 @@ return b + C
 
 
 # Cleaned :
+- unify connexion/initilisation in hardawre component (from connect() to init() ? )
 - Le format BioMap sert encore a quelquechose ? => Non
 Variables :
 - Laser => Source

@@ -1,7 +1,9 @@
 classdef RobotMeca500 < handle
-   ...
+    ...
 
     properties (SetAccess = public)
+        stop_distance = 70 ; % Critic security distance // distance de sécurité critique
+        warning_distance = 75 ; % Warning security distance // distance de sécurité avertissement
         % Nb_shoot_per_burst = 0
         IP_adress = '192.168.0.100';
         rest_position = [ 137.7 0.1 119.5 180 0 180 ];
@@ -133,8 +135,6 @@ classdef RobotMeca500 < handle
             % insert code to set the robot position by sensing a frame % set_pos.m for MECA500
             global state
 
-            %a(6) = 180 % we should not do that !!
-            %disp('dirty fix here')
             a = pos ;
             self.current_x = a(1);
             self.current_y = a(2);
@@ -142,33 +142,27 @@ classdef RobotMeca500 < handle
             data = "MovePose("+a(1)+","+a(2)+","+a(3)+","+a(4)+","+a(5)+","+a(6)+")"+char(0);
             data = char(data);
 
-            state.stop_flag = security_check(a(1),a(2),a(3));
+            state.stop_flag = self.security_check(a(1),a(2),a(3));
 
-%             disp("RObot object :") % usefull for debug
-%             disp(self.robot_communication)
+            if state.stop_flag == 0
+                fwrite(self.robot_communication,data);
+                while self.robot_communication.BytesAvailable == 0 % && h < 100 % wait robot message
+                    % h = h + 1;
+                end
+                % read robot message
+                data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
+                m = char(data);
+                m1 = convertCharsToStrings(m);
+                m2 = convertContainedStringsToChars(m1);
+                m3 = m2(2 : 5 );
+                u = str2double(m3);
 
-            fwrite(self.robot_communication,data);
-            %  pause(0.01); % ?
-            % h = 0;
-            while self.robot_communication.BytesAvailable == 0 % && h < 100 % wait robot message
-                % h = h + 1;
+                if u ~= 3012 && length(m) == 22
+                    state.stop_flag = 1;
+                end
+            else 
+                disp("Robot stopped for security purpose ")
             end
-
-            % read robot message
-            data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
-            m = char(data);
-            m1 = convertCharsToStrings(m);
-            m2 = convertContainedStringsToChars(m1);
-            m3 = m2(2 : 5 );
-            u = str2double(m3);
-
-            if u ~= 3012 && length(m) == 22
-                state.stop_flag = 1;
-            end
-            %             else
-            %                 disp('robot arrêté par sécurité');
-            %             end
-
 
         end
 
@@ -177,6 +171,36 @@ classdef RobotMeca500 < handle
             self.set_position( self.rest_position);
             pause(3);
             self.disconnect( app);
+        end
+
+        function stop = security_check(self,x,y,z)
+
+            global parameters
+
+            stop = 0;
+
+            %%% teste le contact au sol %%%
+            if z  < 0
+                disp( ' impact ');
+                stop = 1;
+            elseif z + parameters.surface_offset < self.stop_distance
+                stop = 1;
+                disp(' Robot trop proche du sol => arret sécurité ' )
+            elseif z + parameters.surface_offset < self.warning_distance
+                disp( 'Attention robot proche du sol');
+            end
+
+            %%% teste le contact a l'objet %%%
+            if z  < parameters.maximal_height + parameters.surface_offset + 10
+                disp( ' Contact imminent avec l echantillon => arret de securite');
+                stop = 1;
+            elseif z  < self.stop_distance - parameters.surface_offset - parameters.maximal_height
+                stop = 0;
+                disp(' Robot trop proche de echantillon => arret sécurité ' )
+            elseif z < self.warning_distance - parameters.surface_offset - parameters.maximal_height
+                disp( 'Attention robot proche de lechantilon');
+            end
+
         end
 
     end
