@@ -4,7 +4,7 @@ function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_lis
 %avec meilleure fusion
 % avec fusion collatérales
 
-hFig = figure(); % plot les points choisis
+figure(); % plot les points choisis
 hold on
 plot(t_i,ion)
 ind_fus = 0; % point fussionnes
@@ -88,7 +88,7 @@ end
 xlabel('Time (s)')
 ylabel('TIC intensity')
 title('Scan selection on chromatogram')
-axes()
+% axes()
 
 
 hold off
