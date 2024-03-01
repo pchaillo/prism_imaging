@@ -9,7 +9,7 @@
 % Tolerance percentage as an argument
 
 
-function [pixels_scans, estimated_time_gap] = Peak_picking(app, mzXMLStruct, threshold_begin, t_step, noise_threshold, intern_flag, fusion_percentage, map_time)
+function [pixels_scans, estimated_time_gap] = Peak_picking(app, mzXMLStruct, threshold_begin, t_step, noise_threshold, intern_flag, fusion_percentage, map_time, aspiration_time)
 
 % Indices = position in the list or in the array
 % Nums = position in the raw mzXML file
@@ -20,8 +20,8 @@ all_scans = clean_time(all_scans_raw); % Function that convert all the time valu
 all_scans = clean_fusion_list(all_scans);
 
 % VARIABLES  %
-time_res = 0.5 ; % Faire remonter en argument de la fonction ?
-aspiration_time = 0.35; % This probably should be set in the GUI instead
+time_res = 0.5 ; % Faire remonter en argument de la fonction ? #TODO
+% aspiration_time = 0.35; % This probably should be set in the GUI instead
 
 TIC_list = extract_TIC(all_scans);
 Scan_time_list = extract_time(all_scans);

@@ -84,4 +84,9 @@ end
 if exist('loc_ad')
     scatter(loc_ad,pk_ad,'d','b');
 end
+
+xlabel('Time (s)')
+ylabel('TIC intensity')
+title('Scan selection on chromatogram')
+
 hold off

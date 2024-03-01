@@ -6,6 +6,7 @@ classdef PeakPickingMethod < handle
            min_threshold = 0;
            fusion_percentage = 0;
            intern_trig = 'charac';
+           aspiration_time = 0.35;
     end
 
     methods
@@ -15,6 +16,7 @@ classdef PeakPickingMethod < handle
             self.min_threshold = app.LoudThresholdEditField.Value;
             self.fusion_percentage = app.FusionpercentSlider.Value;
             self.intern_trig = app.InternalTriggeringSwitch.Value;
+            self.aspiration_time = app.AspirationTimesEditField.Value;
 
             update_log(app, self.intern_trig)
 
@@ -32,7 +34,7 @@ classdef PeakPickingMethod < handle
             update_log(app, self.fusion_percentage)
             update_log(app, self.intern_trig)
 
-            [pixels_scans ,time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time); % take only the useful informations
+            [pixels_scans ,time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time,self.aspiration_time); % take only the useful informations
 
         end
     end
