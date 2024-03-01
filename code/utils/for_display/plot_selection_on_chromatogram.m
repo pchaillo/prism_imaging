@@ -4,7 +4,7 @@ function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_lis
 %avec meilleure fusion
 % avec fusion collatérales
 
-figure() % plot les points choisis
+hFig = figure(); % plot les points choisis
 hold on
 plot(t_i,ion)
 ind_fus = 0; % point fussionnes
@@ -71,9 +71,9 @@ for i = 1 :length(all_scans)
     end
 end
 
-
 if exist('loc_norm')
-    scatter(loc_norm,pk_norm,'*','red');
+    % plot(loc_norm,pk_norm,'*','red');
+   s(1) = scatter(loc_norm,pk_norm,'*','red','DisplayName','Scan');
 end
 if exist('loc_coll')
     scatter(loc_coll,pk_coll,'o','red');
@@ -88,5 +88,26 @@ end
 xlabel('Time (s)')
 ylabel('TIC intensity')
 title('Scan selection on chromatogram')
+axes()
+
 
 hold off
+
+% hIm = imshow('legend3.PNG') % Faire legend ? #TODO
+% % hIm = imshow(rgbImage);
+% hSP = imscrollpanel(hFig,hIm);
+% set(hSP,'Units','normalized',...
+%     'Position',[0 .1 1 .9])
+% % 2. Add a Magnification Box and an Overview tool.
+% hMagBox = immagbox(hFig,hIm);
+% pos = get(hMagBox,'Position');
+% set(hMagBox,'Position',[0 0 pos(3) pos(4)])
+% imoverview(hIm)
+% % 3. Get the scroll panel API to programmatically control the view.
+% api = iptgetapi(hSP);
+% % 4. Get the current magnification and position.
+% mag = api.getMagnification();
+% r = api.getVisibleImageRect();
+% % 5. View the top left corner of the image.
+% api.setVisibleLocation(0.5,0.5)
+% truesize([50 50])
