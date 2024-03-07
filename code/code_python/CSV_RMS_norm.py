@@ -2,7 +2,7 @@
 # To run manunally through MatLab:
 #   path(path, 'code/code_python')
 #   pyrunfile('#SCRIPT_NAME#.py')
-# Highly sensitive to the null values that populate most cells of the CSV files. Not advisable as it is.
+# This version will instead work on the sum of intensities in each pixel
 
 import pandas
 import numpy
@@ -49,27 +49,28 @@ def file_name_recovery(filepath):
 Tk().withdraw()
 filename = askopenfilename()
 
-csv = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, deprecated
+csv = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
 head = csv.iloc[:11, :]
 tail = csv.iloc[11:, :]
-tail_squared = tail.apply(numpy.square)
-tail_squared_mean = []
 
-for data in tail_squared:
-    tail_squared_mean.append(tail_squared[data].mean())
+tail_sum = tail.copy()
+tail_sum = tail_sum.sum(axis=0)  # This should equate to the TIC, but it is much larger.
+tail_mean = tail_sum.mean()
+tail_delta = tail_sum - tail_mean
+tail_rms = numpy.sqrt(tail_delta.apply(numpy.square))
 
-tail_rms = numpy.sqrt(tail_squared_mean)
+# The following line is a debug workaround, and WILL diminish RMS accuracy
+tail_rms = tail_rms.round()
 
-i = 0
-for data in tail:
-    tail[data] = tail[data]/tail_rms[i]
-    i = i + 1
+# Not too sure about this one. It looks like floats are messing up and creating values where there are none
+
+tail = tail/tail_rms
 
 csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 file_name_recovery(filepath=filename)
 tgtname = tgtnamefin + '-RMSnorm.' + tgtext
-csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
+csv_norm.to_csv(path_or_buf=('csv files/' + tgtname))
 
-print(tgtname, 'was properly saved in "files/csv files/"')
+print(tgtname, 'was properly saved in "csv files/"')

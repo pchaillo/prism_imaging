@@ -16,50 +16,15 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from PIL import Image
 from coloraide import Color
+from utils import GUI, utils
 
 # Creation of global variables
+filename = None
 filename = None
 data_list = None
 colour1 = None
 colour2 = None
 coreg_img = None
-
-
-# Define the name fetching function
-def file_name_recovery(filepath):
-    # This function returns a file's name and its extension as two separate entities in order to allow for easier
-    # manipulation
-  #  global tgtnamefin, tgtext
-    tgtname = ''
-    rvstgtname = ''
-    tgtnamefin = ''
-    tgtext = ''
-    rvstgtext = ''
-    for i in reversed(filepath):
-        if i != "/":
-            rvstgtname = rvstgtname + i
-        else:
-            break
-
-    for i in reversed(rvstgtname):
-        tgtname = tgtname + i
-
-    for i in tgtname:
-        if i != '.':
-            tgtnamefin = tgtnamefin + i  # Target name
-        else:
-            break
-
-    for i in reversed(filepath):
-        if i != '.':
-            rvstgtext = rvstgtext + i
-        else:
-            break
-
-    for i in reversed(rvstgtext):
-        tgtext = tgtext + i  # Target extension
-
-    return tgtnamefin, tgtext
 
 
 # GUI Goodness
@@ -88,7 +53,6 @@ def set_coreg():
 def set_interpol():
     global interpol
     interpol = sldr7.get()
-    #return sldr7.get()
 
 
 gui = tkinter.Tk()
@@ -339,7 +303,7 @@ else:
 imax = max(intensities)
 itstlst = []
 for i in intensities:
-    itstlst.append(int(i))  # Creates a list of intensities converted to integers
+    itstlst.append(i)  # Creates a list of intensities
 
 # Colouring of vertices with ColorAide
 colours_dict = {"Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7, 0]), Color("srgb", [0, 1, 0]), "linear"],
@@ -367,9 +331,9 @@ if coreg_img is None:
     min_cutoff = numpy.percentile(itstlst, float(min_percentile))
 
     for i in itstlst:
-        if i >= int(max_cutoff):
+        if i >= max_cutoff:
             hue = col(1)
-        elif i <= int(min_cutoff):
+        elif i <= min_cutoff:
             hue = col(0)
         else:
             scaled_value = (i - min_cutoff)/(max_cutoff - min_cutoff)
@@ -385,7 +349,7 @@ else:
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
-tgtnamefin, tgtext = file_name_recovery(filepath=filename)
+tgtnamefin, tgtext = utils.file_name_recovery(filepath=filename)
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices

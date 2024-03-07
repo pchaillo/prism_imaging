@@ -124,7 +124,7 @@ def windowmaker(resolution, indices=data_type):
     # ones of interest
     window = img_win.get()
     global data_window
-    if window == '0':  # Fixes an edge case where a null window causes data_window to be empty
+    if window == '0':
         data_window = [data.get()]
         return data_window
     centroid = float(indices.get())
@@ -135,11 +135,11 @@ def windowmaker(resolution, indices=data_type):
     while cursor <= win_max:
         cursor = cursor + resolution
         target_indices.append(cursor)
+    target_indices = [round(index, 5) for index in target_indices]  # Workaround float-related shenanigans
     target_indices_str = []
     for index in target_indices:
         target_indices_str.append(str(index))
-    target_indices = [round(index, 5) for index in target_indices]  # Workaround float-related shenanigans
-    target_indices_str = []
+    target_indices = []
     for index in target_indices_str:
         if index.endswith('.0'):
             index = index.replace('.0', '')
@@ -149,6 +149,7 @@ def windowmaker(resolution, indices=data_type):
         if index in data_list:
             data_window.append(index)
     return data_window
+
 
 separator = ttk.Separator(gui, orient="horizontal")
 separator.place(x=0, y=65, relwidth=3)
@@ -222,7 +223,6 @@ ttk.Button(frm, text="Proceed", command=lambda: [set_gradient_type(), set_data_t
 gui.mainloop()
 
 # End of the GUI loop
-
 biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
@@ -336,7 +336,7 @@ else:
 imax = max(intensities)
 itstlst = []
 for i in intensities:
-    itstlst.append(int(i))  # Creates a list of intensities converted to integers
+    itstlst.append(i)  # Creates a list of intensities
 
 # Colouring of vertices with ColorAide
 colours_dict = {"Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7, 0]), Color("srgb", [0, 1, 0]), "linear"],
