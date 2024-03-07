@@ -1,4 +1,4 @@
-function extract_spectra_zone(app, pixels_scans,map,limits,loud_flag)
+function extract_spectra_zone(app, pixels_scans,map,limits,loud_flag,nom_mat)
 
 if isfield(map,'time')
     time_flag = 1;
@@ -15,7 +15,15 @@ pixels_scans = fix_ms_data(pixels_scans);
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 
 title_str = "Select the area you want to extract by clicking";
-display_mz_map(map,pixels_mz,title_str);
+display_mz_map(map,pixels_mz,title_str)
+% figure() % fonction d'affichage a factoriser
+% % hold on
+% s = surf(map.x,map.y,map.z,pixels_mz);
+% s.FaceColor = 'flat'; % set color interpolqtion
+% s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
+% title(title_str);
+view(2)
+axis equal
 
 [x1,y1] = ginput(1);
 [x2,y2] = ginput(1);
@@ -102,5 +110,9 @@ xlabel('Mass/Charge (M/Z)')
 ylabel('Relative Intensity')
 title('Sum of all the spectra of the zone');
 
-csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv") % fonction qui n'existe pas, appeler plutot csv_extractor #TODO
+csv_filename = "files/csv files/"+nom_mat+"_Xzone"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+".csv";
+disp(csv_filename)
+export_spectra_to_csv(peak_sum_array,csv_filename);
+
+% csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv") % fonction qui n'existe pas, appeler plutot csv_extractor #TODO
 % #TODO : sauver tous les spectres dans un .csv et la somme dans un autre ?
