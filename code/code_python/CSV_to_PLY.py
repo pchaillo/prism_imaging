@@ -16,7 +16,6 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from PIL import Image
 from coloraide import Color
-from utils import GUI, utils
 
 # Creation of global variables
 filename = None
