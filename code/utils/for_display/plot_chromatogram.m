@@ -9,4 +9,4 @@ Scan_time = extract_time(all_scans);
 plot(Scan_time,TIC_list)
 xlabel('Time (s)')
 ylabel('TIC intensity')
-title('Scan selection on chromatogram')
+title('Chromatogram')

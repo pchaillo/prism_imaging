@@ -1,4 +1,4 @@
-function extract_spectra_sum(app, pixels_scans,name_mat)
+function display_spectra_sum(app, pixels_scans,name_mat)
 
 peaks_array = compute_all_spectra(app, pixels_scans);
 

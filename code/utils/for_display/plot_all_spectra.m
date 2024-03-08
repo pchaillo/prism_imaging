@@ -22,7 +22,4 @@ for i = length(parsed_all_peaks):-1:1
     end
 end
 
-figure()
-plot(parsed_all_peaks(:,1),parsed_all_peaks(:,2));
-xlabel('Mass/Charge (M/Z)')
-ylabel('Relative Intensity')
+plot_spectra(parsed_all_peaks)

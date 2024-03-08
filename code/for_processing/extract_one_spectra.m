@@ -1,5 +1,4 @@
-function extract_one_spectra(app, pixels_scans,map,name_map,limits,loud_flag)
-
+function [peaks_array,ind_x,ind_y] = extract_one_spectra(app, pixels_scans,map,limits,loud_flag)
 
 if isfield(map,'time')
     time_flag = 1;
@@ -16,6 +15,8 @@ pixels_mz = replace_NaN_by_zero(pixels_mz);
 
 title_str = "Pick the pixel that you want to extract the spectra";
 display_mz_map(map,pixels_mz,title_str)
+view(2)
+axis equal
 
 [x1,y1] = ginput(1);
 
@@ -38,13 +39,7 @@ ind_y = max_y;
 selected_ind = pixels_ind(ind_x,ind_y); % indice of the selected pixel in the pixels_scans
 
 peaks_array = pixels_scans(selected_ind).peaks.mz;
-% times = pixels_scans(ind_bio).retentionTime;
-csv_filename = "files/csv files/"+name_map(1:end-4)+"_x_"+ind_x+"_y_"+ind_y+".csv";
 
-export_spectra_to_csv(peaks_array,csv_filename);
-disp(csv_filename)
 
-figure();
-plot(peaks_array(:,1),peaks_array(:,2));
-xlabel('Mass/Charge (M/Z)');
-ylabel('Relative Intensity');
+
+
