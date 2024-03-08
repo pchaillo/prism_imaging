@@ -16,12 +16,6 @@ pixels_mz = replace_NaN_by_zero(pixels_mz);
 
 title_str = "Select the area you want to extract by clicking";
 display_mz_map(map,pixels_mz,title_str)
-% figure() % fonction d'affichage a factoriser
-% % hold on
-% s = surf(map.x,map.y,map.z,pixels_mz);
-% s.FaceColor = 'flat'; % set color interpolqtion
-% s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
-% title(title_str);
 view(2)
 axis equal
 
@@ -57,7 +51,6 @@ else
 end
 
 max_int_value = max(max(pixels_mz));
-% [I,J] = find(pixels_mz == max_int_value) ;
 
 id = 0;
 size_map = size(map.x);
@@ -65,7 +58,7 @@ map_color = pixels_mz;
 for x_ind = min_x : max_x % récupère les indices
     for y_ind = min_y : max_y
         id = id + 1 ;
-        selected_ind_array(id) = pixels_ind(x_ind,y_ind); % semble bien fonctionner
+        selected_ind_list(id) = pixels_ind(x_ind,y_ind); % semble bien fonctionner
         map_color(x_ind,y_ind) = max_int_value;
     end
 end
@@ -73,15 +66,15 @@ end
 %% Plot multiple spectra
 
 ind_peaks = 0;
-for n = 1 : length(selected_ind_array) % récupère les temps et les spectres associés aux indices
+for n = 1 : length(selected_ind_list) % récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
-    peaks(ind_peaks) = {pixels_scans(selected_ind_array(n)).peaks.mz};
-    times(ind_peaks) = pixels_scans(selected_ind_array(n)).retentionTime;
+    peaks(ind_peaks) = {pixels_scans(selected_ind_list(n)).peaks.mz};
+    times(ind_peaks) = pixels_scans(selected_ind_list(n)).retentionTime;
 end
 peaks = peaks';
 times = times';
 
-plot_multiple_spectra(peaks,times,length(selected_ind_array))
+plot_multiple_spectra(peaks,times,length(selected_ind_list))
 
 title_str = 'Selected area in yellow';
 display_mz_map(map,map_color,title_str)
@@ -110,9 +103,19 @@ xlabel('Mass/Charge (M/Z)')
 ylabel('Relative Intensity')
 title('Sum of all the spectra of the zone');
 
-csv_filename = "files/csv files/"+nom_mat+"_Xzone"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+".csv";
+%% CSV Recording
+
+csv_filename = "files/csv files/"+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+".csv";
 disp(csv_filename)
 export_spectra_to_csv(peak_sum_array,csv_filename);
 
+ind_peaks = 0;
+for n = 1 : length(selected_ind_list) % récupère les temps et les spectres associés aux indices
+    ind_peaks = ind_peaks + 1 ;
+    csv_name = "files/csv files/"+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+"_scan_"+ind_peaks+".csv" ;
+    peaks_array = {pixels_scans(selected_ind_list(n)).peaks.mz};
+    export_spectra_to_csv(peaks_array,csv_name);
+end
+
 % csv_spectra_recorder(peak_sum_array,"Test_sauv_somme.csv") % fonction qui n'existe pas, appeler plutot csv_extractor #TODO
-% #TODO : sauver tous les spectres dans un .csv et la somme dans un autre ?
+% #TODO : sauver tous les spectres dans un unique .csv et la somme dans un autre ?
