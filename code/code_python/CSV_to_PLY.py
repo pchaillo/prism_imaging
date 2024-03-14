@@ -25,6 +25,40 @@ colour1 = None
 colour2 = None
 coreg_img = None
 
+# Define the name fetching function
+def file_name_recovery(filepath):
+    # This function returns a file's name and its extension as two separate entities in order to allow for easier
+    # manipulation
+    global tgtnamefin, tgtext
+    tgtname = ''
+    rvstgtname = ''
+    tgtnamefin = ''
+    tgtext = ''
+    rvstgtext = ''
+    for i in reversed(filepath):
+        if i != "/":
+            rvstgtname = rvstgtname + i
+        else:
+            break
+
+    for i in reversed(rvstgtname):
+        tgtname = tgtname + i
+
+    for i in tgtname:
+        if i != '.':
+            tgtnamefin = tgtnamefin + i  # Target name
+        else:
+            break
+
+    for i in reversed(filepath):
+        if i != '.':
+            rvstgtext = rvstgtext + i
+        else:
+            break
+
+    for i in reversed(rvstgtext):
+        tgtext = tgtext + i  # Target extension
+    return tgtnamefin, tgtext
 
 # GUI Goodness
 def uploadaction():
@@ -219,11 +253,21 @@ old_vertices = int(oldimX * oldimY)
 edges = interpol * dimX * dimY - dimX - dimY  # See Grid Graphs properties, seems wrong
 faces = (dimX - 1) * (dimY - 1)
 faces = int(faces)  # Conversion to integer is necessary for PLY files
-headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 " \
+
+if coreg_img is None:  # Ugly workaround that will have to do for want of time. This allows the addition of comments
+    # to the header
+    headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 " \
+                                                               "y\nproperty float64 z\nproperty uchar red\nproperty " \
+                                                               "uchar green\nproperty uchar blue\nelement face" \
+                                                               " ", faces, "\nproperty list uchar int " \
+                                                                           "vertex_indices""\n"
+else:
+    headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 " \
                                                                "y\nproperty float64 z\nproperty uchar red\nproperty " \
                                                                "uchar green\nproperty uchar blue\nelement face" \
                                                                " ", faces, "\nproperty list uchar int " \
                                                                            "vertex_indices""\nend_header\n"
+
 header = ""
 header = header.join(map(str, headertp))
 
@@ -299,7 +343,7 @@ if interpol == 1:
 else:
     intensities = ovspcoords[:, 3]
     ovspcoords = ovspcoords[:, :3]
-imax = max(intensities)
+
 itstlst = []
 for i in intensities:
     itstlst.append(i)  # Creates a list of intensities
@@ -348,7 +392,7 @@ else:
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
-tgtnamefin, tgtext = utils.file_name_recovery(filepath=filename)
+tgtnamefin, tgtext = file_name_recovery(filepath=filename)
 
 # Faces calculation
 vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
@@ -359,6 +403,21 @@ for i in vtx:
 fcsdf = pandas.DataFrame(fcs)
 fcsdf = fcsdf.astype(int)
 fcsdf = fcsdf[fcsdf[0] != 0]
+
+# Retrieve the cutoffs and min/max intensities and add them to the file
+if coreg_img is None:
+    scale_intensities = pandas.DataFrame(index=["author", "min", "max", "abs_min", "abs_max", "end_header"],
+                                         columns=["comment", "value"])
+    scale_intensities.loc[:, "comment"] = "comment"
+
+    scale_intensities.loc["author", "value"] = "This PLY was created using OMG-MSI's data exportation tool."
+    scale_intensities.loc["min", "value"] = "Minimum Intensity = " + str(min_cutoff)
+    scale_intensities.loc["max", "value"] = "Maximum Intensity = " + str(max_cutoff)
+    scale_intensities.loc["abs_min", "value"] = "Absolute Minimum Intensity = " + str(min(intensities))
+    scale_intensities.loc["abs_max", "value"] = "Absolute Maximum Intensity = " + str(max(intensities))
+    scale_intensities.loc["end_header", "comment"] = 'end_header'
+
+    scale_intensities.assign(line_return='\n')
 
 # Export file name recovery
 tgtname = tgtnamefin + '.' + tgtext
@@ -378,6 +437,9 @@ for i in counter:
     fusion.iloc[rank + 1] = coloursdf.iloc[i]
     rank = rank + 2
 
+if coreg_img is None:  # This is not pretty, but it will have to do until I give this program a thorough cleaning
+    scale_intensities.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False,
+                             mode="a")
 fusion.assign(line_return='\n')
 fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
 fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
