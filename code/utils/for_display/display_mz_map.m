@@ -1,4 +1,5 @@
 function display_mz_map(map,pixels_mz,title_str)
+
 % to see image as 2D from front display = "2D". Otherwise pick "3D"
 
 pixels_mz = replace_NaN_by_zero(pixels_mz);
