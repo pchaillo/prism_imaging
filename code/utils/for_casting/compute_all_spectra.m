@@ -9,7 +9,8 @@ for i = 1 : l
         spectra_array_raw = [ spectra_array_raw ; pixels_scans(i).peaks.mz ];
     end
     X = sprintf('Spectra creation : %d / %d',i,l);
-    update_log(app, X)
+    disp(X)
+   % update_log(app, X)
 end
 
 % tests => bon ca marche pas pour l'instant, mais y'a moyen de faire plus
