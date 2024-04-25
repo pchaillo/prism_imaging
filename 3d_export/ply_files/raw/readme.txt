@@ -1,1 +1,0 @@
-This folder will store all unprocessed ('native' in the interface) PLY files
