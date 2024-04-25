@@ -380,6 +380,6 @@ if coreg_img is None:
     colours_int = colours.astype(int)
     colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save('3d_export/molecular_png/' + tgtnamefin + '.png')
+    coreg_target.save('files/image files/molecular_png/' + tgtnamefin + '.png')
 
-print(tgtnamefin, '.png', 'was properly saved in 3d_export/molecular_png/')
+print(tgtnamefin, '.png', 'was properly saved in files/image_files/molecular_png/')

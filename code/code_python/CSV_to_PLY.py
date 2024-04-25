@@ -425,7 +425,7 @@ if coreg_img is None:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
 else:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
-with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
+with open('files/ply_files/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -438,10 +438,10 @@ for i in counter:
     rank = rank + 2
 
 if coreg_img is None:  # This is not pretty, but it will have to do until I give this program a thorough cleaning
-    scale_intensities.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False,
+    scale_intensities.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
                              mode="a")
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
+fusion.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
 
-print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')
+print(tgtname, 'was properly saved in files/ply_files/')
