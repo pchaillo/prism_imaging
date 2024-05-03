@@ -1,4 +1,6 @@
 function emergency_stop(source, robot, sensor, state,arduino_object, app)
+
+
 % Completely stops the imaging process 
 %   Disconnects the source and robot, then clears arduino connexions if
 %   they exist.

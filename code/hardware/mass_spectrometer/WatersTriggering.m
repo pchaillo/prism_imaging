@@ -1,8 +1,8 @@
 classdef WatersTriggering
 
     properties
-        % Contain all the properties that are same for each robot
-        % Nb_shoot_per_burst = 5
+        % Contain all the properties that are similar for each spectrometer
+        % trigerring
     end
 
     methods
