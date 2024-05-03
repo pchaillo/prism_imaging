@@ -7,10 +7,12 @@ ind_peak_tab = 0;
 for i = 1 : l
     if bio_dat(i).num > 0 % pour ne prendre en compte que les spectres vecteurs d'informations
         ind_peak_tab = ind_peak_tab + 1;
-        peak_tab(:,:,ind_peak_tab) = bining_2(bio_dat(i).peaks.mz,win,band);
+        peak_tab(:,:,ind_peak_tab) = bining_fixed_size(bio_dat(i).peaks.mz,win,band);
         h = waitbar(i/l);
     end
 end
+
+disp("bining finished")
 
 %  p_2 = peak_tab(:,:,2);
 p_1 = peak_tab(:,:,1);
@@ -25,6 +27,8 @@ end
 %     p_80 = peak_tab(:,:,80);
 
 [vect_propres,scores,val_propres,t2,explained] = pca(pca_ingredients);
+
+disp("pca computed")
 
 if tlp == 1
     figure('Name','Cercle des corrélations - Toutes les masses','NumberTitle','off');
@@ -114,7 +118,7 @@ plot(vect_propres(t,1),vect_propres(t,2),'.');
 text(vect_propres(t,1),vect_propres(t,2),mass_char(t,:));
 hold on
 [x,y,z] = cylinder(1,200);
-title(['Poucentage of variance explained, PC1 : ', num2str(explained(1)),'  PC2 : ',num2str(explained(2))]);
+title(['Percentage of variance explained, PC1 : ', num2str(explained(1)),'  PC2 : ',num2str(explained(2))]);
 plot(x(1,:),y(1,:))
 hold on
 line([-1 1],[0 0])
