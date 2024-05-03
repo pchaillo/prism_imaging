@@ -20,6 +20,5 @@ classdef WatersTriggering
 
             time_ref = tic;
         end
-
     end
 end
