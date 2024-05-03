@@ -11,9 +11,11 @@ classdef WatersTriggering
 
             global arduino_object
 
-            writeDigitalPin(arduino_object,'A5',0)
+            pin = 'A5';
+
+            writeDigitalPin(arduino_object,pin,0)
             pause(0.1)
-            writeDigitalPin(arduino_object,'A5',1)
+            writeDigitalPin(arduino_object,pin,1)
 
             disp(arduino_object)
             disp("Triggering done")
