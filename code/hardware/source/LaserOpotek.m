@@ -97,7 +97,7 @@ classdef LaserOpotek % < LaserBase
             str_temp_ok = readline(opotek);
         end
         
-        function tir(laser, nb_shot, app) % Translate this name
+        function trigger(laser, nb_shot, app) % Translate this name
             opotek = self.laser_communication;
             % Déclenche un "tir" pour la désorbtion de la surface à analyser
             % Equivalent au "burst mode" du logiciel Opotek
@@ -253,7 +253,7 @@ classdef LaserOpotek % < LaserBase
             state_text = strcat('State : ',state_text);
         end
 
-        function tir_continu_ON(laser, app)
+        function continuous_trigerring(laser, app)
             % insert code to open the mirror that let the laser get out
             opotek = self.laser_communication;
             
@@ -263,7 +263,7 @@ classdef LaserOpotek % < LaserBase
             update_log(app, 'Warning: The mirror is open. The laser is now continuosuly firing!');
         end
 
-        function tir_continu_OFF(laser, app)
+        function STOP_continuous_trigerring(laser, app)
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(self.laser_communication, "QSW 0") % ferme le laser

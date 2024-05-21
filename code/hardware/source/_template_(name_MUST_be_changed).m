@@ -17,12 +17,12 @@ classdef (Abstract) LaserBase
             % state_double = 2 => connected, lamp on
         end
 
-        function  temp = get_temp(laser,laser_co)
+        function temp = get_temp(laser,laser_co)
             % insert code to get the temperature of the lamp of the laser
             % A REFAIRE POUR OPOLETTE !
         end
 
-        function tir(laser,laser_co,nb_shot)
+        function trigger(laser,laser_co,nb_shot)
 
             %for i=1:nb_shot
             % insert code to do a laser shot
@@ -50,11 +50,11 @@ classdef (Abstract) LaserBase
             % insert code to choose the state text
         end
 
-        function tir_continu_ON(laser, laser_co, ~)
+        function continuous_trigerring(laser, laser_co, ~)
             % insert code to open the mirror that let the laser get out
         end
 
-        function tir_continu_OFF(laser, laser_co, ~)
+        function STOP_continuous_trigerring(laser, laser_co, ~)
             % insert code to close the mirror, to stop continue laser shooting
         end
     end
