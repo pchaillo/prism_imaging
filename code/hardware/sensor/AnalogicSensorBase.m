@@ -18,6 +18,8 @@ classdef AnalogicSensorBase
         end
 
         function calibration_array = calibration(sensor,robot)
+            calibration_array = default_sensor_calibration(robot, self,parameters, app);
+            self.calibration_array = calibration_array;
 
         end
 

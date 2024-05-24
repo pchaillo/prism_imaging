@@ -56,11 +56,7 @@ while get_first_value == 0  || is_measured == 0
                 update_log(app, 'Repositioning. New height :');
                 shift = shift + 1;
                 update_log(app, string(shift))
-                
-                % if watchdog_flag == 1 % #TODO
-                %     state_double = get_state(app, opotek);
-                % end
-                                
+                                              
                 position = [x_pos y_pos parameters.initial_height+sample_height+shift 180 0 180];
                 robot.class.set_position(position); 
               %  set_pos(a,t);
