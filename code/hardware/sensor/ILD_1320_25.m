@@ -1,5 +1,5 @@
 classdef ILD_1320_25 < handle
-    % (Analogic)
+    % (Analog)
     % ILD1320-25 renvoie la tension lu sur l'Arduino, qd le VL6180x renvoie directement la distance => comment combiner les deux ?
     % => Mettre la conversion tension / distance dans le code orienté objet
 
