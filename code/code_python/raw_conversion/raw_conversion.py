@@ -7,13 +7,16 @@ from tkinter import Tk
 
 extensions_dict = {'mzML':'--mzML', 'mzXML':'--mzXML', 'mgf':'--mgf', 'txt':'--txt', 'mz5':'--mz5'}
 
-def convert_raw_to_mzxml(raw_files_path, extension = "--mzML"):
-    command = ["msconvert", raw_files_path, "-o", 'files/conversion/', extension="--mzML"]
+def convert_raw_to_mzxml(raw_files_path, txt_file, extension = "--mzML"):
+    command = ["msconvert", raw_files_path, "-o", 'files/conversion/', "extension=",extension]
     subprocess.run(command, check=True)
+    
+print("Loaded text file : ")
+print(txt_file)
 
 Tk().withdraw()
 filename = askopenfilename()
 
-convert_raw_to_mzxml(raw_files_path="")
+convert_raw_to_mzxml(raw_files_path=filename, txt_file = txt_file)
 
 print("mzML file saved in files/raw files/")
