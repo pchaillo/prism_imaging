@@ -7,8 +7,8 @@ from tkinter import Tk
 
 extensions_dict = {'mzML':'--mzML', 'mzXML':'--mzXML', 'mgf':'--mgf', 'txt':'--txt', 'mz5':'--mz5'}
 
-def convert_raw_to_mzxml(raw_file_path, txt_file, extension = "--mzML"):
-    command = ["msconvert ", raw_file_path, "-f ", txt_file, "-o ", "files/conversion/ ", "--mzML"]
+def convert_raw_to_mzxml(raw_file_path, txt_file, output_loc, extension = "--mzML"):
+    command = ["msconvert ", '"', raw_file_path, '"', "-f ", '"', txt_file, '"', "-o ", output_loc, "--mzML"]
     subprocess.run(command, check=True)
     
 print("Loaded text file: ")
@@ -17,6 +17,6 @@ print(txt_file)
 print("Loaded .RAW file: ")
 print(raw_file)
 
-convert_raw_to_mzxml(raw_file_path=raw_file, txt_file = txt_file)
+convert_raw_to_mzxml(raw_file_path=raw_file, txt_file=txt_file, output_loc=output_loc, extension="--mzML")
 
 print("mzML file saved in files/raw files/")

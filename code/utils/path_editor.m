@@ -1,13 +1,13 @@
 function path  = path_editor(folder_name,file_name)
 
-% Permet de choisir automatique le bon dossier pour l'enregistrement,
-% quelquesoit le fichier dans lequel est stocké le code
+% Automatically picks the proper folder to record a file, no matter where
+% the file is stored
 
 % Return the proper folder to record the file
 
 workspace_dir = pwd;
 
-if isunix % work for both Linux and Windows OS
+if isunix % works for both Linux and Windows OS
     separator = '/';
 elseif ispc
     separator = '\';
