@@ -9,6 +9,7 @@
 *.biomap
 *.tmp
 *.png
+*.mzML
 
 
 # *.csv
