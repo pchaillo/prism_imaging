@@ -1,4 +1,5 @@
 function raw_conversion(app, raw_path, txt_path, output_path)
+
 % Uses msconvert to generate mzML files
 % Could be repurposed to generate other file types if needed
 
@@ -13,6 +14,7 @@ else
     update_log(app, "Something went wrong. Check the raw_conversion" + ...
         "function and integrity of the raw file.")
 end
+
 
 end
 
