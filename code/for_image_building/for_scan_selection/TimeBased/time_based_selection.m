@@ -28,7 +28,7 @@ TIC_list = extract_TIC(all_scans );
 scan_time_list = extract_time(all_scans );
 
 map_time = map_time + aspiration_time;
-% map_time = apply_prog_aspiration(map_time,aspiration_time); % fonction experimentale
+%map_time = apply_prog_aspiration(map_time,aspiration_time); % fonction experimentale
 % disp(map_time)
 
 topography_time_list = time_to_list(map_time);
