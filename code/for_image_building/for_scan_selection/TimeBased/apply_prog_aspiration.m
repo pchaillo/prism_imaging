@@ -2,7 +2,7 @@ function new_map_time = apply_prog_aspiration(map_time,aspiration)
 
 si = size(map_time);
 
-cst = 0.8;
+cst = 0.5;
 u = 0;
 tot = si(1)*si(2);
 
