@@ -1,5 +1,7 @@
 ﻿*.asv
 *.mzXML
+*.imzML
+*.ibd
 *.mat
 *.raw
 *.csv
