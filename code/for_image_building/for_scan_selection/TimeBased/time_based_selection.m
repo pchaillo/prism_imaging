@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time,neighbourgh_nb)
+function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time,neighbourgh_nb,aspiration_shift)
 
 all_scans_raw = mzXMLStruct.scan ;
 
@@ -28,7 +28,7 @@ TIC_list = extract_TIC(all_scans );
 scan_time_list = extract_time(all_scans );
 
 % map_time = map_time + aspiration_time;
-map_time = apply_prog_aspiration(map_time,aspiration_time); % fonction experimentale
+map_time = apply_prog_aspiration(map_time,aspiration_time,aspiration_shift); % fonction experimentale
 
 % disp(map_time)
 
