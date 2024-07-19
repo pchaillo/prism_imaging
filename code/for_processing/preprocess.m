@@ -15,14 +15,20 @@ function processed_scan = preprocess(app, scan, win)
 raw_peaks_array = scan.peaks.mz;
 l = length(raw_peaks_array);
 
-h = 0; % remise du tableau dans la bonne forme ( lx1 par (l/2)x2 )
-for i = 1 : l
-    if ( mod(i,2) == 0 )
-        peak_array(h,2) = raw_peaks_array(i);
-    else
-        h = h + 1;
-        peak_array(h,1) = raw_peaks_array(i);
+if isempty(raw_peaks_array)
+    peak_array = [0,0];
+else
+
+    h = 0; % remise du tableau dans la bonne forme ( lx1 par (l/2)x2 )
+    for i = 1 : l
+        if ( mod(i,2) == 0 )
+            peak_array(h,2) = raw_peaks_array(i);
+        else
+            h = h + 1;
+            peak_array(h,1) = raw_peaks_array(i);
+        end
     end
+
 end
 
 %fusion des lignes à fusionner
