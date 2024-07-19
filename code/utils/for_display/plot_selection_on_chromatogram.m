@@ -14,7 +14,7 @@ ind_coll = 0; % Points qui resultent d'une fusion "collatérale"
 for i = 1 :length(pixels_scans)
     %% pour scatter les points
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
-    if pixels_scans(i).centroided ~= 0
+    if pixels_scans(i).centroided == -1 
         ind_fus = ind_fus + 1 ;
         pk_fus(ind_fus) = pixels_scans(i).ionisationEnergy; % ou pixels_scans(i).centroided ?
         %         loc_r= pixels_scans(i).retentionTime;
@@ -62,7 +62,7 @@ end
 for i = 1 :length(all_scans)
     %% pour scatter les points
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
-    if all_scans(i).centroided ~= 0
+    if all_scans(i).centroided == -1
         ind_fus = ind_fus + 1 ;
         pk_fus(ind_fus) = all_scans(i).ionisationEnergy; % ou pixels_scans(i).centroided ?
         %         loc_r= pixels_scans(i).retentionTime;
