@@ -1,0 +1,1 @@
+Waters .RAW files go here. There are only used for  mzML exportation.
