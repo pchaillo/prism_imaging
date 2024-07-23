@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="3301892409" file="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI.prj" location="C:\Users\guiot\Documents\PRISM\prism_imaging" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3301892409" file="D:\OMG_MSI\prism_imaging\OMG_MSI.prj" location="D:\OMG_MSI\prism_imaging" name="OMG_MSI" preferred-package-location="C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>OMG_MSI</param.appname>
     <param.icon />
     <param.icons />
@@ -24,8 +24,8 @@
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
     <param.support.packages />
-    <param.web.mcr>true</param.web.mcr>
-    <param.package.mcr>false</param.package.mcr>
+    <param.web.mcr>false</param.web.mcr>
+    <param.package.mcr>true</param.package.mcr>
     <param.no.mcr>false</param.no.mcr>
     <param.web.mcr.name>OMG_MSI_Installer_Web</param.web.mcr.name>
     <param.package.mcr.name>OMG_MSI_Installer_Local</param.package.mcr.name>
@@ -61,8 +61,6 @@
       <param.user.defined.mcr.options />
       <param.target.type />
       <param.support.packages />
-      <param.web.mcr />
-      <param.package.mcr />
       <param.no.mcr />
       <param.no.mcr.name />
       <param.create.log />
@@ -89,16 +87,17 @@
       <file>${PROJECT_ROOT}\emergency_check.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\OMG_MSI.exe</file>
-      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">C:\Users\guiot\Documents\PRISM\prism_imaging\OMG_MSI\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="splash.png" optional="false">D:\OMG_MSI\prism_imaging\OMG_MSI\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="readme.txt" optional="true">D:\OMG_MSI\prism_imaging\OMG_MSI\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\OMG_MSI\for_testing" name="OMG_MSI.exe" optional="false">D:\OMG_MSI\prism_imaging\OMG_MSI\for_testing\OMG_MSI.exe</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Program Files\MATLAB\R2022b</root>
+      <root>D:\Program Files\MATLAB\R2023b</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
-        <toolbox name="gpucoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="neuralnetwork" />
       </toolboxes>
       <toolbox>
         <matlabcoder>
@@ -106,9 +105,14 @@
         </matlabcoder>
       </toolbox>
       <toolbox>
-        <gpucoder>
+        <embeddedcoder>
           <enabled>true</enabled>
-        </gpucoder>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
       </toolbox>
     </matlab>
     <platform>
