@@ -1,5 +1,5 @@
 
-function time_gap_median = record_map(map,name)
+function time_gap_median = record_map(map, name)
 % Records the .map in its designated folder
 
 size_time = size(map.time);
@@ -20,15 +20,15 @@ figure()
 mesh(map.x,map.y,map.z)
 axis equal
 
-folder_name = strcat(pwd, '\files\map files');
+folder_name = '\files\map files';
 
-path = path_editor(folder_name,name);
+path = path_editor(folder_name, name);
 
 punto = fopen(path,'w');
 
 % On rentre les dimensions pour la reconstruction %%%
 si = size(map.z);
-fprintf(punto,'%f %f %f %f \n', si(1), si(2),time_gap_median,0 );
+fprintf(punto,'%f %f %f %f \n', si(1), si(2), time_gap_median, 0);
 
 %%% On rentre les données dans le document %%%
 for x_ind = 1 : si(1)
