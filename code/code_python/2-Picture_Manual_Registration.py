@@ -7,11 +7,11 @@
 # on images to ease the process.
 # I advise picking four points as far apart from each other as possible in order to get the best results
 
-import cv2
+import cv2  # opencv
 import numpy as np
-import sys
-import pandas
 import os
+import pandas
+import sys
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename

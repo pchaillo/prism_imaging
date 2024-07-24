@@ -1,24 +1,24 @@
-# Validated on Python 3.8.10
+# Validated on Python 3.8.10 and 3.11
 # To run manually through MatLab:
 #   path(path, 'code/code_python')
 #   pyrunfile('#FILE_NAME#.py')
 # If not working:
-# _Make sure that Python 3.8 is installed properly
+# _Make sure that Python 3.8 is installed properly along wit required libraries
 # _Verify that the Matlab version is compatible with Python 3.8
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.8). If not, set it up.
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
 
-import pandas
+from coloraide import Color
 import numpy
+import pandas
+from PIL import Image  # pillow library
 import scipy
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
-from PIL import Image
-from coloraide import Color
+
 
 # Creation of global variables
-filename = None
 filename = None
 data_list = None
 colour1 = None
@@ -425,7 +425,7 @@ if coreg_img is None:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
 else:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
-with open('files/ply_files/' + tgtname, "w") as plyfile:
+with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
@@ -438,10 +438,10 @@ for i in counter:
     rank = rank + 2
 
 if coreg_img is None:  # This is not pretty, but it will have to do until I give this program a thorough cleaning
-    scale_intensities.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
+    scale_intensities.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False,
                              mode="a")
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
+fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
 
-print(tgtname, 'was properly saved in files/ply_files/')
+print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')

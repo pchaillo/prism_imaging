@@ -67,7 +67,7 @@ csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 file_name_recovery(filepath=filename)
-tgtname = tgtnamefin + '-TICnorm.' + tgtext
-csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
+tgtname = tgtnamefin + '-TICnorm3.' + tgtext
+csv_norm.to_csv(path_or_buf=('csv files/' + tgtname))
 
-print(tgtname, 'was properly saved in files/csv files/')
+print(tgtname, 'was properly saved in csv files/')
