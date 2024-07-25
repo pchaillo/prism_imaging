@@ -20,7 +20,7 @@ figure()
 mesh(map.x,map.y,map.z)
 axis equal
 
-folder_name = '\files\map files';
+folder_name = 'files\map files';
 
 path = path_editor(folder_name, name);
 
