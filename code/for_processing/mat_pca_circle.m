@@ -73,8 +73,8 @@ for i = 1 : si(3)
     max_tab(i) = max_val;
 end
 
-tot_tab(3,:) = loc_tab;
-tot_tab(2,:) = max_tab;
+% tot_tab(3,:) = loc_tab;
+%  tot_tab(2,:) = max_tab;
 
 for i = 1 : length(loc_tab)
     if loc_tab(i) ~= 0
