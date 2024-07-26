@@ -17,7 +17,7 @@ for v = 1  : si_r(1)
     for u = 2 : si_r(2) - 1
         x = [u-1, u , u + 1] ;
         y = [map.r(v,u-1),map.r(v,u) , map.r(v,u+1)];  %
-        q(u,:) = polyfit (x,y,scan.n);
+        q(u,:) = polyfit (x,y,3);
     end
     q_tot{1,v} = q;
 end
@@ -71,7 +71,7 @@ for u = 1 : si0(2)
     for v = 2 : si0(1) -1
         x = [v-1, v , v + 1] ;
         y = [o2(v-1,u),o2(v,u) , o2(v+1,u)];  %
-        p(v,:) = polyfit (x,y,scan.n);
+        p(v,:) = polyfit (x,y,3);
     end
     p_tot{1,u} = p;
 end
