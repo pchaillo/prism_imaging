@@ -6,7 +6,7 @@
 *.raw
 *.csv
 *.map
-#*.txt
+*.txt
 *.ply
 *.biomap
 *.tmp
