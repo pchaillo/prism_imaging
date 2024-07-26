@@ -55,8 +55,8 @@ head = csv.iloc[:11, :]
 tail = csv.iloc[11:, :]
 tic = tail.sum(axis=0)
 
-tic.loc[tic == 0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from wroking. Making those values
-# equal to 1 is a workaround.
+tic.loc[tic == 0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from wroking.
+# Making those values equal to 1 is a workaround.
 
 if move_decimal:
     tail = (tail * 1000) / tic
@@ -67,7 +67,7 @@ csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 file_name_recovery(filepath=filename)
-tgtname = tgtnamefin + '-TICnorm3.' + tgtext
+tgtname = tgtnamefin + '-TICnorm.' + tgtext
 csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
 
 print(tgtname, 'was properly saved in files/csv files/')
