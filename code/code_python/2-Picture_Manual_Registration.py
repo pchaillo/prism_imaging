@@ -232,9 +232,9 @@ img2_reconstructed = cv2.warpPerspective(img2_merged, M_inv, (img2.shape[1], img
 
 # Save the reconstructed Image 2
 file_name_recovery(image_2)
-cv2.imwrite('3d_export\\coregistered_images\\' + tgtnamefin + '-coreg.png', img2_reconstructed)
+cv2.imwrite('files\\image files\\coregistered_images\\' + tgtnamefin + '-coreg.png', img2_reconstructed)
 
 # Destroy all windows
 cv2.destroyAllWindows()
 
-print(tgtnamefin, '-coreg.png', 'was properly saved in 3d_export/coregistered_images/')
+print(tgtnamefin, '-coreg.png', 'was properly saved in files/image files/coregistered_images/')

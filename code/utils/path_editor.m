@@ -13,7 +13,7 @@ elseif ispc
     separator = '\';
 end
 
-file_dir = strcat(separator,folder_name,separator);
+file_dir = strcat(separator, folder_name, separator);
 repertory = strcat(workspace_dir, file_dir);
 path = [repertory file_name];
 

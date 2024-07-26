@@ -17,13 +17,13 @@ import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 
-
 # Creation of global variables
 filename = None
 data_list = None
 colour1 = None
 colour2 = None
 coreg_img = None
+
 
 # Define the name fetching function
 def file_name_recovery(filepath):
@@ -59,6 +59,7 @@ def file_name_recovery(filepath):
     for i in reversed(rvstgtext):
         tgtext = tgtext + i  # Target extension
     return tgtnamefin, tgtext
+
 
 # GUI Goodness
 def uploadaction():
@@ -113,7 +114,7 @@ data.bind('<<ComboboxSelected>>', set_data_type)
 data_type.trace('w', on_combobox_change)
 
 ttk.Label(frm, text='M/z +/-').place(x=160, y=30)
-img_win = tkinter.StringVar(value= "0")
+img_win = tkinter.StringVar(value="0")
 img_win_input = tkinter.Entry(frm, textvariable=img_win, width=7).place(x=208, y=30)
 
 
@@ -148,13 +149,14 @@ def windowmaker(resolution, indices=data_type):
             data_window.append(index)
     return data_window
 
+
 separator = ttk.Separator(gui, orient="horizontal")
 separator.place(x=0, y=65, relwidth=3)
 
 ttk.Label(frm, text="Colour Gradient").place(x=80, y=60)
 col_box = ttk.Combobox(frm, state='readonly',
-                   values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian'),
-                   width=13)
+                       values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian'),
+                       width=13)
 col_box.place(x=73, y=85)
 col_box.set('Viridian')
 
@@ -217,13 +219,14 @@ profiling_chk.place(x=155, y=243)
 bt2 = ttk.Button(frm, text="Image", command=set_coreg)
 bt2.place(x=35, y=240)
 
-ttk.Button(frm, text="Proceed", command=lambda: [set_gradient_type(), set_data_type(), set_interpol(), set_interpol_type(),
-                                                 set_profiling(), windowmaker(resolution=binning_win), set_limits(),
-                                                 gui.destroy()]).place(x=180, y=270)
+ttk.Button(frm, text="Proceed",
+           command=lambda: [set_gradient_type(), set_data_type(), set_interpol(), set_interpol_type(),
+                            set_profiling(), windowmaker(resolution=binning_win), set_limits(),
+                            gui.destroy()]).place(x=180, y=270)
 gui.mainloop()
 
 # End of the GUI loop
-biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, deprecated
+biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
 if coreg_img is not None:
@@ -257,16 +260,16 @@ faces = int(faces)  # Conversion to integer is necessary for PLY files
 if coreg_img is None:  # Ugly workaround that will have to do for want of time. This allows the addition of comments
     # to the header
     headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 " \
-                                                               "y\nproperty float64 z\nproperty uchar red\nproperty " \
-                                                               "uchar green\nproperty uchar blue\nelement face" \
-                                                               " ", faces, "\nproperty list uchar int " \
-                                                                           "vertex_indices""\n"
+                                                                   "y\nproperty float64 z\nproperty uchar red\nproperty " \
+                                                                   "uchar green\nproperty uchar blue\nelement face" \
+                                                                   " ", faces, "\nproperty list uchar int " \
+                                                                               "vertex_indices""\n"
 else:
     headertp = "ply\nformat ascii 1.0\nelement vertex ", vertices, "\nproperty float64 x\nproperty float64 " \
-                                                               "y\nproperty float64 z\nproperty uchar red\nproperty " \
-                                                               "uchar green\nproperty uchar blue\nelement face" \
-                                                               " ", faces, "\nproperty list uchar int " \
-                                                                           "vertex_indices""\nend_header\n"
+                                                                   "y\nproperty float64 z\nproperty uchar red\nproperty " \
+                                                                   "uchar green\nproperty uchar blue\nelement face" \
+                                                                   " ", faces, "\nproperty list uchar int " \
+                                                                               "vertex_indices""\nend_header\n"
 
 header = ""
 header = header.join(map(str, headertp))
@@ -313,11 +316,12 @@ if interpol != 1:
         interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_int_np, method='nearest')
 
     # Computes every position in X and Y for which we want interpolated data
-    neworderX = numpy.arange(min(orderX), max(orderX) + res/interpol, res/interpol)
+    neworderX = numpy.arange(min(orderX), max(orderX) + res / interpol, res / interpol)
     neworderX = neworderX.round(5)
     neworderX = neworderX[neworderX <= max(orderX)]
 
-    neworderY = numpy.arange(min(orderY), max(orderY) + res/interpol, res/interpol)  # Should work in theory, but floats are garbage
+    neworderY = numpy.arange(min(orderY), max(orderY) + res / interpol,
+                             res / interpol)  # Should work in theory, but floats are garbage
     neworderY = neworderY.round(5)
     neworderY = neworderY[neworderY <= max(orderY)]
     yy2, xx2 = numpy.meshgrid(neworderY, neworderX)
@@ -349,20 +353,21 @@ for i in intensities:
     itstlst.append(i)  # Creates a list of intensities
 
 # Colouring of vertices with ColorAide
-colours_dict = {"Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7, 0]), Color("srgb", [0, 1, 0]), "linear"],
-                "Fusion": [Color("srgb", [1, 1, 0]), Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0, 0]), "linear"],
-                "Halloween": [Color("srgb", [1, 0.4, 0]), Color("srgb", [0.2, 0.1, 0.8]), Color("srgb", [0.3, 1, 0.2]), "linear"],
-                "Easter": [Color("srgb", [0, 0, 1]), Color("srgb", [1, 0.6, 0.8]), Color("srgb", [1, 0.6, 0]), "linear"],
-                "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"],
-                "Rainbow": [Color("srgb", [0, 0, 0]), Color("srgb", [0.9, 0, 0.9]), Color("srgb", [0, 0, 1]),
-                            Color("srgb", [1, 0, 0]), Color("srgb", [0, 1, 0]), Color("srgb", [0.8, 0.8, 1]), "linear"]}
+colours_dict = {
+    "Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7, 0]), Color("srgb", [0, 1, 0]), "linear"],
+    "Fusion": [Color("srgb", [1, 1, 0]), Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0, 0]), "linear"],
+    "Halloween": [Color("srgb", [1, 0.4, 0]), Color("srgb", [0.2, 0.1, 0.8]), Color("srgb", [0.3, 1, 0.2]), "linear"],
+    "Easter": [Color("srgb", [0, 0, 1]), Color("srgb", [1, 0.6, 0.8]), Color("srgb", [1, 0.6, 0]), "linear"],
+    "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"],
+    "Rainbow": [Color("srgb", [0, 0, 0]), Color("srgb", [0.9, 0, 0.9]), Color("srgb", [0, 0, 1]),
+                Color("srgb", [1, 0, 0]), Color("srgb", [0, 1, 0]), Color("srgb", [0.8, 0.8, 1]), "linear"]}
 gradient_base = colours_dict.get(gradient_type)
 
 if coreg_img is None:
     if gradient_type == 'Rainbow':
         col = Color.interpolate(gradient_base[0:6],
-                            space="oklab",
-                            method=gradient_base[6])
+                                space="oklab",
+                                method=gradient_base[6])
     else:
         col = Color.interpolate([gradient_base[0], gradient_base[1], gradient_base[2]],
                                 space="oklab",
@@ -379,7 +384,7 @@ if coreg_img is None:
         elif i <= min_cutoff:
             hue = col(0)
         else:
-            scaled_value = (i - min_cutoff)/(max_cutoff - min_cutoff)
+            scaled_value = (i - min_cutoff) / (max_cutoff - min_cutoff)
             hue = col(scaled_value)
         hue = Color.convert(hue, "srgb")
         colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
@@ -425,12 +430,12 @@ if coreg_img is None:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
 else:
     tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
-with open('3D_export/ply_files/processed/' + tgtname, "w") as plyfile:
+with open('files/ply_files/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
 counter = numpy.arange(0, vertices)
 rank = 0
-fusion = pandas.DataFrame(index=range(vertices*2), columns=range(3))
+fusion = pandas.DataFrame(index=range(vertices * 2), columns=range(3))
 
 for i in counter:
     fusion.iloc[rank] = ovspcoords[i]
@@ -438,10 +443,11 @@ for i in counter:
     rank = rank + 2
 
 if coreg_img is None:  # This is not pretty, but it will have to do until I give this program a thorough cleaning
-    scale_intensities.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False,
+    scale_intensities.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
                              mode="a")
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf='3d_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf='3D_export/ply_files/processed/' + tgtname, sep=" ", header=False, index=False, mode="a")  # Writes faces to target file
+fusion.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
+             mode="a")  # Writes faces to target file
 
-print(tgtname, 'was properly saved in 3d_export/ply_files/processed/')
+print(tgtname, 'was properly saved in files/ply_files/processed/')
