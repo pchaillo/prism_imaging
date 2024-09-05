@@ -1,12 +1,11 @@
-function raw_conversion(app, raw_path, txt_path, output_path,filename)
+function raw_conversion(app, raw_path, txt_path, output_path, filename)
 
 % Uses msconvert to generate mzML files
 % Could be repurposed to generate other file types if needed
 
 command = strcat("msconvert ", '"', raw_path, '"', " -c ", '"', txt_path, ...
-    '"', " -o ", output_path, " --outfile ", filename   ,' --mzML');
+    '"', " -o ", output_path, " --outfile ", filename,' --mzML');
 disp(command)
-disp(output_path)
 
 state = system(command);
 

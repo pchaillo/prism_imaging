@@ -53,7 +53,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
                 end
                 map.x(x_ind,y_ind) = pos_x;
                 map.y(x_ind,y_ind) = pos_y;
-                map.i(x_ind,y_ind) =  0 ;
+                map.i(x_ind,y_ind) =  0 ;  % map.initial, vestigial name
 
                 if source.continuous_flag == 0
                     source.class.trigger( source.nb_shot, app)
