@@ -14,7 +14,7 @@ classdef PeakPickingMethod < handle
             self.threshold_begin = app.BeginThresholdEditField.Value; 
             self.t_b = app.TimebetweentwolaserburstssEditField.Value;
             self.min_threshold = app.LoudThresholdEditField.Value;
-            self.fusion_percentage = app.FusionpercentSlider.Value;
+            self.fusion_percentage = app.FusionpercentageSlider.Value;
             self.intern_trig = app.InternalTriggeringSwitch.Value;
             self.aspiration_time = app.AspirationTimesEditField.Value;
 
