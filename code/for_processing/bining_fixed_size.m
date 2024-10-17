@@ -5,7 +5,7 @@
 % forme finie => comparable entre elles
 % Normalizes the shape of the array
 
-function binned_peak_array = bining_fixed_size(peak_array,binning_step,band)
+function binned_peak_array = bining_fixed_size(peak_array, binning_step, band)
 
 band_begin = band(1);
 band_end = band(2);
@@ -25,7 +25,7 @@ end
 si=size(peak_array);
 
 for i = 1:si(1)
-   % Determines the corresponding bined_peak_array index
+   % Determines the corresponding binned_peak_array index
    ind_in_bined_array=floor(peak_array(i,1)/binning_step)+1;
    % Checks whether we are in the allowed data range
    if ind_in_bined_array < fixed_size
