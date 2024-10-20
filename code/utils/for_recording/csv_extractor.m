@@ -135,13 +135,21 @@ csv_concatenate = {};
 parfor i=1:length(csv_cell)
     csv_concatenate = [csv_concatenate, csv_cell{i}];
 end
-csv_export = reshape(csv_concatenate, [], total_pixels + 1);
+csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Need a header row
 
 clear csv_concatenate csv_cell
 
 % Concatenate the results from the cell array into the final array
 export_name = erase(csv_map, '.map');
 export_name = append(export_name, '.csv');
+header_row = num2cell(zeros(1, total_pixels + 1));
+
+for i = 1:total_pixels + 1
+    header_row{1, i} = i;
+end
+
+header_row{1,1} = "Data Type";
+csv_export = vertcat(header_row, csv_export);
 
 disp('Data successfuly sorted. Creating the CSV file. This may take a while...')
 
@@ -153,4 +161,5 @@ movefile(export_name,"files/csv files")
 
 sentence = strcat(export_name, " was saved in files/csv files.");
 update_log(app, sentence)
+
 end

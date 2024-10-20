@@ -8,10 +8,16 @@
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.8). If not, set it up.
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
 
+import os
+import sys
+
+sys.path.insert(0, os.getcwd() + "\code\code_python") # Needed so that MatLab can actually find the dependency
+
 from coloraide import Color
-import numpy
-import pandas
+import numpy as np
+import pandas as pd
 from PIL import Image  # pillow library
+from utils.PLY_ColourScale_Headless import generate_scale
 import scipy
 import tkinter
 from tkinter import ttk
@@ -66,7 +72,8 @@ def uploadaction():
     global filename, data_list, binning_win
     filename = askopenfilename(
         defaultextension='.csv')  # Global allows for modification of a variable out of the function
-    biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
+    #biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False) # Deprecated thanks to improved CSV generation
+    biomap = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
     data_list = biomap.index
     data_list = data_list.to_list()
     data['values'] = data_list
@@ -113,7 +120,7 @@ data.bind('<<ComboboxSelected>>', set_data_type)
 
 data_type.trace('w', on_combobox_change)
 
-ttk.Label(frm, text='M/z +/-').place(x=160, y=30)
+ttk.Label(frm, text='m/Z +/-').place(x=160, y=30)
 img_win = tkinter.StringVar(value="0")
 img_win_input = tkinter.Entry(frm, textvariable=img_win, width=7).place(x=208, y=30)
 
@@ -226,7 +233,8 @@ ttk.Button(frm, text="Proceed",
 gui.mainloop()
 
 # End of the GUI loop
-biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
+#biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
+biomap = pd.read_csv(filename, sep=',', index_col='Data Type',low_memory=False)  # Reads the opened CSV
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
 if coreg_img is not None:
@@ -285,7 +293,7 @@ itp_dic = {"Linear": "linear",
 itp_type = itp_dic.get(itp_type)
 
 coordsfinal = biomap.iloc[:, 0:3]
-coordsfinal[numpy.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
+coordsfinal[np.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
 if len(data_window) == 1:
     coordsfinal[data_type] = biomap[data_type]
 else:
@@ -316,18 +324,18 @@ if interpol != 1:
         interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), biomap_int_np, method='nearest')
 
     # Computes every position in X and Y for which we want interpolated data
-    neworderX = numpy.arange(min(orderX), max(orderX) + res / interpol, res / interpol)
+    neworderX = np.arange(min(orderX), max(orderX) + res / interpol, res / interpol)
     neworderX = neworderX.round(5)
     neworderX = neworderX[neworderX <= max(orderX)]
 
-    neworderY = numpy.arange(min(orderY), max(orderY) + res / interpol,
+    neworderY = np.arange(min(orderY), max(orderY) + res / interpol,
                              res / interpol)  # Should work in theory, but floats are garbage
     neworderY = neworderY.round(5)
     neworderY = neworderY[neworderY <= max(orderY)]
-    yy2, xx2 = numpy.meshgrid(neworderY, neworderX)
+    yy2, xx2 = np.meshgrid(neworderY, neworderX)
 
     # Creates a flattened array of X and Y couples, akin to an interpolated version of columns 1 and 2 of the biomap
-    target_pts = numpy.vstack([xx2.ravel(), yy2.ravel()])
+    target_pts = np.vstack([xx2.ravel(), yy2.ravel()])
     target_pts = target_pts.transpose()
 
     # Returns the interpolated data
@@ -335,9 +343,9 @@ if interpol != 1:
     int_interpol = interp_grid_int(target_pts)
 
     # All data is then compiled into a single array for further analysis
-    ovspcoords = numpy.vstack([z_interpol, int_interpol])
+    ovspcoords = np.vstack([z_interpol, int_interpol])
     ovspcoords = ovspcoords.transpose()
-    ovspcoords = numpy.hstack([target_pts, ovspcoords])
+    ovspcoords = np.hstack([target_pts, ovspcoords])
 
 # MS intensities extraction
 if interpol == 1:
@@ -372,11 +380,11 @@ if coreg_img is None:
         col = Color.interpolate([gradient_base[0], gradient_base[1], gradient_base[2]],
                                 space="oklab",
                                 method=gradient_base[3])
-    colours = numpy.zeros(shape=(vertices, 3))
+    colours = np.zeros(shape=(vertices, 3))
     rank = 0
 
-    max_cutoff = numpy.percentile(itstlst, float(max_percentile))
-    min_cutoff = numpy.percentile(itstlst, float(min_percentile))
+    max_cutoff = np.percentile(itstlst, float(max_percentile))
+    min_cutoff = np.percentile(itstlst, float(min_percentile))
 
     for i in itstlst:
         if i >= max_cutoff:
@@ -389,29 +397,29 @@ if coreg_img is None:
         hue = Color.convert(hue, "srgb")
         colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
         rank = rank + 1
-    coloursdf = pandas.DataFrame(colours)
+    coloursdf = pd.DataFrame(colours)
 
 else:
     coreg_pixels = list(coreg.getdata())
-    coloursdf = pandas.DataFrame(coreg_pixels)
+    coloursdf = pd.DataFrame(coreg_pixels)
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 tgtnamefin, tgtext = file_name_recovery(filepath=filename)
 
 # Faces calculation
-vtx = numpy.arange(1, vertices)  # Generates a numbered list corresponding to vertices
-fcs = numpy.zeros(shape=(vertices, 5))
+vtx = np.arange(1, vertices)  # Generates a numbered list corresponding to vertices
+fcs = np.zeros(shape=(vertices, 5))
 for i in vtx:
     if (i % dimX) != 0 and i + dimX <= vertices and ((i + dimX) % dimX) != 0 and i + dimX + 1 <= vertices:
         fcs[i - 1] = ([4, i + dimX - 1, i + dimX, i, i - 1])
-fcsdf = pandas.DataFrame(fcs)
+fcsdf = pd.DataFrame(fcs)
 fcsdf = fcsdf.astype(int)
 fcsdf = fcsdf[fcsdf[0] != 0]
 
 # Retrieve the cutoffs and min/max intensities and add them to the file
 if coreg_img is None:
-    scale_intensities = pandas.DataFrame(index=["author", "min", "max", "abs_min", "abs_max", "end_header"],
+    scale_intensities = pd.DataFrame(index=["author", "min", "max", "abs_min", "abs_max", "end_header"],
                                          columns=["comment", "value"])
     scale_intensities.loc[:, "comment"] = "comment"
 
@@ -433,9 +441,9 @@ else:
 with open('files/ply_files/' + tgtname, "w") as plyfile:
     plyfile.write(header)
 
-counter = numpy.arange(0, vertices)
+counter = np.arange(0, vertices)
 rank = 0
-fusion = pandas.DataFrame(index=range(vertices * 2), columns=range(3))
+fusion = pd.DataFrame(index=range(vertices * 2), columns=range(3))
 
 for i in counter:
     fusion.iloc[rank] = ovspcoords[i]
@@ -450,4 +458,15 @@ fusion.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, i
 fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
              mode="a")  # Writes faces to target file
 
-print(tgtname, 'was properly saved in files/ply_files/processed/')
+print(tgtname, 'was properly saved in files/ply_files/')
+
+if coreg_img is None:
+    generate_scale(name=tgtname,
+                   gradient=col,
+                   intensities_min=round(min(intensities)),
+                   intensities_max=round(max(intensities)),
+                   min_cutoff=round(min_cutoff),
+                   max_cutoff=round(max_cutoff))
+
+    print('The corresponding colour scale was recorded in files/colour_scales/')
+
