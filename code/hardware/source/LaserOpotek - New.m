@@ -5,6 +5,7 @@ classdef LaserOpotek % < LaserBase
         Port = 10001
         Temp_limit = 38
         voltage_value
+		laser_communication % TCP client object
     end
     
     methods %(Static)
