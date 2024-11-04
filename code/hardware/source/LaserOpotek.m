@@ -64,9 +64,9 @@ classdef LaserOpotek % < LaserBase
             end
 
             % This approach only works in MatLab 2022b and later, as dictionnaries are somehow new in MatLab
-			states_number = -1:9
-			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem' 
-            states_dict = dictionnary(states_number, states_text)
+			states_number = -1:9;
+			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem']; 
+            states_dict = dictionnary(states_number, states_text);
 			
             state_string = strcat('State : ', states_dict(state));
         end
