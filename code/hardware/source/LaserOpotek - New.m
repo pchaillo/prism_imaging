@@ -11,7 +11,7 @@ classdef LaserOpotek % < LaserBase
         function init(self, app)
             self.laser_communication = tcpclient(self.IP_address,self.Port);
             
-            %% Ces commandes servent a verifier que la communication fonctionne bien
+            %% Ensures that the connexion is fully functional 
 %             flush(self.laser_communication)
             writeline(self.laser_communication, "ECHO 0") % ECHO 1 active le retour commande
             echo = readline(self.laser_communication);
@@ -62,7 +62,12 @@ classdef LaserOpotek % < LaserBase
                 state_double = -1;
             end
 
-            state_string = self.choose_state_text(state_double);
+            % This approach only works in MatLab 2022b and later, as dictionnaries are somehow new in MatLab
+			states_number = -1:9
+			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem' 
+            states_dict = dictionnary(states_number, states_text)
+			
+            state_string = strcat('State : ', states_dict(state));
         end
         
         function temp = get_temp(self, app)
@@ -207,15 +212,6 @@ classdef LaserOpotek % < LaserBase
                 return
                 
             end
-        end
-
-        function [state_text, state] = choose_state_text(self, state) % Bespoke LaserOpotek function
-			% This approach only works in MatLab 2022b and later, as dictionnaries are somehow new in MatLab
-			states_number = -1:9
-			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem' 
-            states_dict = dictionnary(states_number, states_text)
-			
-            state_text = strcat('State : ', states_dict(state));
         end
 
         function continuous_trigerring(self, app)
