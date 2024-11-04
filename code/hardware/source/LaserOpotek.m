@@ -2,18 +2,17 @@ classdef LaserOpotek % < LaserBase
     
     properties
         IP_address = '192.168.0.59'
-%         IP_address = '169.254.82.164'
         Port = 10001
-%         Port = 139
         Temp_limit = 38
         voltage_value
+		laser_communication % TCP client object
     end
     
     methods %(Static)
         function init(self, app)
-            self.laser_communication = tcpclient(self.IP_address, self.Port);
+            self.laser_communication = tcpclient(self.IP_address,self.Port);
             
-            %% Ces commandes servent a verifier que la communication fonctionne bien
+            %% Ensures that the connexion is fully functional 
 %             flush(self.laser_communication)
             writeline(self.laser_communication, "ECHO 0") % ECHO 1 active le retour commande
             echo = readline(self.laser_communication);
@@ -43,12 +42,12 @@ classdef LaserOpotek % < LaserBase
             
             %% parameters
             flush(self.laser_communication)
-            writeline(self.laser_communication, "TRIG II") % set internal triggering
+            writeline(self.laser_communication, "TRIG II") % Sets internal triggering
             % pause(0.1)
             trig = readline(self.laser_communication);
         end
         
-        function [state_string, state_double] = get_state(laser, app)
+        function [state_string, state_double] = get_state(self, app)
             opotek = self.laser_communication;
             writeline(opotek, "STATE")
             state_raw = readline(opotek);
@@ -64,10 +63,15 @@ classdef LaserOpotek % < LaserBase
                 state_double = -1;
             end
 
-            state_string = laser.choose_state_text(state_double, app);
+            % This approach only works in MatLab 2022b and later, as dictionnaries are somehow new in MatLab
+			states_number = -1:9
+			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem' 
+            states_dict = dictionnary(states_number, states_text)
+			
+            state_string = strcat('State : ', states_dict(state));
         end
         
-        function temp = get_temp(laser, app)
+        function temp = get_temp(self, app)
             opotek = self.laser_communication;
             
             temp_limit = 38; % limit celsius temperature under that you canot shot
@@ -99,7 +103,7 @@ classdef LaserOpotek % < LaserBase
             str_temp_ok = readline(opotek);
         end
         
-        function trigger(laser, nb_shot, app) % Translate this name
+        function trigger(self, nb_shot, app) % Translate this name
             opotek = self.laser_communication;
             % Déclenche un "tir" pour la désorbtion de la surface à analyser
             % Equivalent au "burst mode" du logiciel Opotek
@@ -120,7 +124,7 @@ classdef LaserOpotek % < LaserBase
             update_log(app, 'Firing...');
         end
         
-        function state_string = lamp_on(laser, app)
+        function state_string = lamp_on(self, app)
             opotek = self.laser_communication;
             %% Turning the lamp on
             
@@ -145,7 +149,7 @@ classdef LaserOpotek % < LaserBase
             end
         end
         
-        function state_string = lamp_off(laser, app)
+        function state_string = lamp_off(self, app)
             opotek = self.laser_communication;
             
             writeline(opotek, "STOP")
@@ -169,14 +173,14 @@ classdef LaserOpotek % < LaserBase
             update_log(app, 'The state ID shoud be 2.');
         end
 
-        function disconnect(laser, app)
+        function disconnect(self, app)
             % insert code to turn the laser off
             delete(self.laser_communication);
-            clear laser;
+            clear self;
             update_log(app, "Opotek Laser Disconnected")
         end
 
-        function set_voltage(laser, voltage_value, app)
+        function set_voltage(self, voltage_value, app)
             opotek = self.laser_communication;
             %% set the voltage
             writeline(opotek, "CAPVSET"); % CAPVSET ### program the flashlamp voltage
@@ -211,61 +215,17 @@ classdef LaserOpotek % < LaserBase
             end
         end
 
-        function [state_text, state_double] = choose_state_text(laser, state, ~) % fonction propre et unique a LaserOpotek ?
-            n = state;
-
-            if n == 0
-                state_text = 'Boot Fault';
-                state_double = 0;
-            elseif n == 1
-                state_text = 'Warm up';
-                state_double = 1;
-            elseif n == 2
-                state_text = 'Laser Ready for a RUN command';
-                state_double = 1;
-            elseif n == 3
-                state_text = 'Flashing - Lamp disabled';
-                state_double = 1;
-            elseif n == 4
-                state_text = 'Flashing awaiting shutter to be opened';
-                state_double = 2;
-            elseif n == 5
-                state_text = 'Flashing - Pulse enabled';
-                state_double = 2;
-            elseif n == 6
-                state_text = 'Pulsed Laser ON/NLO Warm up';
-                state_double = 2;
-            elseif n == 7
-                state_text = 'Harmonic generator thermally stabilized';
-                state_double = 1;
-            elseif n == 8
-                state_text = 'NLO Optimization';
-                state_double = 1;
-            elseif n == 9
-                state_text = 'APM ok : NLO ready';
-                state_double = 1;
-            elseif n == -1
-                state_text = 'No connexion, Laser off or buffer problem';
-                state_double = -1;
-            else
-                state_text = 'No connexion, Laser off or buffer problem';
-                state_double = -1;
-            end
-
-            state_text = strcat('State : ',state_text);
-        end
-
-        function continuous_trigerring(laser, app)
+        function continuous_trigerring(self, app)
             % insert code to open the mirror that let the laser get out
             opotek = self.laser_communication;
             
-            writeline(opotek, "QSW 1")  % ouvre le laser
+            writeline(opotek, "QSW 1")  % Opens the laser
             msg_qsw_1 = readline(opotek);
             update_log(app, msg_qsw_1)
             update_log(app, 'Warning: The mirror is open. The laser is now continuosuly firing!');
         end
 
-        function STOP_continuous_trigerring(laser, app)
+        function STOP_continuous_trigerring(self, app)
             % insert code to close the mirror, to stop continue laser shooting
             
             writeline(self.laser_communication, "QSW 0") % ferme le laser
