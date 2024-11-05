@@ -5,12 +5,12 @@ classdef LaserOpotek % < LaserBase
         Port = 10001
         Temp_limit = 38
         voltage_value
-		laser_communication % TCP client object
+		laser_communication = tcpclient('192.168.0.59', 10001); % TCP client object
     end
     
     methods %(Static)
         function init(self, app)
-            self.laser_communication = tcpclient(self.IP_address,self.Port);
+            % self.laser_communication = tcpclient(self.IP_address,self.Port);
             
             %% Ensures that the connexion is fully functional 
 %             flush(self.laser_communication)
@@ -65,10 +65,10 @@ classdef LaserOpotek % < LaserBase
 
             % This approach only works in MatLab 2022b and later, as dictionnaries are somehow new in MatLab
 			states_number = -1:9;
-			states_text = ['Boot Fault', 'Warm up', 'Laser Ready for a RUN command', 'Flashing - Lamp disabled', 'Flashing awaiting shutter to be opened', 'Flashing - Pulse enabled', 'Pulsed Laser ON/NLO Warm up', 'Harmonic generator thermally stabilized', 'NLO Optimization', 'APM ok : NLO ready', 'No connexion, Laser off or buffer problem']; 
-            states_dict = dictionnary(states_number, states_text);
+			states_text = ["No connexion, Laser off or buffer problem", "Boot Fault", "Warm up", "Laser Ready for a RUN command", "Flashing - Lamp disabled", "Flashing awaiting shutter to be opened", "Flashing - Pulse enabled", "Pulsed Laser ON/NLO Warm up", "Harmonic generator thermally stabilized", "NLO Optimization", "APM ok : NLO ready"]; 
+            states_dict = dictionary(states_number, states_text);
 			
-            state_string = strcat('State : ', states_dict(state));
+            state_string = strcat('State : ', states_dict(state_double));
         end
         
         function temp = get_temp(self, app)
@@ -103,20 +103,20 @@ classdef LaserOpotek % < LaserBase
             str_temp_ok = readline(opotek);
         end
         
-        function trigger(self, nb_shot, app) % Translate this name
+        function trigger(self, nb_shot, app) 
             opotek = self.laser_communication;
             % Déclenche un "tir" pour la désorbtion de la surface à analyser
             % Equivalent au "burst mode" du logiciel Opotek
             
             time_stop = nb_shot*0.1;
             
-            writeline(opotek, "QSW 1")  % ouvre le laser
+            writeline(opotek, "QSW 1")  % Fires the laser
             msg_qsw_1 = readline(opotek);
             update_log(app, msg_qsw_1)
             
             pause(time_stop);
             
-            writeline(opotek, "QSW 0") % ferme le laser
+            writeline(opotek, "QSW 0") % Stops the laser from firing
             msg_qsw_0 = readline(opotek);
             update_log(app, msg_qsw_0)
             
@@ -136,14 +136,15 @@ classdef LaserOpotek % < LaserBase
             pause(1)
             
             %flush(opotek)
-            writeline(opotek, "RUN \r")
-            %writeline(opotek, "RUN")
+            % writeline(opotek, "RUN \r")
+            writeline(opotek, "RUN")
+
+            pause(5)
+
             run = readline(opotek);
             update_log(app, run)
             
-            pause(10)
-            
-            if run == "ERROR"
+            if run == "ERROR"  % Why TF does this happen???
                 update_log(app, 'Error: The lamp cannot be turned on.');
                 is_ok = 0;
             end

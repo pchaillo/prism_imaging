@@ -12,7 +12,7 @@ classdef (Abstract) LaserBase
         function  [state_string, state_double] = get_state(laser,laser_co)
             % insert code to read the state of the laser
             % state_double = -1 => no connexion
-            % state_double = 0 => boolt fault
+            % state_double = 0 => boot fault
             % state_double = 1 => connected, lamp off
             % state_double = 2 => connected, lamp on
         end
