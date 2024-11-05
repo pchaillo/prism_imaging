@@ -124,8 +124,10 @@ classdef RobotMeca500 < handle
 
         end
 
-        function reset_error(self) % utile ?
-            % insert code to remove error state of the robot % reset_error.m for MECA500
+        function reset_error(self, app)
+            fwrite(self.robot_communication, "ResetError") % reset_error.m for MECA500
+            pause(0.1)
+            update_log(app, 'Error reset!')
         end
 
         function set_position(self, pos)
