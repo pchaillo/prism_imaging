@@ -9,7 +9,7 @@ classdef LaserOpolette < handle
     end
     
     methods
-        function init(self, ~) % app ici ? #TODO
+        function init(self, ~) 
            self.laser_communication = serialport(self.USB_port, self.Baudrate);
            self.laser_communication.configureTerminator("CR/LF");
         end
@@ -17,7 +17,7 @@ classdef LaserOpolette < handle
         function [state_text, state_double] = get_state(self, app)
             flush(self.laser_communication);
             writeline(self.laser_communication, "QI");
-            state_string = read(self.laser_communication, 15, 'string');
+%             state_string = read(self.laser_communication, 15, 'string');
             flush(self.laser_communication);
             writeline(self.laser_communication, "ST");
             state_string = read(self.laser_communication, 15, 'string');
