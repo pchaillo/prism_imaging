@@ -1,4 +1,7 @@
 function out = mzxmlread_2019(filename,varargin)
+
+% Old version of mzxmlread function, used because the new one create bug with large files ( > +-5GB )
+
 % MZXMLREAD Read an mzXML file into MATLAB as a structure.
 %
 %   OUT = MZXMLREAD(FILENAME) reads an mzXML file into MATLAB as a

@@ -15,7 +15,7 @@ pixels_scans = fix_ms_data(pixels_scans);
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 
 ind_peaks = 0;
-for n = 1 : length(selected_ind_list) % récupère les temps et les spectres associés aux indices
+for n = 1 : length(selected_ind_list) % ENG : get the time and the spectras associated to the index // FR : récupère les temps et les spectres associés aux indices
     ind_peaks = ind_peaks + 1 ;
     peaks(ind_peaks) = {pixels_scans(selected_ind_list(n)).peaks.mz};
     times(ind_peaks) = pixels_scans(selected_ind_list(n)).retentionTime;
@@ -33,7 +33,7 @@ si_p = size(peaks);
 win = 0.1;
 band = [200 1500];
 
-%f irst line % 1ere ligne
+% ENG : first line processed separatly % FR : 1ere ligne calculée séparemment
 raw_peak_array = peaks{1, 1}  ;
 fix_peak_array = bining_fixed_size(raw_peak_array,win,band);
 all_selected_spectra_struct(1) = {fix_peak_array};

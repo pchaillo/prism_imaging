@@ -1,8 +1,10 @@
-%  Creates a table that links spatial data to temporal data
 
 % Still used ? #TODO
 
 function index = num_to_position(map_name, mat) 
+
+ %  Creates a table that links spatial data to temporal data
+
 
 mat_file = load(mat);
 pixels_number = length(mat_file.bio_dat);
