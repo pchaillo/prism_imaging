@@ -76,3 +76,14 @@ Variables :
 - deiso_fusion_reccur() => process_fusion_list
 - Arrêt du laser continu => Arrêt total de l'imagerie 
 - verifier que la variable globale state est bien fonctionelle + test de la fonction de securite
+
+
+# Todo :
+
+## Add utility comment (input/output) and volontee :
+- utils/find_closest_point
+- utils/for_casting/clean_fusion_list
+
+## utils :
+- Merge extract_num, extract_TIC and extract_time to improve perfomances ? (see usage of this funtions)
+- Merge find_folders_and_subfolders, folder_scan, folder_scan_withtout_extension and sort_folder_and_files ? Refactor ? (call each others ?)

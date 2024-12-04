@@ -1,5 +1,6 @@
 function display_RGB_mz_map(map,pixels_mz_R,pixels_mz_G,pixels_mz_B,limits_R,limits_G,limits_B,title_str)
 
+% Display function that plot three mz with differents color on a map
 % to see image as 2D from front display = "2D". Otherwise pick "3D"
 
 rgb_map(:,:,1) = pixels_mz_R ;

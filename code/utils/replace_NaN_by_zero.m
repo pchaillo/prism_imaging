@@ -1,4 +1,7 @@
 function pixels_mz = replace_NaN_by_zero(pixels_mz)
+
+% Raplce NaN value to 0, to avoid bugs during process
+
 shape=size(pixels_mz);
 for i = 1 : shape(1)
     for j = 1 : shape(2) 
