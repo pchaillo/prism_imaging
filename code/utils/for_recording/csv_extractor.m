@@ -135,7 +135,7 @@ csv_concatenate = {};
 parfor i=1:length(csv_cell)
     csv_concatenate = [csv_concatenate, csv_cell{i}];
 end
-csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Need a header row
+csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Needs a header row
 
 clear csv_concatenate csv_cell
 

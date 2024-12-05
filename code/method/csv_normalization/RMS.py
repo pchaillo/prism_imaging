@@ -49,7 +49,7 @@ def file_name_recovery(filepath):
 Tk().withdraw()
 filename = askopenfilename()
 
-csv = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
+csv = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)  # Reads the opened CSV
 head = csv.iloc[:11, :]
 tail = csv.iloc[11:, :]
 
