@@ -9,7 +9,7 @@ import pandas
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
 
-move_decimal = False  # Multiplies the obtained values by 1000 to get a more sensible placement of the decimal
+move_decimal = True  # Multiplies the obtained values by 1000 to get a more sensible placement of the decimal
 
 # Define the name fetching function
 def file_name_recovery(filepath):
@@ -50,12 +50,12 @@ def file_name_recovery(filepath):
 Tk().withdraw()
 filename = askopenfilename()
 
-csv = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)  # Reads the opened CSV
+csv = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)  # Reads the opened CSV, deprecated
 head = csv.iloc[:11, :]
 tail = csv.iloc[11:, :]
-tic = tail.sum(axis=0)
+tic = head.loc["TIC"]
 
-tic.loc[tic == 0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from wroking.
+tic.loc[tic == 0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from working.
 # Making those values equal to 1 is a workaround.
 
 if move_decimal:
@@ -67,7 +67,7 @@ csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 file_name_recovery(filepath=filename)
-tgtname = tgtnamefin + '-TICnorm.' + tgtext
+tgtname = tgtnamefin + '-TICnormAlt.' + tgtext
 csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
 
 print(tgtname, 'was properly saved in files/csv files/')
