@@ -31,9 +31,9 @@ countdown = dimX;
 for position = 1:pixels_number
     quotient = floor((position-1)/dimX);
     if mod(quotient, 2) == 0
-        num_order(position) = m(position).num;
+        num_order(position) = position;
     else
-        num_order(position) = m(position + countdown - 1).num;
+        num_order(position) = position + countdown - 1;
         countdown = countdown - 2;
         if countdown == -dimX
             countdown = dimX;
@@ -41,8 +41,6 @@ for position = 1:pixels_number
     end
 end
  
-[~, index] = sort(abs(num_order)); % Order in which to pick molecular data sorted time-wise to reconstruct
-                                   % spatial sorting
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % data_ind = 1; % Sort absolute nums in increasing order in num_order_table, and fetch the corresponding order 
 % number instead of data_ind
@@ -64,27 +62,27 @@ mz = {};
 
 disp('Deconstructing mat file.')
 for i = 1:total_pixels
+    pixel_id = num_order(i);
+    tic(i) = m(pixel_id).totIonCurrent;
+    rt(i) = m(pixel_id).retentionTime;
+    deisotoped{i} = m(pixel_id).deisotoped;
 
-    tic(i) = m(i).totIonCurrent;
-    rt(i) = m(i).retentionTime;
-    deisotoped{i} = m(i).deisotoped;
-
-    if isempty(m(i).basePeakMz)
+    if isempty(m(pixel_id).basePeakMz)
         bp(i) = 0;
     else
-        bp(i) = m(i).basePeakMz;
+        bp(i) = m(pixel_id).basePeakMz;
     end 
 
-    if isempty(m(i).basePeakIntensity)
+    if isempty(m(pixel_id).basePeakIntensity)
         bpi(i) = 0;
     else
-        bpi(i) = m(i).basePeakIntensity;
+        bpi(i) = m(pixel_id).basePeakIntensity;
     end
 
     if isempty(m(i).peaks.mz)
         mz{i} = [0 0];
     else
-        mz{i} = m(i).peaks.mz;
+        mz{i} = m(pixel_id).peaks.mz;
     end
 end 
 

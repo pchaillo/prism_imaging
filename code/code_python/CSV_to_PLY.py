@@ -165,7 +165,7 @@ col_box = ttk.Combobox(frm, state='readonly',
                        values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian', 'Viridis'),
                        width=13)
 col_box.place(x=73, y=85)
-col_box.set('Viridian')
+col_box.set('Viridis')
 
 
 def set_gradient_type():
@@ -372,7 +372,7 @@ colours_dict = {
     "Viridis": [Color("srgb", [0.267, 0.004, 0.329]), Color("srgb", [0.213, 0.322, 0.545]),
                 Color("srgb", [0.129, 0.569, 0.549]), Color("srgb", [0.369, 0.788, 0.384]),
                 Color("srgb", [0.992, 0.906, 0.145]), "linear"]
-}
+    }
 gradient_base = colours_dict.get(gradient_type)
 
 if coreg_img is None:

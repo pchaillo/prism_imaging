@@ -67,7 +67,7 @@ def uploadaction():
     global filename, data_list, binning_win
     filename = askopenfilename(
         defaultextension='.csv')  # Global allows for modification of a variable out of the function
-    biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
+    biomap = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
     data_list = biomap.index
     data_list = data_list.to_list()
     data['values'] = data_list
@@ -156,10 +156,10 @@ separator.place(x=0, y=65, relwidth=3)
 
 ttk.Label(frm, text="Colour Gradient").place(x=80, y=60)
 col_box = ttk.Combobox(frm, state='readonly',
-                   values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Viridian'),
+                   values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Viridian', 'Viridis'),
                    width=13)
 col_box.place(x=73, y=85)
-col_box.set('Viridian')
+col_box.set('Viridis')
 
 
 def set_gradient_type():
@@ -223,7 +223,7 @@ ttk.Button(frm, text="Proceed", command=lambda: [set_gradient_type(), set_data_t
 gui.mainloop()
 
 # End of the GUI loop
-biomap = pandas.read_csv(filename, sep=',', index_col='cell1', low_memory=False)
+biomap = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
 if coreg_img is not None:
@@ -343,13 +343,19 @@ colours_dict = {"Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7,
                 "Fusion": [Color("srgb", [1, 1, 0]), Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0, 0]), "linear"],
                 "Halloween": [Color("srgb", [1, 0.4, 0]), Color("srgb", [0.2, 0.1, 0.8]), Color("srgb", [0.3, 1, 0.2]), "linear"],
                 "Easter": [Color("srgb", [0, 0, 1]), Color("srgb", [1, 0.6, 0.8]), Color("srgb", [1, 0.6, 0]), "linear"],
-                "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"]}
+                "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]), "continuous"],
+                "Rainbow": [Color("srgb", [0, 0, 0]), Color("srgb", [0.9, 0, 0.9]), Color("srgb", [0, 0, 1]),
+                            Color("srgb", [1, 0, 0]), Color("srgb", [0, 1, 0]), Color("srgb", [0.8, 0.8, 1])],
+                "Viridis": [Color("srgb", [0.267, 0.004, 0.329]), Color("srgb", [0.213, 0.322, 0.545]),
+                            Color("srgb", [0.129, 0.569, 0.549]), Color("srgb", [0.369, 0.788, 0.384]),
+                            Color("srgb", [0.992, 0.906, 0.145]), "linear"]
+                }
 gradient_base = colours_dict.get(gradient_type)
 
 if coreg_img is None:
-    col = Color.interpolate([gradient_base[0], gradient_base[1], gradient_base[2]],
+    col = Color.interpolate(gradient_base[:-1],
                             space="oklab",
-                            method=gradient_base[3])
+                            method=gradient_base[-1])
     colours = numpy.zeros(shape=(vertices, 3))
     rank = 0
 
