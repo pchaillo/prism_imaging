@@ -60,7 +60,7 @@ bp = [];
 bpi = [];
 mz = {};
 
-disp('Deconstructing mat file.')
+disp('Deconstructing the mat file...')
 for i = 1:total_pixels
     pixel_id = num_order(i);
     tic(i) = m(pixel_id).totIonCurrent;
@@ -79,7 +79,7 @@ for i = 1:total_pixels
         bpi(i) = m(pixel_id).basePeakIntensity;
     end
 
-    if isempty(m(i).peaks.mz)
+    if isempty(m(pixel_id).peaks.mz)
         mz{i} = [0 0];
     else
         mz{i} = m(pixel_id).peaks.mz;

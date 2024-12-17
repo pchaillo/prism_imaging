@@ -4,12 +4,13 @@
 #   pyrunfile('#SCRIPT_NAME#.py')
 # Modified based on the approach defined in: 10.1007/s00216-011-4929-z
 # Recompute the TIC based on the sum of intensities
+# TIC normalization outlines artifacts and should thus be used in conjunction with denoising. This might be worth
+# implementing at some point
 
 import pandas
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
 
-move_decimal = True  # Multiplies the obtained values by 1000 to get a more sensible placement of the decimal
 
 # Define the name fetching function
 def file_name_recovery(filepath):
@@ -55,19 +56,18 @@ head = csv.iloc[:11, :]
 tail = csv.iloc[11:, :]
 tic = head.loc["TIC"]
 
-tic.loc[tic == 0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from working.
+tic.loc[tic == 0.0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from working.
 # Making those values equal to 1 is a workaround.
 
-if move_decimal:
-    tail = (tail * 1000) / tic
-else:
-    tail = tail / tic
+proportional_tic = tic/max(tic)
+
+tail = tail / proportional_tic
 
 csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 file_name_recovery(filepath=filename)
-tgtname = tgtnamefin + '-TICnormAlt.' + tgtext
+tgtname = tgtnamefin + '-TICnorm.' + tgtext
 csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
 
 print(tgtname, 'was properly saved in files/csv files/')
