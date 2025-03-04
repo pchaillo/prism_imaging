@@ -51,23 +51,31 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
 def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff):
     bar_width = 2500
     bar_height = 100
-    padding_x = int(300)
-    padding_y = int(100)
+    padding_x = 500
+    padding_x_offset = 100 # Gives leeway for annotations to extend away from the image
+    padding_y = 100
+    txt_y_padding = 35
     alpha = 50
+    font_size = 50
 
-    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4))
+    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4))  # That +10 is a workaround to fully
+    # retain the rightmost extremity if a higher threshold is applied
 
     if min_cutoff != intensities_min:
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), 0:int(padding_x / 2), 0] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), 0:int(padding_x / 2), 1] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), 0:int(padding_x / 2), 2] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), 0:int(padding_x / 2), 3] = alpha
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2), padding_x_offset:int(padding_x / 2), 0] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2), padding_x_offset:int(padding_x / 2), 1] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2), padding_x_offset:int(padding_x / 2), 2] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2), padding_x_offset:int(padding_x / 2), 3] = alpha
 
     if max_cutoff != intensities_max:
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), int(padding_x / 2):, 0] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), int(padding_x / 2):, 1] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), int(padding_x / 2):, 2] = 200
-        scale[int(padding_y / 2):int(bar_height + padding_y / 2), int(padding_x / 2):, 3] = alpha
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2),
+        int(padding_x / 2):bar_width + padding_x - padding_x_offset, 0] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2),
+        int(padding_x / 2):bar_width + padding_x - padding_x_offset, 1] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2),
+        int(padding_x / 2):bar_width + padding_x - padding_x_offset, 2] = 200
+        scale[int(padding_y / 2):int(bar_height + padding_y / 2),
+        int(padding_x / 2):bar_width + padding_x - padding_x_offset, 3] = alpha
 
     rank_list = np.arange(0, bar_width)
 
@@ -88,7 +96,7 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
     # font = ImageFont.truetype(font="Agency FB", size=10)
 
     if min_cutoff != intensities_min:
-        scale_legend.text((10, 0), str(intensities_min), font_size=35)
+        scale_legend.text((padding_x_offset, txt_y_padding), str(intensities_min), font_size=font_size, anchor="ms")
         scale_legend.line(
             xy=[(padding_x / 2, (bar_height + padding_y) / 2), ((padding_x / 2) - 30, (bar_height + padding_y) / 2)],
             width=5)
@@ -104,9 +112,11 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
             xy=[((padding_x / 2) - 120, (bar_height + padding_y) / 2),
                 ((padding_x / 2) - 150, (bar_height + padding_y) / 2)],
             width=5)
-        scale_legend.line(xy=[(0, bar_height + padding_y / 2), (0, (padding_y / 2) - 5)], width=5)
+        scale_legend.line(xy=[(padding_x_offset, bar_height + padding_y / 2), (padding_x_offset, (padding_y / 2) - 5)],
+                          width=5)
     if max_cutoff != intensities_max:
-        scale_legend.text((bar_width - 30 + padding_x * (3 / 4), 0), str(intensities_max), font_size=35)
+        scale_legend.text((bar_width + padding_x - padding_x_offset, txt_y_padding), str(intensities_max),
+                          font_size=font_size, anchor="ms")
         scale_legend.line(
             xy=[(bar_width + padding_x / 2, (bar_height + padding_y) / 2),
                 (bar_width + (padding_x / 2) + 30, (bar_height + padding_y) / 2)],
@@ -123,10 +133,10 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
             xy=[(bar_width + (padding_x / 2) + 120, (bar_height + padding_y) / 2),
                 (bar_width + (padding_x / 2) + 150, (bar_height + padding_y) / 2)],
             width=5)
-        scale_legend.line(xy=[(bar_width + padding_x, bar_height + padding_y / 2),
-                              (bar_width + padding_x, (padding_y / 2) - 5)], width=5)
-    scale_legend.text((padding_x / 2, 0), str(min_cutoff), font_size=35)
-    scale_legend.text((bar_width - 60 + padding_x / 2, 0), str(max_cutoff), font_size=35)
+        scale_legend.line(xy=[(bar_width + padding_x - padding_x_offset, bar_height + padding_y / 2),
+                              (bar_width + padding_x - padding_x_offset, (padding_y / 2) - 5)], width=5)
+    scale_legend.text((padding_x / 2, txt_y_padding), str(min_cutoff), font_size=font_size, anchor="ms")
+    scale_legend.text((bar_width + padding_x / 2, txt_y_padding), str(max_cutoff), font_size=font_size, anchor="ms")
 
     scale_legend.line(xy=[(padding_x / 2, bar_height + padding_y / 2), (padding_x / 2, (padding_y / 2) - 5)], width=5)
     scale_legend.line(
