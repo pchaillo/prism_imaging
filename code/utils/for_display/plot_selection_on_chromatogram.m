@@ -1,22 +1,22 @@
 function plot_selection_on_chromatogram(pixels_scans,t_i,ion,topography_time_list,all_scans)
 % Function that display the selected peaks on the chromatogram for visual checking
 
-%avec meilleure fusion
+% avec meilleure fusion
 % avec fusion collatérales
 
-figure(); % plot les points choisis
+figure(); % Plot chosen points
 hold on
-plot(t_i,ion)
-ind_fus = 0; % point fussionnes
-ind_norm = 0; % peaks normaux
-ind_ad = 0; % points ajoutes
-ind_coll = 0; % Points qui resultent d'une fusion "collatérale"
-for i = 1 :length(pixels_scans)
-    %% pour scatter les points
+plot(t_i, ion)
+ind_fus = 0; % Fused points
+ind_norm = 0; % Normal peaks
+ind_ad = 0; % Added points
+ind_coll = 0; % Points resulting from a "collateral" fusion
+for i = 1:length(pixels_scans)
+    %% To scatter points
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
     if pixels_scans(i).centroided == -1 
         ind_fus = ind_fus + 1 ;
-        pk_fus(ind_fus) = pixels_scans(i).ionisationEnergy; % ou pixels_scans(i).centroided ?
+        pk_fus(ind_fus) = pixels_scans(i).ionisationEnergy; % or pixels_scans(i).centroided ?
         %         loc_r= pixels_scans(i).retentionTime;
         %         loc_rond(ind_rond) = raw_to_time(loc_r);
         loc_fus(ind_fus) = pixels_scans(i).retentionTime;
@@ -37,7 +37,7 @@ for i = 1 :length(pixels_scans)
         loc_norm(ind_norm) = pixels_scans(i).retentionTime;
         pk_norm(ind_norm) = pixels_scans(i).ionisationEnergy;
     end
-    %% pour plot les lignes d'écarts temporels
+    %% To plot temporal delay lines
     
     if topography_time_list ~= 0
         
@@ -51,7 +51,7 @@ for i = 1 :length(pixels_scans)
     time_line_x = [time_dat time_map];
     time_line_y = [int int ];
     
-    plot(time_line_x,time_line_y);
+    plot(time_line_x, time_line_y);
     
     end
     
@@ -59,8 +59,8 @@ end
 
 %     plot(time_line_x,time_line_y);
 
-for i = 1 :length(all_scans)
-    %% pour scatter les points
+for i = 1:length(all_scans)
+    %% To scatter points
     %if floor(pixels_scans(i).num) ~= pixels_scans(i).num
     if all_scans(i).centroided == -1
         ind_fus = ind_fus + 1 ;
@@ -73,21 +73,21 @@ end
 
 if exist('loc_norm')
     % plot(loc_norm,pk_norm,'*','red');
-   s(1) = scatter(loc_norm,pk_norm,'*','red','DisplayName','Scan');
+   s(1) = scatter(loc_norm, pk_norm, '*', 'red', 'DisplayName', 'Scan');
 end
 if exist('loc_coll')
-    scatter(loc_coll,pk_coll,'o','red');
+    scatter(loc_coll, pk_coll, 'o', 'red');
 end
 if exist('loc_fus')
-    scatter(loc_fus,pk_fus,'*','m');
+    scatter(loc_fus, pk_fus, '*', 'm');
 end
 if exist('loc_ad')
-    scatter(loc_ad,pk_ad,'d','b');
+    scatter(loc_ad, pk_ad, 'd', 'b');
 end
 
 xlabel('Time (s)')
-ylabel('TIC intensity')
-title('Scan selection on chromatogram')
+ylabel('TIC Intensity (A.U.)')
+title('Selected scans on the chromatogram')
 % axes()
 
 

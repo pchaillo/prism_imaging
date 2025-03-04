@@ -22,7 +22,7 @@ classdef PeakPickingMethod < handle
 
         end
 
-        function [pixels_scans ,time] = selection(self, mzXML_data , map_time, app)
+        function [pixels_scans, time] = selection(self, mzXML_data , map_time, app)
             if (self.intern_trig(1:2) == 'On')
                 intern_flag = 1;
             else
@@ -34,7 +34,7 @@ classdef PeakPickingMethod < handle
             update_log(app, self.fusion_percentage)
             update_log(app, self.intern_trig)
 
-            [pixels_scans ,time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time,self.aspiration_time); % take only the useful informations
+            [pixels_scans, time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time, self.aspiration_time); % take only the useful informations
 
         end
     end

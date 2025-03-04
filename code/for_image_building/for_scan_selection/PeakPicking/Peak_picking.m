@@ -72,13 +72,13 @@ if exist('point_to_add_indices')
     filtered_selected_indices = [ filtered_selected_indices point_to_add_indices];
 end
 
-[sorted_selected_indices, ordre]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
+[sorted_selected_indices, order]= sort(filtered_selected_indices) ;% indices finaux des points à mettre dans pixels_scans
 [uv,a,b] = unique(sorted_selected_indices);
 if length(uv) ~= length(sorted_selected_indices)
     update_log(app, 'Warning: Points are overlapping. Please investigate the all_peaks variable or the mat file.')
 end
 
-%% Usefull value for debug
+%% Useful values for debug
 % final_data_array(1,:) = sorted_selected_indices; % for informations
 % final_data_array(2,:) =  fusionned_Scan_time(sorted_selected_indices) ;
 % final_time_gap_list = time_list_to_time_gap(final_data_array(2,:));
@@ -97,4 +97,4 @@ all_scans = collateral_fusion(app, all_scans, first_point_indice, last_selected_
 %% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
 
 pixels_scans(:) = all_scans(Final_selected_indices_list);
-plot_selection_on_chromatogram(pixels_scans,Scan_time_list,TIC_list,corrected_topography_time_list,all_scans); % Function that display the selected peaks on the chromatogram for visual checking
+plot_selection_on_chromatogram(pixels_scans, Scan_time_list, TIC_list, corrected_topography_time_list, all_scans); % Function that display the selected peaks on the chromatogram for visual checking

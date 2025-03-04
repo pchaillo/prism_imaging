@@ -20,13 +20,13 @@ over_noise_indices =  find(selected_scans_TIC > noise_threshold );
 over_noise_nums = selected_scans_num(over_noise_indices); % à comparer avec les peaks pour ajouter les infos !
 % comparer avec selected_indices;
 
-over_noise_mask = ismember(over_noise_nums ,selected_indices);
+over_noise_mask = ismember(over_noise_nums, selected_indices);
 
 under_noise_mask = ~ over_noise_mask;
 selected_over_noise_inds = over_noise_nums(under_noise_mask); % indices de toutes les lignes au dessus du threshold minimum de bruit
 
 if (~isempty(fusion_indices))
-    [common_indices aa to_supp_ind ] = intersect(deleted_indices, selected_over_noise_inds); % delete all the already fusionned scans % retrait de toutes les lignes déjà fusionnées
+    [common_indices aa to_supp_ind ] = intersect(deleted_indices, selected_over_noise_inds); % delete all the already fusionned scans 
     selected_over_noise_inds(to_supp_ind)=[];
 end
 
