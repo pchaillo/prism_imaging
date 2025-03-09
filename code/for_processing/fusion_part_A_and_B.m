@@ -23,4 +23,4 @@ scan.peaks.mz = [ scan_1.peaks.mz ; scan_2.peaks.mz ];
 
 scan.totIonCurrent = scan_1.totIonCurrent + scan_2.totIonCurrent ;
 
-scan.msLevel = scan_1.msLevel + 1; % msLevel = contain the number of additionated spectra in one scan
+scan.msLevel = scan_1.msLevel + 1; % msLevel = Contains the number of additionated spectra in one scan

@@ -55,6 +55,9 @@ if ind > 0
     for i = 1 : size_coll_fus(1)
         mains_ind = to_fusion_array(i,1);
         collateral_fusion_ind = to_fusion_array(i,2);
-        all_scans(mains_ind) = fusion_part_A_and_B(all_scans(mains_ind),all_scans(collateral_fusion_ind));
-    end
+        all_scans(mains_ind) = fusion_part_A_and_B(all_scans(mains_ind), all_scans(collateral_fusion_ind));
+
+        % Display fused peaks. Seems to slow peak picking down
+        all_scans(to_fusion_array(i,2)).centroided = -1;
+    end   
 end

@@ -28,14 +28,14 @@ TIC_list = extract_TIC(all_scans );
 scan_time_list = extract_time(all_scans );
 
 % map_time = map_time + aspiration_time;
-map_time = apply_prog_aspiration(map_time,aspiration_time,aspiration_shift); % fonction experimentale
+map_time = apply_prog_aspiration(map_time,aspiration_time,aspiration_shift); 
 
 % disp(map_time)
 
 topography_time_list = time_to_list(map_time);
 
 % remplir ind_f_new
-Final_selected_indices_list = corresponding_time(scan_time_list, topography_time_list); % Indentify intensities by temporal correlation
+Final_selected_indices_list = corresponding_time(scan_time_list, topography_time_list); % Identify intensities by temporal correlation
 
 %% Pour fusionner le point suivant
 % all_scans  = add_neighbourgh_scan(all_scans , Final_selected_indices_list);
