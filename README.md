@@ -45,7 +45,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 - Move .ply to file folder
 - Refactor interface => retirer biomap
 - remplacer les diodes par quelquechose de plus elegant
-- Basiquement, ce que fait le software, c'est 
+
 
 # Long-term additions (Todo) :
 
