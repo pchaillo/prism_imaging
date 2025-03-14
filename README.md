@@ -37,7 +37,7 @@ A :
 Y :
 - automatic mzML generation
 - imzML generation pipeline as clear as possible
-- remove code_for_segmentation ?
+- remove code_for_segmentation ? TODO !
 
 
 # TOCHOOSE : (Repasser sur ceux du code) + Long terme
