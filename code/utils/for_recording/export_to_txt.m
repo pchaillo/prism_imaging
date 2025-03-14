@@ -13,13 +13,8 @@ for i = 1 : l
     fprintf(file_id,' [%d,%d]',num,num);
 end
 
-% for i = 1 : l % Working, but not adapted to the rest of the pipeline, avec pixels_scans en argument
-%     all_scans = pixels_scans(i).deisotoped;
-%     num_begin = min(all_scans);
-%     num_end = max(all_scans);
-%     fprintf(file_id,' [%d,%d]',num_begin,num_end);
-% end
-
 fprintf(file_id,'"');
 
 fclose(file_id);
+
+% The .txt file is generated as an intermediary file to generate the .mzML file

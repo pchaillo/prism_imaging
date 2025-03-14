@@ -1,17 +1,17 @@
 function map = load_map_fcn(nom)
 
-out = load(nom);
+% Load data from .map file into Matlab
 
+out = load(nom);
 si = size(out);
 
-%%% Récupération des dimensions %%%
+%%% ENG : Dimension recovery // FR : Récupération des dimensions %%%
 si_1 = out(1,1);
 si_2 = out(1,2);
 
 seuil = out(1,3);
 
 u = 1;
-
 if si(2) > 3
     t_b = out(1,4);
     for i = 1 : si_1
@@ -33,14 +33,6 @@ else
         end
     end
 end
-
-% figure()
-% %surf(map_x,map_y,map_z);
-% mesh(map_x,map_y,map_z);
-% % colormap(autumn);
-% axis equal
-% grid off
-% axis off
 
 map.x = map_x;
 map.y = map_y;

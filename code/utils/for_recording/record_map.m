@@ -21,9 +21,7 @@ mesh(map.x,map.y,map.z)
 axis equal
 
 folder_name = 'files\map files';
-
 path = path_editor(folder_name, name);
-
 punto = fopen(path,'w');
 
 % On rentre les dimensions pour la reconstruction %%%
