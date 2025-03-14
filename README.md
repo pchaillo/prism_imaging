@@ -1,6 +1,6 @@
 ﻿# prism_imaging
 
-STORM_MSI: Open-Source Software for 3D Mass Spectrometry Imaging
+STORM_MSI: Software Open, Robotic and Modular MSI = Open-Source Software for 3D Mass Spectrometry Imaging
 
 STORM_MSI enables the synchronization of a positioning platform, a desorption source, a topographic sensor (measuring distance (height of sample) at each point), and a mass spectrometer to reconstruct 3D images with biometric information. The software also includes essential tools for basic data processing, such as m/z selection, noise filtering, and normalization.
 For spectral data import, STORM_MSI supports the mzXML format. For data export and reuse in other software, it provides compatibility with mzML, imzML, PLY, and CSV formats, ensuring flexibility and interoperability across different analytical platforms.
@@ -49,9 +49,19 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 
 # Long-term additions (Todo) :
 
+## Mass Spectrometry :
+- Somme ou Moyenne pour la fusion des scans ? Qu'est-ce qui induit le - d'artefacts ? Rendre modulaire dans le code ?
+- Bien documenter les effets de shift + rendre la supression de shift automatique (logiciel de détection et estimation du décalage) ?
+- Détecttion et suppression auto des peaks parasites ?
+
 ## Generate an executable ?
 
+## Framework :
+- Création de sous-dépots git pour les composants hardware et les étapes de processing modulaire = ne pas tout retélécharger à chaque fois + réutilisation dans des contextes différents. ( Utilisation de ROS ? )
+- Rendre les étapes de processing plus modulaires ?
+
 ## Cleaning :
+- Ajout de fonction tests (sur le jeu de données test ? )
 - Aussi deporter ce qui peut l'etre dans des fonctions et ne pas laisser dans mlapp => rend les merge plus faciles
 - Supprimer les egalites inutiles ? 
 Exemple :
@@ -74,8 +84,9 @@ return b + C
 
 ## New features ? :
 - WatchDog : On supprime ou on fait remonter dans l'interface
-- Rendre la modalite d'acquisition modulaire ? Ou juste le pattern de balayage ?
+- Rendre la modalite d'acquisition modulaire ? Ou juste le pattern de balayage ? (Fonction qui lisent des tableaux de position successives, possibilité de la faire manuelle, automatiquement, ou en important des fichiers externes (csv aec les points, etc.))
 - Rectification de l'acquisition par defaut avant l'enregistrement ? (plutot non, risque de generer des bugs ?)
+- Proposer l'acquisition en deux temps (topographique puis moléculaire) + proposer de prendre en compte l'orientation du sample ?
 
 
 # Changes history
