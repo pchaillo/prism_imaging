@@ -1,5 +1,13 @@
 ﻿# prism_imaging
 
+STORM_MSI: Open-Source Software for 3D Mass Spectrometry Imaging
+
+STORM_MSI enables the synchronization of a positioning platform, a desorption source, a topographic sensor (measuring distance and height at each point), and a mass spectrometer to reconstruct 3D images with biometric information. The software also includes essential tools for basic data processing, such as m/z selection, noise filtering, and normalization.
+For spectral data import, STORM_MSI supports the mzXML format. For data export and reuse in other software, it provides compatibility with mzML, imzML, PLY, and CSV formats, ensuring flexibility and interoperability across different analytical platforms.
+
+## En français :
+STORM_MSI permet de synchroniser une plateforme de positionnement, une source de désorption, un capteur topographique (distance, hauteur de chaque point) et un spcetromètre de masse, afin de pouvoir reconstruire des images 3D avec les informations biométriques. Le logiciel comprend aussi le nécessaire pour réaliser le processing basique des données (selection des m/z, filtrage du bruit, normalisation, etc.). Le format mzXML est utilisé pour importer les données spectrométriques, et les formats mzML, imzMl, ply et csv peuvent être utiliser pour l'export et la réutilisation de ces données dans d'autres logiciels.
+
 
 Attention, penser à créer les répertoires "csv files", "map files", "mat files", "mzXML files", and "rgb map files" to use the interface.
 
@@ -37,6 +45,7 @@ Contributeurs : Adel Guiot (adel.guiot.etu@univ-lille.fr) / Thibaud Picinalli / 
 - Move .ply to file folder
 - Refactor interface => retirer biomap
 - remplacer les diodes par quelquechose de plus elegant
+- Basiquement, ce que fait le software, c'est 
 
 # Long-term additions (Todo) :
 
