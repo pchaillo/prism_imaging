@@ -2,7 +2,7 @@
 
 STORM_MSI: Open-Source Software for 3D Mass Spectrometry Imaging
 
-STORM_MSI enables the synchronization of a positioning platform, a desorption source, a topographic sensor (measuring distance and height at each point), and a mass spectrometer to reconstruct 3D images with biometric information. The software also includes essential tools for basic data processing, such as m/z selection, noise filtering, and normalization.
+STORM_MSI enables the synchronization of a positioning platform, a desorption source, a topographic sensor (measuring distance (height of sample) at each point), and a mass spectrometer to reconstruct 3D images with biometric information. The software also includes essential tools for basic data processing, such as m/z selection, noise filtering, and normalization.
 For spectral data import, STORM_MSI supports the mzXML format. For data export and reuse in other software, it provides compatibility with mzML, imzML, PLY, and CSV formats, ensuring flexibility and interoperability across different analytical platforms.
 
 ## En français :
