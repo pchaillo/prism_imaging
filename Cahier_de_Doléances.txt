@@ -17,3 +17,6 @@ On the compiled code:
 On the MatLab interface:
 - update_log seems to sometimes brak due to 'app' being an 'unrecognized function or variable'. This behaviour is found upon robot connexion for instance.
 - Sometimes the connexion will hang forever. This is not a flaw of the interface, but rather due to the robot entering an error state (in my case, most likely because the new logging breaks scripts called outside of the interface). This can be fixed by resetting the error on the robot's bespoke interface.
+
+On Hardware configuration :
+- Utilisation d'un tuyau chauffant = aide à l'ionisation des molécules et conserve l'enthropie

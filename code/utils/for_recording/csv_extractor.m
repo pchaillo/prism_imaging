@@ -1,9 +1,9 @@
-% Version with binning
+function csv = csv_extractor(app, csv_map, csv_mat, band, win)
+
+    % Version with binning
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
-% One of those names needs to change, too unclear
-
-function csv = csv_extractor(app, csv_map, csv_mat, band, win)
+% One of those names needs to change, too unclear #TODO
 
 map = load(csv_map);
 
