@@ -1,6 +1,6 @@
 function sample_height = get_rectified_data(app, sensor,robot,x_pos,y_pos,sample_height,watchdog_flag,parameters)
 
-% This function will get the data from the sensor, and if is not able to (sensor return error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
+% This function will get the data from the sensor, and if is not able to (e.g. sensor returns error value), it will correct itself automatically by putting the position higher (uselful for triangulation sensor)
 
 % global opotek; % For MSI, takes care of the opotek watchdog (send a frame on a regular temporal basis to avoid security blocking)
 
@@ -22,7 +22,7 @@ calibration_array = sensor.calibration_array;
 % disp(calibration_array) $ useful for debug
 
 if calibration_array == 0
-    disp("This analogic sensor require calibration");
+    disp("This analog sensor requires calibration");
 end
 
 while get_first_value == 0  || is_measured == 0
@@ -46,7 +46,7 @@ while get_first_value == 0  || is_measured == 0
             end
         end
         
-        %% nouveau repos
+        %% New repositioning
         if value < calibration_array(2,1) % || value == 0
             if parameters.fast_flag == 0 % faire ressortir de la fonction = refactor ? des fonctions différentes, avec des entree sortie differente pour la version modulaire ? 
                 if first_loop == 1
@@ -57,8 +57,8 @@ while get_first_value == 0  || is_measured == 0
                 shift = shift + 1;
                 update_log(app, string(shift))
                                               
-                position = [x_pos y_pos parameters.initial_height+sample_height+shift 180 0 180];
-                robot.class.set_position(position); 
+                position = [x_pos y_pos parameters.initial_height + sample_height + shift 180 0 180]; % TODO: Refactor for better abstraction with other robots
+                robot.class.set_position(position); % Moves the effector to the desired position
               %  set_pos(a,t);
                 if shift > max_shift
                     shift = 0;
@@ -75,7 +75,7 @@ while get_first_value == 0  || is_measured == 0
     end 
 end
 
-if sample_height < -3 % en donnant des valeurs fixes impossibles aux points faux, cela permet de les retrouver pour les corriger par la suite
+if sample_height < -3 % Giving negative (and therefore impossible) values to wrong measurements allows easy targeting for subsequent correction
     sample_height = 0.01;
 end
 

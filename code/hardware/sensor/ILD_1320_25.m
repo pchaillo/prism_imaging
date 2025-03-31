@@ -24,15 +24,15 @@ classdef ILD_1320_25 < handle
             disp(self.sensor_connexion)
         end
 
-        function calibration_array = calibration(self, robot,parameters, app)
+        function calibration_array = calibration(self, robot, parameters, app)
             calibration_array = default_sensor_calibration(robot, self,parameters, app);
             self.calibration_array = calibration_array;
         end
 
-        function sample_height = get_data(self, robot,sample_height,watchdog_flag,parameters,app) % Robot as input : could be usefull to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
+        function sample_height = get_data(self, robot, sample_height, watchdog_flag, parameters, app) % Robot as input : could be useful to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
             x_pos = robot.class.current_x;
             y_pos = robot.class.current_y;
-            sample_height = get_rectified_data(app, self,robot,x_pos,y_pos,sample_height,watchdog_flag,parameters);
+            sample_height = get_rectified_data(app, self, robot, x_pos, y_pos, sample_height, watchdog_flag, parameters);
             % Watchdog_flag ici ? #TODO
         end
 

@@ -96,7 +96,7 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
     # font = ImageFont.truetype(font="Agency FB", size=10)
 
     if min_cutoff != intensities_min:
-        scale_legend.text((padding_x_offset, txt_y_padding), str(intensities_min), font_size=font_size, anchor="ms")
+        scale_legend.text((padding_x_offset, txt_y_padding), f"{round(intensities_min*100/max_cutoff)}%", font_size=font_size, anchor="ms")
         scale_legend.line(
             xy=[(padding_x / 2, (bar_height + padding_y) / 2), ((padding_x / 2) - 30, (bar_height + padding_y) / 2)],
             width=5)
@@ -115,7 +115,7 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
         scale_legend.line(xy=[(padding_x_offset, bar_height + padding_y / 2), (padding_x_offset, (padding_y / 2) - 5)],
                           width=5)
     if max_cutoff != intensities_max:
-        scale_legend.text((bar_width + padding_x - padding_x_offset, txt_y_padding), str(intensities_max),
+        scale_legend.text((bar_width + padding_x - padding_x_offset, txt_y_padding), f"{round(intensities_max*100/max_cutoff)}%",
                           font_size=font_size, anchor="ms")
         scale_legend.line(
             xy=[(bar_width + padding_x / 2, (bar_height + padding_y) / 2),
@@ -135,8 +135,8 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
             width=5)
         scale_legend.line(xy=[(bar_width + padding_x - padding_x_offset, bar_height + padding_y / 2),
                               (bar_width + padding_x - padding_x_offset, (padding_y / 2) - 5)], width=5)
-    scale_legend.text((padding_x / 2, txt_y_padding), str(min_cutoff), font_size=font_size, anchor="ms")
-    scale_legend.text((bar_width + padding_x / 2, txt_y_padding), str(max_cutoff), font_size=font_size, anchor="ms")
+    scale_legend.text((padding_x / 2, txt_y_padding), f"{round(min_cutoff*100/max_cutoff)}%", font_size=font_size, anchor="ms")
+    scale_legend.text((bar_width + padding_x / 2, txt_y_padding), f"{round(max_cutoff*100/max_cutoff)}%", font_size=font_size, anchor="ms")
 
     scale_legend.line(xy=[(padding_x / 2, bar_height + padding_y / 2), (padding_x / 2, (padding_y / 2) - 5)], width=5)
     scale_legend.line(
