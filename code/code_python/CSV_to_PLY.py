@@ -97,7 +97,7 @@ def set_interpol():
 
 
 gui = tkinter.Tk()
-gui.title("CSV to PLY converter - The big one")
+gui.title("CSV to PLY converter - The clean one")
 gui.resizable(False, False)
 frm = ttk.Frame(gui, padding=10, height=320, width=290)
 frm.grid()
@@ -162,7 +162,8 @@ separator.place(x=0, y=65, relwidth=3)
 
 ttk.Label(frm, text="Colour Gradient").place(x=80, y=60)
 col_box = ttk.Combobox(frm, state='readonly',
-                       values=('Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian', 'Viridis'),
+                       values=("Classification III", 'Easter', 'Fusion', 'Halloween', 'Magic', 'Rainbow', 'Viridian',
+                               'Viridis'),
                        width=13)
 col_box.place(x=73, y=85)
 col_box.set('Viridis')
@@ -233,7 +234,7 @@ ttk.Button(frm, text="Proceed",
 gui.mainloop()
 
 # End of the GUI loop
-#biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV
+#biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, old format
 biomap = pd.read_csv(filename, sep=',', index_col='Data Type',low_memory=False)  # Reads the opened CSV
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
@@ -295,10 +296,10 @@ itp_type = itp_dic.get(itp_type)
 coordsfinal = biomap.iloc[:, 0:3]
 coordsfinal[np.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
 if len(data_window) == 1:
-    coordsfinal[data_type] = biomap[data_type]
+    coordsfinal[3] = biomap[data_type]
 else:
     coordsfinal[data_type] = biomap[data_window].sum(1)
-coordsfinal = coordsfinal.rename(columns={'x': 0, 'y': 1, 'z': 2, data_type: 3})
+coordsfinal = coordsfinal.rename(columns={'x': 0, 'y': 1, 'z': 2, f"{data_type}_data": 3})
 
 if interpol != 1:
     # Data must be mapped in a grid for 2D interpolation. For 2D, we can only implement one dataset at a time. Z heights
@@ -371,32 +372,50 @@ colours_dict = {
                 Color("srgb", [1, 0, 0]), Color("srgb", [0, 1, 0]), Color("srgb", [0.8, 0.8, 1]), "linear"],
     "Viridis": [Color("srgb", [0.267, 0.004, 0.329]), Color("srgb", [0.213, 0.322, 0.545]),
                 Color("srgb", [0.129, 0.569, 0.549]), Color("srgb", [0.369, 0.788, 0.384]),
-                Color("srgb", [0.992, 0.906, 0.145]), "linear"]
+                Color("srgb", [0.992, 0.906, 0.145]), "linear"],
+    "Classification III": [Color("srgb", [0.1, 0.2, 0.9]), Color("srgb", [0.7, 0.3, 0.1]), Color("srgb", [0.1, 0.7, 0.85]), "bspline"]
     }
 gradient_base = colours_dict.get(gradient_type)
 
 if coreg_img is None:
-    col = Color.interpolate(gradient_base[:-1],
+    if is_segmentation:
+        cluster_colors = {0:{"Red":0.7*255, "Green":0.7*255, "Blue":0.15*255},
+                          1:{"Red":0.9*255, "Green":0.3*255, "Blue":0.1*255},
+                          2:{"Red":0.1*255, "Green":0.2*255, "Blue":0.9*255}}
+        unique_clusters = list(set(itstlst))
+
+        colours = np.zeros(shape=(vertices, 3))
+        rank = 0
+        for i in itstlst:
+            colour = cluster_colors.get(unique_clusters.index(i))
+            colours[rank] = ([colour.get("Red"), colour.get("Green"), colour.get("Blue")])
+            rank += 1
+        coloursdf = pd.DataFrame(colours)
+        max_cutoff = "N.A."
+        min_cutoff = "N.A."
+
+    else:
+        col = Color.interpolate(gradient_base[:-1],
                                 space="oklab",
                                 method=gradient_base[-1])
-    colours = np.zeros(shape=(vertices, 3))
-    rank = 0
+        colours = np.zeros(shape=(vertices, 3))
+        rank = 0
 
-    max_cutoff = np.percentile(itstlst, float(max_percentile))
-    min_cutoff = np.percentile(itstlst, float(min_percentile))
+        max_cutoff = np.percentile(itstlst, float(max_percentile))
+        min_cutoff = np.percentile(itstlst, float(min_percentile))
 
-    for i in itstlst:
-        if i >= max_cutoff:
-            hue = col(1)
-        elif i <= min_cutoff:
-            hue = col(0)
-        else:
-            scaled_value = (i - min_cutoff) / (max_cutoff - min_cutoff)
-            hue = col(scaled_value)
-        hue = Color.convert(hue, "srgb")
-        colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
-        rank = rank + 1
-    coloursdf = pd.DataFrame(colours)
+        for i in itstlst:
+            if i >= max_cutoff:
+                hue = col(1)
+            elif i <= min_cutoff:
+                hue = col(0)
+            else:
+                scaled_value = (i - min_cutoff) / (max_cutoff - min_cutoff)
+                hue = col(scaled_value)
+            hue = Color.convert(hue, "srgb")
+            colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
+            rank = rank + 1
+        coloursdf = pd.DataFrame(colours)
 
 else:
     coreg_pixels = list(coreg.getdata())
@@ -459,7 +478,7 @@ fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, in
 
 print(tgtname, 'was properly saved in files/ply_files/')
 
-if coreg_img is None:
+if coreg_img is None and is_segmentation is False:
     generate_scale(name=tgtname,
                    gradient=col,
                    intensities_min=round(min(intensities)),
