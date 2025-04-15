@@ -1,4 +1,4 @@
-function display_one_spectra(app, pixels_scans,map,name_map,limits,loud_flag)
+function display_one_spectrum(app, pixels_scans,map,name_map,limits,loud_flag)
 
 [peaks_array,ind_x,ind_y] = extract_one_spectra(app, pixels_scans,map,limits,loud_flag);
 

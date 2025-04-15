@@ -13,7 +13,7 @@ end
 pixels_mz = replace_NaN_by_zero(pixels_mz);
 % pixels_mz = replace_NaN_by_zero(pixels_mz); % two times ? #TODO
 
-title_str = "Pick the pixel that you want to extract the spectra";
+title_str = "Click on the pixel whose spectrum you want to extract";
 display_mz_map(map,pixels_mz,title_str)
 view(2)
 axis equal
