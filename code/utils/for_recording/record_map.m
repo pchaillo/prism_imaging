@@ -20,9 +20,9 @@ figure()
 mesh(map.x,map.y,map.z)
 axis equal
 
-folder_name = 'files\map files';
+folder_name = strcat('files\', name, '\map_files');
 path = path_editor(folder_name, name);
-punto = fopen(path,'w');
+punto = fopen(path,'w');  
 
 % On rentre les dimensions pour la reconstruction %%%
 si = size(map.z);
