@@ -155,9 +155,10 @@ writematrix(csv_export, export_name)
 
 %fcell2csv(export_name, csv_export)
 
-movefile(export_name,"files/csv files")
+out_path = strrep(app.map_path, "map_files", "csv_files");
+movefile(export_name, out_path)
 
-sentence = strcat(export_name, " was saved in files/csv files.");
+sentence = strcat(export_name, " was saved in ", out_path);
 update_log(app, sentence)
 
 end

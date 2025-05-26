@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image  # pillow library
 from utils.PLY_ColourScale_Headless import generate_scale
+from utils.utils import file_name_recovery
 import scipy
 import tkinter
 from tkinter import ttk
@@ -29,43 +30,6 @@ data_list = None
 colour1 = None
 colour2 = None
 coreg_img = None
-
-
-# Define the name fetching function
-def file_name_recovery(filepath):
-    # This function returns a file's name and its extension as two separate entities in order to allow for easier
-    # manipulation
-    global tgtnamefin, tgtext
-    tgtname = ''
-    rvstgtname = ''
-    tgtnamefin = ''
-    tgtext = ''
-    rvstgtext = ''
-    for i in reversed(filepath):
-        if i != "/":
-            rvstgtname = rvstgtname + i
-        else:
-            break
-
-    for i in reversed(rvstgtname):
-        tgtname = tgtname + i
-
-    for i in tgtname:
-        if i != '.':
-            tgtnamefin = tgtnamefin + i  # Target name
-        else:
-            break
-
-    for i in reversed(filepath):
-        if i != '.':
-            rvstgtext = rvstgtext + i
-        else:
-            break
-
-    for i in reversed(rvstgtext):
-        tgtext = tgtext + i  # Target extension
-    return tgtnamefin, tgtext
-
 
 # GUI Goodness
 def uploadaction():
@@ -423,7 +387,7 @@ else:
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
-tgtnamefin, tgtext = file_name_recovery(filepath=filename)
+in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
 
 # Faces calculation
 vtx = np.arange(1, vertices)  # Generates a numbered list corresponding to vertices
@@ -451,12 +415,14 @@ if coreg_img is None:
     scale_intensities.assign(line_return='\n')
 
 # Export file name recovery
-tgtname = tgtnamefin + '.' + tgtext
+export_name = in_filename + '.' + in_filename_ext
+export_path = f'files\\%project%\\ply_files\\'
+
 if coreg_img is None:
-    tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
+    export_name = export_name.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
 else:
-    tgtname = tgtname.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
-with open('files/ply_files/' + tgtname, "w") as plyfile:
+    export_name = export_name.replace(".csv", "-" + data_type + '-' + str(interpol) + "x_coreg" + ".ply")
+with open(export_path + export_name, "w") as plyfile:
     plyfile.write(header)
 
 counter = np.arange(0, vertices)
@@ -469,22 +435,24 @@ for i in counter:
     rank = rank + 2
 
 if coreg_img is None:  # This is not pretty, but it will have to do until I give this program a thorough cleaning
-    scale_intensities.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
+    scale_intensities.to_csv(path_or_buf=export_path + export_name, sep=" ", header=False, index=False,
                              mode="a")
 fusion.assign(line_return='\n')
-fusion.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False, mode="a")
-fcsdf.to_csv(path_or_buf='files/ply_files/' + tgtname, sep=" ", header=False, index=False,
+fusion.to_csv(path_or_buf=export_path + export_name, sep=" ", header=False, index=False, mode="a")
+fcsdf.to_csv(path_or_buf=export_path + export_name, sep=" ", header=False, index=False,
              mode="a")  # Writes faces to target file
 
-print(tgtname, 'was properly saved in files/ply_files/')
+print(export_name, f'was properly saved in %export_path%')
 
 if coreg_img is None and is_segmentation is False:
-    generate_scale(name=tgtname,
+    export_path_scale = export_path.replace("csv_files", "colour_scales")
+    generate_scale(name=export_name,
                    gradient=col,
                    intensities_min=round(min(intensities)),
                    intensities_max=round(max(intensities)),
                    min_cutoff=round(min_cutoff),
-                   max_cutoff=round(max_cutoff))
+                   max_cutoff=round(max_cutoff),
+                   export_path = export_path_scale)
 
-    print('The corresponding colour scale was recorded in files/colour_scales/')
+    print('The corresponding colour scale was recorded in %export_path_scale%')
 

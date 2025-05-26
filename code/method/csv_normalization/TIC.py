@@ -10,43 +10,9 @@
 import pandas
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
+from utils.utils import file_name_recovery
 
-
-# Define the name fetching function
-def file_name_recovery(filepath):
-    # This function returns a file's name and its extension as two separate entities in order to allow for easier
-    # manipulation
-    global tgtnamefin, tgtext
-    tgtname = ''
-    rvstgtname = ''
-    tgtnamefin = ''
-    tgtext = ''
-    rvstgtext = ''
-    for i in reversed(filepath):
-        if i != "/":
-            rvstgtname = rvstgtname + i
-        else:
-            break
-
-    for i in reversed(rvstgtname):
-        tgtname = tgtname + i
-
-    for i in tgtname:
-        if i != '.':
-            tgtnamefin = tgtnamefin + i  # Target name
-        else:
-            break
-
-    for i in reversed(filepath):
-        if i != '.':
-            rvstgtext = rvstgtext + i
-        else:
-            break
-
-    for i in reversed(rvstgtext):
-        tgtext = tgtext + i  # Target extension
-    return tgtnamefin, tgtext
-
+norm_name = 'TIC'
 
 Tk().withdraw()
 filename = askopenfilename()
@@ -66,8 +32,8 @@ tail = tail / proportional_tic
 csv_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
-file_name_recovery(filepath=filename)
-tgtname = tgtnamefin + '-TICnorm.' + tgtext
-csv_norm.to_csv(path_or_buf=('files/csv files/' + tgtname))
+in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
+out_name = f"%in_filename%-%norm_name%-norm.csv" + norm_name + 'norm.' + tgtext
+csv_norm.to_csv(path_or_buf=(f"files\\%project%\\csv_files\\%out_name%"))
 
-print(tgtname, 'was properly saved in files/csv files/')
+print(f"%out_name% was properly saved in files/%project%/csv_files/")

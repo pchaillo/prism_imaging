@@ -7,7 +7,8 @@ min_x = min_max_list(1) ;
 max_x = min_max_list(2) ;
 min_y = min_max_list(3) ;
 max_y = min_max_list(4) ;
-csv_filename = "files/csv files/"+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+".csv";
+csv_out_path = strrep(app.mat_path, "mat_files", "csv_files");
+csv_filename = csv_out_path+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+".csv";
 
 ind_peaks = 0; % Refactor to do with display_spectra_zone % #TODO
 for n = 1 : length(selected_ind_list) % récupère les temps et les spectres associés aux indices
@@ -35,9 +36,9 @@ export_spectra_to_csv(peak_sum_array,csv_filename);
 disp(csv_filename)
 
 ind_peaks = 0;
-for n = 1 : length(selected_ind_list) % récupère les temps et les spectres associés aux indices
+for n = 1 : length(selected_ind_list) % Recovers the time and spectra of associated indices
     ind_peaks = ind_peaks + 1 ;
-    csv_name = "files/csv files/"+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+"_scan_"+ind_peaks+".csv" ;
+    csv_name = csv_out_path+nom_mat+"_Xzone_"+min_x + "_" + max_x+"_Yzone_"+min_y+"_"+max_y+"_scan_"+ind_peaks+".csv" ;
     peaks_array = {pixels_scans(selected_ind_list(n)).peaks.mz};
     export_spectra_to_csv(peaks_array,csv_name);
 end

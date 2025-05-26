@@ -48,7 +48,7 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
         image.line([dot_pos, dest], width=5)
 
 
-def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff):
+def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale):
     bar_width = 2500
     bar_height = 100
     padding_x = 500
@@ -143,6 +143,6 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
         xy=[(bar_width + padding_x / 2, bar_height + padding_y / 2), (bar_width + padding_x / 2, (padding_y / 2) - 5)],
         width=5)
 
-    scale_save.save('files/colour_scales/' + name + '-legend' + '.png', mode="SRGB")
+    scale_save.save(f"export_path_scale%name%-legend.png", mode="SRGB")
 
     # scale_save.show()

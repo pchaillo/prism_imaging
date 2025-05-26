@@ -17,6 +17,7 @@ import scipy
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
+from utils.utils import file_name_recovery
 
 # Creation of global variables
 filename = None
@@ -24,43 +25,6 @@ data_list = None
 colour1 = None
 colour2 = None
 coreg_img = None
-
-
-# Define the name fetching function
-def file_name_recovery(filepath):
-    # This function returns a file's name and its extension as two separate entities in order to allow for easier
-    # manipulation
-    global tgtnamefin, tgtext
-    tgtname = ''
-    rvstgtname = ''
-    tgtnamefin = ''
-    tgtext = ''
-    rvstgtext = ''
-    for i in reversed(filepath):
-        if i != "/":
-            rvstgtname = rvstgtname + i
-        else:
-            break
-
-    for i in reversed(rvstgtname):
-        tgtname = tgtname + i
-
-    for i in tgtname:
-        if i != '.':
-            tgtnamefin = tgtnamefin + i  # Target name
-        else:
-            break
-
-    for i in reversed(filepath):
-        if i != '.':
-            rvstgtext = rvstgtext + i
-        else:
-            break
-
-    for i in reversed(rvstgtext):
-        tgtext = tgtext + i  # Target extension
-    return tgtnamefin, tgtext
-
 
 # GUI Goodness
 def uploadaction():
@@ -381,11 +345,12 @@ else:
 coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
-file_name_recovery(filepath=filename)
+in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
+out_filepath = f"files\\%project%\\image_files\\molecular_png\\"
 if coreg_img is None:
     colours_int = colours.astype(int)
     colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save('files/image files/molecular_png/' + tgtnamefin + '.png')
+    coreg_target.save(f"%out_filepath%%in_filename%.%png%")
 
-print(tgtnamefin, '.png', 'was properly saved in files/image files/molecular_png/')
+print(f"%in_filename%.png was properly saved in %out_filepath%")

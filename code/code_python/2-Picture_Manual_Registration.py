@@ -15,48 +15,12 @@ import sys
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
+from utils.utils import file_name_recovery
 
 # Creation of global variables
 image_1 = None
 image_2 = None
 merge = None
-
-
-# Define the name fetching function
-def file_name_recovery(filepath):
-    # This function returns a file's name and its extension as two separate entities in order to allow for easier
-    # manipulation
-    global tgtnamefin, tgtext
-    tgtname = ''
-    rvstgtname = ''
-    tgtnamefin = ''
-    tgtext = ''
-    rvstgtext = ''
-    for i in reversed(filepath):
-        if i != "/":
-            rvstgtname = rvstgtname + i
-        else:
-            break
-
-    for i in reversed(rvstgtname):
-        tgtname = tgtname + i
-
-    for i in tgtname:
-        if i != '.':
-            tgtnamefin = tgtnamefin + i  # Target name
-        else:
-            break
-
-    for i in reversed(filepath):
-        if i != '.':
-            rvstgtext = rvstgtext + i
-        else:
-            break
-
-    for i in reversed(rvstgtext):
-        tgtext = tgtext + i  # Target extension
-    return tgtnamefin, tgtext
-
 
 gui = tkinter.Tk()
 gui.title("Manual Picture Coregistration")
@@ -175,12 +139,12 @@ if img1.shape[0] < img2.shape[0] or img1.shape[1] < img2.shape[1]:
     sys.exit()
 
 # Export file name recovery
-file_name_recovery(image_1)
-tgtname = tgtnamefin + '-coreg.' + tgtext
+in_filename, in_filename_ext, project = file_name_recovery(image_1)
+out_name_full = in_filename + '-coreg.' + in_filename_ext
 
 # Matrix recovery
 try:
-    M = pandas.read_csv('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt', sep=' ', header=None)
+    M = pandas.read_csv('code\\code_python\\settings\\' + in_filename + '-matrix.txt', sep=' ', header=None)
     M = M.to_numpy()
     M = M.reshape((3, 3))
 except:
@@ -219,7 +183,7 @@ merged_img = cv2.addWeighted(img1_display, merge, img2_warped, 1-merge, 0)
 # cv2.imshow('Merge', merged_img)  # Kept for debugging/verbose behaviour
 
 # Save the matrix
-matrix = open('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt', 'w')
+matrix = open('code\\code_python\\settings\\' + in_filename + '-matrix.txt', 'w')
 M.tofile(matrix, sep=' ')
 
 # Create a mask of the pixels that originally belonged to Image 2 in the merge
@@ -232,9 +196,9 @@ img2_reconstructed = cv2.warpPerspective(img2_merged, M_inv, (img2.shape[1], img
 
 # Save the reconstructed Image 2
 file_name_recovery(image_2)
-cv2.imwrite('files\\image files\\coregistered_images\\' + tgtnamefin + '-coreg.png', img2_reconstructed)
+cv2.imwrite(f"files\\%project%\\image_files\\coregistered_images\\%out_name_full%", img2_reconstructed)
 
 # Destroy all windows
 cv2.destroyAllWindows()
 
-print(tgtnamefin, '-coreg.png', 'was properly saved in files/image files/coregistered_images/')
+print(f"%out_name_full% was properly saved in files/%project%/image files/coregistered_images/")
