@@ -17,17 +17,17 @@ classdef LaserOpolette < handle
         function [state_text, state_double] = get_state(self, app)
             flush(self.laser_communication);
             writeline(self.laser_communication, "QI");
-%             state_string = read(self.laser_communication, 15, 'string');
+            read(self.laser_communication, 15, 'string');
+
             flush(self.laser_communication);
             writeline(self.laser_communication, "ST");
             state_string = read(self.laser_communication, 15, 'string');
-%             disp(state_string);
-            if length(state_string) > 0 
-%           if isempty(state_string) == 0 is supposedly faster      
-                [state_text, state_double] = self.choose_state_text(state_string, app);
-            else
+
+            if isempty(state_string) 
                 state_text = 'Empty State String - No communication';
-                state_double = 2;
+                state_double = 2;           
+            else            
+                [state_text, state_double] = self.choose_state_text(state_string, app);
             end
 %             state_text = state_string;
         end
@@ -43,7 +43,7 @@ classdef LaserOpolette < handle
                 flush(self.laser_communication)
 %                 writeline(self.laser_communication, "QSP")
                 writeline(self.laser_communication, "OP");
-                state_string = read(self.laser_communication,15,'string');
+                read(self.laser_communication, 15, 'string');
                 update_log(app, "LASER SHOT")
                 pause(0.1)
             end
@@ -106,13 +106,11 @@ classdef LaserOpolette < handle
             else
                 state_text = 'No connexion, Laser off or communication problem';
                 state_double = -1;
-%                 state_double = 2; % ONLY FOR TEST !!!!
+%                 state_double = 2; % ONLY FOR TESTING !!!!
             end
 
             state_text = strcat('State : ', state_text);
-%             disp("Debug process : ")
             update_log(app, state_text);
-%             disp("Debug end /")
 
         end
 
