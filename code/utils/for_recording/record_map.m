@@ -1,5 +1,5 @@
 
-function time_gap_median = record_map(app, map, name)
+function time_gap_median = record_map(map, name, path_in)
 % Records the .map in its designated folder
 
 size_time = size(map.time);
@@ -20,9 +20,9 @@ figure()
 mesh(map.x,map.y,map.z)
 axis equal
 
-folder_name = strcat(app.map_pp_path, name); % TODO: Check whether the path is respected when saving data
-path = path_editor(folder_name, name);
-punto = fopen(path,'w');  
+folder_name = strcat(path_in, name); % TODO: Check whether the path is respected when saving data
+% path = path_editor(folder_name, name);
+punto = fopen(folder_name,'w');  
 
 %%% Input dimensions for data reconstruction %%%
 si = size(map.z);
