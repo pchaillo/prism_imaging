@@ -1,11 +1,11 @@
-function map_z_out = reccursive_topographic_correction(app, map, map_z,min_threshold,max_threshold)
+function map_z_out = recursive_topographic_correction(app, map, map_z,min_threshold,max_threshold)
 
 % Recursive function to select, step by step, all the points that the users
 % wants to rectify
 
 fig = figure();
 mesh(map.x,map.y,map_z) % map_z separed for recursive usage
-title({'Click on the point you want to rectify by placing a cursor on it' ,'(you may place multiple cursor with CRTL key)', 'Then press any key to go to the next step,',' and the S key to save the corrected map'});
+title({'Click on the point you want to rectify by placing a cursor on it' ,'(You may place multiple cursors with SHIFT key)', 'Press any key to go to the next step,','Press the S key to save the corrected map'});
 axis equal
 
 datacursormode on
@@ -43,7 +43,7 @@ if l ~= 0
         
     end
 
-    [map_out, nb_err] = map_rectification_multi(map_z,min_threshold,max_threshold,x_list,y_list);
+    [map_out, nb_err] = map_rectification_multi(map_z, min_threshold, max_threshold, x_list, y_list);
 end
 close(fig);
 
@@ -52,5 +52,5 @@ if current_key == 's' % S key to stop the recursive loop and get out the functio
 %     tooltip
     map_z_out = map_z;
 else
-    map_z_out = reccursive_topographic_correction(app, map,map_out,min_threshold,max_threshold);
+    map_z_out = recursive_topographic_correction(app, map, map_out, min_threshold,max_threshold);
 end

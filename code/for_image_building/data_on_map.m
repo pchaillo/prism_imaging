@@ -73,7 +73,7 @@ if time_flag == 1
     
     pixels_ind = map_indices_array ;
     
-    % sinon on suit le pattern classique
+    % Otherwise, follow the usual pattern
 else
     x_ind = 0;
     scan_ind = 0;
@@ -111,7 +111,5 @@ else
                 end
             end
         end
-    end
-    
+    end    
 end
-
