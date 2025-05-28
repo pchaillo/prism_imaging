@@ -138,8 +138,7 @@ csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Needs a header ro
 clear csv_concatenate csv_cell
 
 % Concatenate the results from the cell array into the final array
-export_name = erase(csv_map, '.map');
-export_name = append(export_name, '.csv');
+export_name = strrep(csv_mat, '.mat', ".csv");
 header_row = num2cell(zeros(1, total_pixels + 1));
 
 for i = 1:total_pixels + 1
