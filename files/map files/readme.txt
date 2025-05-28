@@ -1,1 +1,0 @@
-This is the folder where the map files are stored.

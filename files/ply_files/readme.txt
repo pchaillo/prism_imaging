@@ -1,1 +1,0 @@
-This folder is where all ply files are saved.

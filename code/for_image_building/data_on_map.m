@@ -14,20 +14,20 @@
 
 % ne crée pas de valeur pour les points ajoutés
 
-function [ pixels_ind, scans_ind, pixels_mz, fusion_list] = data_on_map(app, pixels_scans,map,limits,map_time,time_flag,loud_flag)
+function [ pixels_ind, scans_ind, pixels_mz, fusion_list] = data_on_map(app, pixels_scans, map, limits, map_time, time_flag, loud_flag)
 % anciennement mzXML_on_map17.m
 % scans_ind (bio_num) => indices in the full mzXML file
 % pixels_ind (bio_ind) => indices of the relative pixel in the image
 
 map_dimension = size(map.x);
 
-if isempty(pixels_scans(1).ionisationEnergy) % pour pouvoir utiliser les vieux mat files
+if isempty(pixels_scans(1).ionisationEnergy) % for compatibility with older map files 
     for i = 1:length(pixels_scans)
         pixels_scans(i).ionisationEnergy = pixels_scans(i).totIonCurrent;
     end
 end
 
-%Extraction des données utiles
+% Extracting the data needed for processing 
 id = 0;
 for i = 1:length(pixels_scans)
    % if pixels_scans(i).num ~= 2 %to delete useless empty point

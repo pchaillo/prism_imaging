@@ -12,7 +12,7 @@
 
 % avec le pourcentage de tolérance en argument !
 
-function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct,map_time,aspiration_time,neighbourgh_nb,aspiration_shift)
+function [pixels_scans, estimated_time_gap] = time_based_selection(mzXMLStruct, map_time, aspiration_time, neighbourgh_nb, aspiration_shift)
 
 all_scans_raw = mzXMLStruct.scan ;
 

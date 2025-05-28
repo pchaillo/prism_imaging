@@ -1,1 +1,0 @@
-mzXML files are stored here.
