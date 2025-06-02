@@ -26,3 +26,5 @@ files/txt files/*.txt
 # /test3.txt
 
 /OMG_MSI/
+
+code/code_python/settings/*txt
