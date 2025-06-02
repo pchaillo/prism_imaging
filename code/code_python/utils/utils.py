@@ -11,7 +11,7 @@ def file_name_recovery(filepath):
     in_filename = filename_split[0]
     in_filename_ext = filename_split[1]
 
-    if "/image_files/" in filepath:
+    if "\\image_files\\" in filepath:
         project = filepath_split[-4]
     else:
         project = filepath_split[-3]
