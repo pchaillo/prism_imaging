@@ -2,6 +2,8 @@
 # To run manually through MatLab:
 #   path(path, 'code/code_python')
 #   pyrunfile('#SCRIPT_NAME#.py')
+# Note: In order to avoid issues during BP normalization, please only 
+# perform it on CSV files that contain the entire mass range of the experiment.
 
 import os
 import sys
