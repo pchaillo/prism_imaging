@@ -57,7 +57,7 @@ for i = source_types_tab
    end
 end
 
-csv_normalization_tab_names = fopen(strcat(pwd, "/code/method/csv_normalization/csv_normalization_types.txt"), 'W');
+csv_normalization_tab_names = fopen(strcat(pwd, "/code/method/csv_normalization_types.txt"), 'W');
 mass_spectrometer_types_names = fopen(strcat(pwd, "/code/hardware/mass_spectrometer_types.txt"), 'W');
 robot_types_names = fopen(strcat(pwd, "/code/hardware/robot_types.txt"), 'W');
 scan_methods_names = fopen(strcat(pwd, "/code/method/scan_methods.txt"), 'W');
