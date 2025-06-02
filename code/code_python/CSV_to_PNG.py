@@ -346,11 +346,11 @@ coloursdf = coloursdf.astype(int)
 
 # IMG Creation and Exportation
 in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
-out_filepath = f"files\\%project%\\image_files\\molecular_png\\"
+out_filepath = f"files\\{project}\\image_files\\molecular_png\\"
 if coreg_img is None:
     colours_int = colours.astype(int)
     colours_export = colours_int.reshape((int(dimY), int(dimX), 3))
     coreg_target = Image.fromarray(colours_export.astype('uint8'), mode='RGB')
-    coreg_target.save(f"%out_filepath%%in_filename%.%png%")
+    coreg_target.save(f"{out_filepath}{in_filename}.png")
 
-print(f"%in_filename%.png was properly saved in %out_filepath%")
+print(f"{in_filename}.png was properly saved in {out_filepath}")

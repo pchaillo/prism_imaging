@@ -25,6 +25,9 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 
 # Creation of global variables
+in_filename = None
+in_filename_ext = None
+project = None
 filename = None
 data_list = None
 colour1 = None
@@ -416,7 +419,7 @@ if coreg_img is None:
 
 # Export file name recovery
 export_name = in_filename + '.' + in_filename_ext
-export_path = f'files\\%project%\\ply_files\\'
+export_path = f'files\\{project}\\ply_files\\'
 
 if coreg_img is None:
     export_name = export_name.replace(".csv", "-" + data_type + '-' + str(interpol) + "x" + ".ply")
@@ -442,17 +445,16 @@ fusion.to_csv(path_or_buf=export_path + export_name, sep=" ", header=False, inde
 fcsdf.to_csv(path_or_buf=export_path + export_name, sep=" ", header=False, index=False,
              mode="a")  # Writes faces to target file
 
-print(export_name, f'was properly saved in %export_path%')
+print(f'{export_name} was properly saved in {export_path}')
 
-if coreg_img is None and is_segmentation is False:
-    export_path_scale = export_path.replace("csv_files", "colour_scales")
+if coreg_img is None and is_segmentation == 0:
+    export_path_scale = export_path.replace("ply_files", "colour_scales")
     generate_scale(name=export_name,
                    gradient=col,
                    intensities_min=round(min(intensities)),
                    intensities_max=round(max(intensities)),
                    min_cutoff=round(min_cutoff),
                    max_cutoff=round(max_cutoff),
-                   export_path = export_path_scale)
+                   export_path_scale = export_path_scale)
 
-    print('The corresponding colour scale was recorded in %export_path_scale%')
-
+    print(f'The corresponding colour scale was recorded in {export_path_scale}')

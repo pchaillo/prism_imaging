@@ -143,6 +143,6 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
         xy=[(bar_width + padding_x / 2, bar_height + padding_y / 2), (bar_width + padding_x / 2, (padding_y / 2) - 5)],
         width=5)
 
-    scale_save.save(f"export_path_scale%name%-legend.png", mode="SRGB")
+    scale_save.save(f"{export_path_scale}{name}-legend.png", mode="SRGB")
 
     # scale_save.show()

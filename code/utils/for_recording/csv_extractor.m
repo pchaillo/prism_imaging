@@ -157,7 +157,7 @@ writematrix(csv_export, export_name)
 out_path = strrep(app.map_path, "map_files", "csv_files");
 movefile(export_name, out_path)
 
-sentence = strcat(export_name, " was saved in ", out_path);
+sentence = strcat("File saved in: ", export_name);
 update_log(app, sentence)
 
 end

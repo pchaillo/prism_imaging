@@ -50,9 +50,9 @@ ttk.Label(frm, text="Molecular 2D image").place(x=0, y=30)
 
 
 def matrix_removal():
-    file_name_recovery(image_1)
+    in_filename, in_filename_ext, project = file_name_recovery(image_2)
     try:
-        os.remove('code\\code_python\\settings\\' + tgtnamefin + '-matrix.txt')
+        os.remove(f'code\\code_python\\settings\\{in_filename}-matrix.txt' + '-matrix.txt')
     except FileNotFoundError:
         print('No transformation matrix was found. Initiating manual coregistration.')
 
@@ -71,7 +71,7 @@ sldr1 = tkinter.Scale(frm, from_=0, to=100, orient=tkinter.HORIZONTAL)
 sldr1.place(x=0, y=125)
 sldr1.set(50)
 
-bt_quit = ttk.Button(frm, text="Quit", command=lambda: [set_merge(), gui.destroy()])
+bt_quit = ttk.Button(frm, text="Proceed", command=lambda: [set_merge(), gui.destroy()])
 bt_quit.place(x=120, y=140)
 
 gui.mainloop()
@@ -139,7 +139,7 @@ if img1.shape[0] < img2.shape[0] or img1.shape[1] < img2.shape[1]:
     sys.exit()
 
 # Export file name recovery
-in_filename, in_filename_ext, project = file_name_recovery(image_1)
+in_filename, in_filename_ext, project = file_name_recovery(image_2)
 out_name_full = in_filename + '-coreg.' + in_filename_ext
 
 # Matrix recovery
@@ -152,7 +152,7 @@ except:
 
 # Display first image
 if M is None:
-    selected_image = 'Image 1'
+    selected_image = 'Picture of the Sample'
     cv2.namedWindow(selected_image)
     img_display = img1.copy()
     cv2.imshow(selected_image, img_display)
@@ -161,7 +161,7 @@ if M is None:
 
 # Display second image
 if M is None:
-    selected_image = 'Image 2'
+    selected_image = 'Molecular Image'
     cv2.namedWindow(selected_image)
     img_display = img2.copy()
     cv2.imshow(selected_image, img_display)
@@ -180,7 +180,7 @@ img1_display = img1.copy()
 img2_warped = cv2.warpPerspective(src=img2, M=M, dsize=(img1.shape[1], img1.shape[0]))
 # cv2.imshow("Warped", img2_warped)
 merged_img = cv2.addWeighted(img1_display, merge, img2_warped, 1-merge, 0)
-# cv2.imshow('Merge', merged_img)  # Kept for debugging/verbose behaviour
+# cv2.imshow("Merge", merged_img)  # Kept for debugging/verbose behaviour
 
 # Save the matrix
 matrix = open('code\\code_python\\settings\\' + in_filename + '-matrix.txt', 'w')
@@ -195,10 +195,9 @@ M_inv = np.linalg.inv(M)
 img2_reconstructed = cv2.warpPerspective(img2_merged, M_inv, (img2.shape[1], img2.shape[0]))
 
 # Save the reconstructed Image 2
-file_name_recovery(image_2)
-cv2.imwrite(f"files\\%project%\\image_files\\coregistered_images\\%out_name_full%", img2_reconstructed)
+cv2.imwrite(f"files\\{project}\\image_files\\coregistered_images\\{out_name_full}", img2_reconstructed)
 
 # Destroy all windows
 cv2.destroyAllWindows()
 
-print(f"%out_name_full% was properly saved in files/%project%/image files/coregistered_images/")
+print(f"{out_name_full} was properly saved in files/{project}/image_files/coregistered_images/")
