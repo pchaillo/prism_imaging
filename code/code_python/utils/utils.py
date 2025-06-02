@@ -4,7 +4,7 @@ def file_name_recovery(filepath):
     # This function returns a file's name and its extension as two separate entities in order to allow for easier
     # manipulation
     
-    filepath_split = filepath.split("/")
+    filepath_split = filepath.split("\\")
     filename_full = filepath_split[-1]
     filename_split = filename_full.split(".")
 

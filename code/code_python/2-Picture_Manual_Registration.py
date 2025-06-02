@@ -7,6 +7,11 @@
 # on images to ease the process.
 # I advise picking four points as far apart from each other as possible in order to get the best results
 
+import os
+import sys
+
+sys.path.insert(0, os.getcwd() + "\code\code_python") # Needed so that MatLab can actually find the dependency
+
 import cv2  # opencv
 import numpy as np
 import os
@@ -32,9 +37,10 @@ frm.grid()
 def bt1_upload():
     global image_1
     image_1 = askopenfilename()
+    image_1 = image_1.replace("/", "\\")
 
 
-bt1 = ttk.Button(frm, text="Target", command=bt1_upload)
+bt1 = ttk.Button(frm, text="Load", command=bt1_upload)
 bt1.place(x=120, y=0)
 ttk.Label(frm, text="Optical image").place(x=0, y=3)
 
@@ -42,9 +48,10 @@ ttk.Label(frm, text="Optical image").place(x=0, y=3)
 def bt2_upload():
     global image_2
     image_2 = askopenfilename()
+    image_2 = image_2.replace("/", "\\")
 
 
-bt2 = ttk.Button(frm, text="Target", command=bt2_upload)
+bt2 = ttk.Button(frm, text="Load", command=bt2_upload)
 bt2.place(x=120, y=27)
 ttk.Label(frm, text="Molecular 2D image").place(x=0, y=30)
 
@@ -52,7 +59,7 @@ ttk.Label(frm, text="Molecular 2D image").place(x=0, y=30)
 def matrix_removal():
     in_filename, in_filename_ext, project = file_name_recovery(image_2)
     try:
-        os.remove(f'code\\code_python\\settings\\{in_filename}-matrix.txt' + '-matrix.txt')
+        os.remove(f'code\\code_python\\settings\\{in_filename}-matrix.txt')
     except FileNotFoundError:
         print('No transformation matrix was found. Initiating manual coregistration.')
 
@@ -139,8 +146,9 @@ if img1.shape[0] < img2.shape[0] or img1.shape[1] < img2.shape[1]:
     sys.exit()
 
 # Export file name recovery
+print(f"Image 2 File Path: {image_2}")
 in_filename, in_filename_ext, project = file_name_recovery(image_2)
-out_name_full = in_filename + '-coreg.' + in_filename_ext
+out_name_full = f"{in_filename}-coreg.{in_filename_ext}"
 
 # Matrix recovery
 try:

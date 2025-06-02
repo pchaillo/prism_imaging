@@ -25,9 +25,6 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 
 # Creation of global variables
-in_filename = None
-in_filename_ext = None
-project = None
 filename = None
 data_list = None
 colour1 = None
@@ -39,6 +36,7 @@ def uploadaction():
     global filename, data_list, binning_win
     filename = askopenfilename(
         defaultextension='.csv')  # Global allows for modification of a variable out of the function
+    filename = filename.replace("/", "\\")
     #biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False) # Deprecated thanks to improved CSV generation
     biomap = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
     data_list = biomap.index

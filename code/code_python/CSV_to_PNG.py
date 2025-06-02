@@ -9,6 +9,11 @@
 # _Tk and Tcl may need to be copied to the 'Lib' file of the Python 3.8 installation folder
 # Interpolations are all fully functional in this version, for better or worse
 
+import os
+import sys
+
+sys.path.insert(0, os.getcwd() + "\\code\\code_python") # Needed so that MatLab can actually find the dependency
+
 from coloraide import Color
 import numpy
 import pandas
@@ -31,6 +36,7 @@ def uploadaction():
     global filename, data_list, binning_win
     filename = askopenfilename(
         defaultextension='.csv')  # Global allows for modification of a variable out of the function
+    filename = filename.replace("/", "\\")
     biomap = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
     data_list = biomap.index
     data_list = data_list.to_list()
