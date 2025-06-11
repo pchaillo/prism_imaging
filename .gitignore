@@ -12,6 +12,7 @@
 *.tmp
 *.png
 *.mzML
+*.pptx
 
 files/txt files/*.txt
 
