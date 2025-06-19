@@ -21,6 +21,7 @@ echo An older MatLab version is used. Installing Python 3.8.10 and the correspon
 choco install python --version=3.8.10 -y --override --installarguments "'/quiet  InstallAllUsers=1 TargetDir=c:\Python38'"
 python -m pip install --upgrade pip
 py -3.8 -m pip install coloraide
+py -3.8 -m pip install matplotlib
 py -3.8 -m pip install numpy
 py -3.8 -m pip install opencv-python
 py -3.8 -m pip install pandas
