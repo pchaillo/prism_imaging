@@ -1,4 +1,4 @@
-function display_RGB_mz_map(map,pixels_mz_R,pixels_mz_G,pixels_mz_B,limits_R,limits_G,limits_B,title_str)
+function display_RGB_mz_map(map,pixels_mz_R,pixels_mz_G,pixels_mz_B,limits_R,limits_G,limits_B)
 
 % Display function that plot three mz with differents color on a map
 % to see image as 2D from front display = "2D". Otherwise pick "3D"
@@ -8,9 +8,9 @@ rgb_map(:,:,2) = pixels_mz_G ;
 rgb_map(:,:,3) = pixels_mz_B ;
 
 figure()
-s = surf(map.x,map.y,map.z,rgb_map);
-s.FaceAlpha=0.9; % niveau de tranparence
-s.FaceColor = 'flat'; % set color interpolqtion
+s = surf(map.x,map.y,map.z,rgb_map/255); %Matlab expects RGB values to be between 0 and 1 for this operation!!
+s.FaceAlpha=1; % Transparency Level
+s.FaceColor = 'flat'; % set color interpolation
 s.EdgeColor = 'none'; %'none' disable lines, you can also choose the color : 'white', etc.
-title(['RGB biometric map, mass limits : R =', num2str(limits_R),' G = ',num2str(limits_G),' B = ',num2str(limits_B), title_str]);
+title(['RGB biometric map, m/Z: R =', num2str(limits_R),' G = ', num2str(limits_G),' B = ', num2str(limits_B), " "]);
 axis equal
