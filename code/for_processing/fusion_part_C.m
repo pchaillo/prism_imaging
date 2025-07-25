@@ -5,18 +5,16 @@ function fusioned_array = fusion_part_C(app, raw_array)
 
 % old name : fusion_part_2
 
-% Fusion of all the mass spectra : there were next to each other, it will be sorted again % fusionne toutes les infos de courant d'ionisation pour finir la fusion
+% Fusion of all the mass spectra : they were next to each other, it will be sorted again % fusionne toutes les infos de courant d'ionisation pour finir la fusion
 
 [C,I] = sort(raw_array(:,1));
 
 D = raw_array(I,2);
 
-fusioned_array = [ C' ; D']';
+fusioned_array = [C(:), D(:)];
 
-si = size(fusioned_array);
+if any(diff(fusioned_array(:,1)) < 0) % Checking spectra fusion
+    update_log(app, 'Warning: Peak fusion abnormality.');
+end
 
-for i = 1 : si(1)-1 % verification de la fusion des spectres
-    if fusioned_array(i,1) > fusioned_array(i+1,1)
-        update_log(app, 'Warning: Peak fusion abnormality.');
-    end
 end
