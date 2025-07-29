@@ -5,7 +5,7 @@ function fusioned_array = fusion_part_C(app, raw_array)
 
 % old name : fusion_part_2
 
-% Fusion of all the mass spectra : they were next to each other, it will be sorted again % fusionne toutes les infos de courant d'ionisation pour finir la fusion
+% Fusion of all mass spectra: they were next to each other, it will be sorted again % fusionne toutes les infos de courant d'ionisation pour finir la fusion
 
 [C,I] = sort(raw_array(:,1));
 
