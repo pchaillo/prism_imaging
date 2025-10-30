@@ -6,6 +6,8 @@
 % dropdown menus for the various software methods and hardware classes.
 % paths = ['./code/hardware/laser/*.m', '/code/hardware/robot/*.m', './code/hardware/sensor/*.m', './code/method/scan_selection/*.m'];
 
+filepath = strrep(mfilename("fullpath"), '\update_hardware', '\');
+cd(filepath)
 addpath(genpath('code'))
 addpath(genpath('files'))
 
