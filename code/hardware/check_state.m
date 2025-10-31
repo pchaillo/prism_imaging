@@ -5,11 +5,11 @@ function check_state(state, app)
 if state.robot_connected == 0 % Those properties will eventually be 
     % replaced by equivalent public properties (app.robot state etc.)
     app.StateLampRobot.Color = [1 0 0];
-    app.RobotConnexionB.Enable = "on";
+    app.ConnectRobotButton.Enable = "on";
     app.DisconnectRobotButton.Enable = "off";
 else
     app.StateLampRobot.Color = [0 1 0];
-    app.RobotConnexionB.Enable = "off";
+    app.ConnectRobotButton.Enable = "off";
     app.DisconnectRobotButton.Enable = "on";
 end
 
@@ -31,7 +31,7 @@ if state.source_connected == 0
     app.TurnLampOnButton.Enable = "off";
     app.TurnLampOffButton.Enable = "off";
     app.GetStateButton.Enable = "off";
-    app.GetTempButton.Enable = "off";
+    app.TemperatureButton.Enable = "off";
     app.StateLampOpotek.Color = [1 0 0];
     app.Lamp_LampONorOFF.Color = [1 0 0];
 else
