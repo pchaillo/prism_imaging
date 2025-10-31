@@ -8,24 +8,24 @@ e_w = 70 ; % Warning security distance // distance de sécurité avertissement
 
 stop = 0;
 
-%%% teste le contact au sol %%%
+%%% Test for ground impact %%%
 if z  < 0
-    disp( ' impact ');
+    disp( 'Impact');
     stop = 1;
 elseif z + parameters.surface_offset < e_c
     stop = 1;
-    disp(' Robot trop proche du sol => arret sécurité ' )
+    disp('Robot too close to the ground. Stopped for safety.' )
 elseif z + parameters.surface_offset < e_w
-    disp( 'Attention robot proche du sol');
+    disp( 'Warning: Robot close to the ground.');
 end
 
 %%% teste le contact a l'objet %%%
 if z  < parameters.maximal_height + parameters.surface_offset + 10
-    disp( ' Contact imminent avec l echantillon => arret de securite');
+    disp( 'Imminent contact with the sample. Stopped for safety.');
     stop = 1;
 elseif z  < e_c - parameters.surface_offset - parameters.maximal_height
     stop = 0;
-    disp(' Robot trop proche de echantillon => arret sécurité ' )
+    disp('Robot too close to the sample. Stopped for safety.' )
 elseif z < e_w - parameters.surface_offset - parameters.maximal_height
-    disp( 'Attention robot proche de lechantilon');
+    disp( 'Warning: Robot close to the sample.');
 end

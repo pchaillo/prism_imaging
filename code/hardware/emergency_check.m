@@ -1,8 +1,8 @@
 function stop_flag = emergency_check(app)
 
-if app.EMERGENCYSTOPACQUISITIONButton.Value
+if app.EMERGENCYSTOPButton.Value
     stop_flag = 0;
-    disp("Emegency stop")
+    disp("Emegency Stop!")
 else 
     stop_flag = 1;
 end
