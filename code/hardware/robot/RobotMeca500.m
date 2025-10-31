@@ -93,12 +93,13 @@ classdef RobotMeca500 < handle
             disp("Robot communication object :")
             disp(self.robot_communication)
 
-            self.rest_position = [137.7 0.1 119.5 app.rotation(0) app.rotation(1) app.rotation(2)]; % Update the robot's rotation
+            self.rest_position = [self.rest_position(1) self.rest_position(2) self.rest_position(3) app.rotation(1) app.rotation(2) app.rotation(3)]; % Update the robot's rotation
 
         end
 
         function disconnect(self, app)  % close_tcp_r.m for MECA500
             % Disables the MECA500 arm and closes its TCP/IP connection
+            self.rest_position = [self.rest_position(1) self.rest_position(2) self.rest_position(3) app.rotation(1) app.rotation(2) app.rotation(3)];
 
             if self.robot_communication.BytesAvailable ~= 0 % && h < 100 % Wait robot message
                 data_r = fread(self.robot_communication, self.robot_communication.BytesAvailable); %vide le buffer

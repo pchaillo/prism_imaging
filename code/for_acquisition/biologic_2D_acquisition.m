@@ -23,7 +23,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             if emergency_check(app)
 
                 y_ind = y_ind +1;
-                position = [pos_x  pos_y  parameters.initial_height app.rotation(0) app.rotation(1) app.rotation(2)];
+                position = [pos_x  pos_y  parameters.initial_height app.rotation(1) app.rotation(2) app.rotation(3)];
                 if state.arret == 0
                     disp([pos_x pos_y]) % show the current position of the robot 
                     robot.class.set_position(position);
@@ -46,7 +46,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             if emergency_check(app)
 
                 y_ind = y_ind - 1;
-                position = [pos_x  pos_y  parameters.initial_height app.rotation(0) app.rotation(1) app.rotation(2)];
+                position = [pos_x  pos_y  parameters.initial_height app.rotation(1) app.rotation(2) app.rotation(3)];
                 if state.arret == 0
                     disp([pos_x pos_y]) % show the current position of the robot 
                     robot.class.set_position(position);

@@ -43,7 +43,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
 
             if emergency_check(app)
                 y_ind = y_ind +1;
-                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(0) app.rotation(1) app.rotation(2)];
+                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(1) app.rotation(2) app.rotation(3)];
                 if state.arret == 0
                     disp([pos_x pos_y ]) % Shows the current position of the robot. May be useless (Comment it)
                     robot.class.set_position(position);
@@ -57,7 +57,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
 
                 real_time_topography_display(map)
 
-                position = [pos_x  pos_y parameters.initial_height+sample_height app.rotation(0) app.rotation(1) app.rotation(2)]; % Repositions the robot to ensure that it remains at a proper distance (parameters.initial_height) of the surface
+                position = [pos_x  pos_y parameters.initial_height+sample_height app.rotation(1) app.rotation(2) app.rotation(3)]; % Repositions the robot to ensure that it remains at a proper distance (parameters.initial_height) of the surface
                 if state.arret == 0
                     disp([pos_x pos_y]) % Shows the current position of the robot. May be useless (Comment it)
                     robot.class.set_position(position);
@@ -75,7 +75,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
         for pos_y = parameters.dim_y + parameters.y_offset  : - parameters.mapping_step : parameters.y_offset  % décalage de deux millimètres pour éviter les bloquages
             if emergency_check(app)
                 y_ind = y_ind - 1;
-                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(0) app.rotation(1) app.rotation(2)];
+                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(1) app.rotation(2) app.rotation(3)];
                 if state.arret == 0
                     disp([pos_x pos_y ]) % show the current position of the robot / may be useless ( comment it )
                     robot.class.set_position(position);
@@ -89,7 +89,7 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
 
                 real_time_topography_display(map)
 
-                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(0) app.rotation(1) app.rotation(2)]; %replace le robot pour s'assurer d'etre a la distance parameters.initial_height de la surface
+                position = [pos_x  pos_y  parameters.initial_height+sample_height app.rotation(1) app.rotation(2) app.rotation(3)]; %replace le robot pour s'assurer d'etre a la distance parameters.initial_height de la surface
                 if state.arret == 0
                     disp([pos_x pos_y]) % show the current position of the robot / may be useless ( comment it )
                     robot.class.set_position(position);
