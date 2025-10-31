@@ -23,9 +23,9 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
             if emergency_check(app)
 
                 y_ind = y_ind +1;
-                position = [pos_x  pos_y  parameters.initial_height 180 0 180];
+                position = [pos_x  pos_y  parameters.initial_height app.rotation(0) app.rotation(1) app.rotation(2)];
                 if state.arret == 0
-                    [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                    disp([pos_x pos_y]) % show the current position of the robot 
                     robot.class.set_position(position);
                 end
                 map.x(x_ind,y_ind) = pos_x;
@@ -42,13 +42,13 @@ for pos_x = parameters.x_offset : parameters.mapping_step : parameters.dim_x + p
         end
     else
         y_ind =  ( parameters.dim_y  ) / parameters.mapping_step + parameters.y_offset  ;
-        for pos_y = parameters.dim_y + parameters.y_offset : -parameters.mapping_step : parameters.y_offset % décalage de deux millimètres pour éviter les bloquages
+        for pos_y = parameters.dim_y + parameters.y_offset : -parameters.mapping_step : parameters.y_offset % 2ms offset to avoid lockups
             if emergency_check(app)
 
                 y_ind = y_ind - 1;
-                position = [pos_x  pos_y  parameters.initial_height 180 0 180];
+                position = [pos_x  pos_y  parameters.initial_height app.rotation(0) app.rotation(1) app.rotation(2)];
                 if state.arret == 0
-                    [pos_x pos_y ] % show the current position of the robot / may be useless ( comment it )
+                    disp([pos_x pos_y]) % show the current position of the robot 
                     robot.class.set_position(position);
                 end
                 map.x(x_ind,y_ind) = pos_x;

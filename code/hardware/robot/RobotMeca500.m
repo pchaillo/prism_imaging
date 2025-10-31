@@ -93,12 +93,14 @@ classdef RobotMeca500 < handle
             disp("Robot communication object :")
             disp(self.robot_communication)
 
+            self.rest_position = [137.7 0.1 119.5 app.rotation(0) app.rotation(1) app.rotation(2)]; % Update the robot's rotation
+
         end
 
         function disconnect(self, app)  % close_tcp_r.m for MECA500
-            % Pour desactiver le MECA500 et fermer sa connecion TCP/IP
+            % Disables the MECA500 arm and closes its TCP/IP connection
 
-            if self.robot_communication.BytesAvailable ~= 0 % && h < 100 % wait robot message
+            if self.robot_communication.BytesAvailable ~= 0 % && h < 100 % Wait robot message
                 data_r = fread(self.robot_communication, self.robot_communication.BytesAvailable); %vide le buffer
             end
 
@@ -106,7 +108,7 @@ classdef RobotMeca500 < handle
             fwrite(self.robot_communication,data)
             pause(0.1)
 
-            while self.robot_communication.BytesAvailable == 0 % && h < 100 % wait robot message
+            while self.robot_communication.BytesAvailable == 0 % && h < 100 % Wait robot message
                 % h = h + 1;
             end
             data = fread(self.robot_communication, self.robot_communication.BytesAvailable);
@@ -125,6 +127,8 @@ classdef RobotMeca500 < handle
         end
 
         function reset_error(self, app)
+            % TODO: Does not seem fully operational yet. Need to look into
+            % why that is. 
             fwrite(self.robot_communication, "ResetError") % reset_error.m for MECA500
             pause(0.1)
             update_log(app, 'Error reset!')
@@ -163,14 +167,14 @@ classdef RobotMeca500 < handle
                     state.stop_flag = 1;
                 end
             else 
-                disp("Robot stopped for security purpose ")
+                disp("Robot stopped for safety purposes.")
             end
 
         end
 
-        function go_to_rest_position(self,app) % utile ?
-            % insert code to put the error in rest position % hugh_to_sleep.m for MECA500
-            self.set_position( self.rest_position);
+        function go_to_rest_position(self,app)
+            % Insert code to put the error in rest position % hugh_to_sleep.m for MECA500
+            self.set_position(self.rest_position);
             pause(3);
             self.disconnect( app);
         end
@@ -181,26 +185,26 @@ classdef RobotMeca500 < handle
 
             stop = 0;
 
-            %%% teste le contact au sol %%%
+            %%% Test for ground collision %%%
             if z  < 0
-                disp( ' impact ');
+                disp('Impact');
                 stop = 1;
             elseif z + parameters.surface_offset < self.stop_distance
                 stop = 1;
-                disp(' Robot trop proche du sol => arret sécurité ' )
+                disp('Robot too close to the ground. Stopped for safety.')
             elseif z + parameters.surface_offset < self.warning_distance
-                disp( 'Attention robot proche du sol');
+                disp('Warning: Robot close to the ground.');
             end
 
-            %%% teste le contact a l'objet %%%
+            %%% Test for object collision %%%
             if z  < parameters.maximal_height + parameters.surface_offset + 10
-                disp( ' Contact imminent avec l echantillon => arret de securite');
+                disp('Imminent collision with the sample. Stopped for safety.');
                 stop = 1;
             elseif z  < self.stop_distance - parameters.surface_offset - parameters.maximal_height
                 stop = 0;
-                disp(' Robot trop proche de echantillon => arret sécurité ' )
+                disp('Robot too close to the sample. Stopped for safety.' )
             elseif z < self.warning_distance - parameters.surface_offset - parameters.maximal_height
-                disp( 'Attention robot proche de lechantilon');
+                disp('Warning: Robot close to the sample.');
             end
 
         end
