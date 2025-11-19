@@ -54,11 +54,23 @@ function opotek_test()
     flush(lascom);
 
     pause(0.1)
+    writeline(lascom, "STATE")
+    disp("STATE")
+    disp(readline(lascom));
+    flush(lascom);
+
+    pause(0.1)
     writeline(lascom, "RUN")
     disp("RUN")
     disp(readline(lascom));
     flush(lascom);
     
+    pause(0.1)
+    writeline(lascom, "STATE")
+    disp("STATE")
+    disp(readline(lascom));
+    flush(lascom);
+
     pause(0.1)
     writeline(lascom, "QSW 1")
     disp("QSW 1")
