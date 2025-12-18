@@ -3,8 +3,6 @@ function map = biologic_2D_acquisition(app, robot, source, parameters, time_ref)
 
 %with spectro time_ref
 
-%pas d'adaptation angulaire
-
 update_log(app, 'Biometric Scan')
 
 global state

@@ -4,6 +4,10 @@ classdef ILD_1750_20 < handle
         need_calibration = 0; % bool, 0 = no // 1 = yes  
         wait_time = 0.05 
         sensor_connection = "";
+        meas_range = 20; % In mm, amplitude of the sensor's measuring range
+        meas_start = 40; % In mm, minimal distance that can be measured
+        repositioning_step = 1; % In mm
+        repositioning_range = 10; % In mm, maximal distance in either direction for repositioning
     end
 
     methods
@@ -26,31 +30,76 @@ classdef ILD_1750_20 < handle
             out = readline(self.sensor_connection);
         end
 
-        function sample_height = get_data(self, ~,sample_height,~,parameters, ~) % Robot as input : could be useful to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
+        function sample_height = get_data(self, robot, sample_height, parameters, app) % Robot as input, allowing for error correction
+            x_pos = robot.class.current_x;
+            y_pos = robot.class.current_y;
+            z_pos = robot.class.current_z;
             meas_value = self.get_value();
+
+            % Error handling
+            if meas_value == "Error: Out of range"
+                % Measure again to confirm the error
+                meas_value_2 = self.get_value();
+                if meas_value_2 == "Error: Out of range"
+                    % Error confirmed, we must now handle it
+                    % First case: Assume that we are too low, limiting the risk
+                    % of a collision
+                    while meas_value_2 == "Error: Out of range"
+                        new_z_pos = z_pos + self.repositioning_step;
+                        if new_z_pos > z_pos + self.repositioning_range
+                            break
+                        end
+                        position = [x_pos, y_pos, new_z_pos, app.rotation(1), app.rotation(2), app.rotation(3)];
+                        robot.class.set_position(position);
+                        pause(0.1)
+                        meas_value_2 = self.get_value();
+                    end
+                    
+                    % Second case: Assume that we are too high, lowering the
+                    % effector as long as it is safe to do so
+                    while meas_value_2 == "Error: Out of range"
+                        new_z_pos = z_pos - self.repositioning_step;
+                        if new_z_pos < z_pos - self.repositioning_range || new_z_pos < robot.stop_distance + parameters.surface_offset % Could take parameters.maximal_height as well for added safety
+                            break
+                        end
+                        position = [x_pos, y_pos, new_z_pos, app.rotation(1), app.rotation(2), app.rotation(3)];
+                        robot.class.set_position(position);
+                        pause(0.1)
+                        meas_value_2 = self.get_value(); 
+                    end
+                    % Third case: Going up or down has not helped. Assume that
+                    % the height is identical to the previous position and move
+                    % on
+                    position = [x_pos, y_pos, z_pos, app.rotation(1), app.rotation(2), app.rotation(3)];
+                    robot.class.set_position(position);
+                    pause(0.1)
+                    return % Should provide the previous height as an output, bypassing the remainder of the function
+                else
+                    % Error cleared, proceed as usual
+                    meas_value = meas_value_2;
+                end
+                clear meas_value_2
+            end
+
             sample_height = parameters.initial_height - meas_value + sample_height;
+
         end
 
-        function dist = get_value(self) 
+        function value = get_value(self) 
             flush(self.sensor_connection);
             raw = read(self.sensor_connection, 3, "uint8");
-            bin_raw = dec2bin(raw);
-            idx = find(strcmp(bin_raw(:,1:2), "00"), 1, "first");
-        
-            bin = bin_raw(idx:idx+2, 3:8); % Removes the two flag bits for each byte
+            bin = dec2bin(raw);
+            bin = bin(:, 3:8); % Removes the two flag bits of each byte
             bin_final = strcat(bin(3,:), bin(2,:), bin(1,:));
-            
-            if bin_final == "111111111110111100"/
-                dist = "Error: Out of range";
+
+            if bin_final == "011101011001011101"
+                value = "Error: Out of range";
                 return
             end
         
             dist_out = bin2dec(bin_final);
-        
-            meas_range = 20; % in mm
-            meas_start = 40; % in mm
             
-            dist = (((dist_out - 98232) / 65536) * meas_range) + meas_start; % In mm
+            value = (((dist_out - 98232) / 65536) * self.meas_range) + self.meas_start; % In mm
         end
     end
 end
