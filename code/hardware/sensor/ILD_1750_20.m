@@ -35,17 +35,19 @@ classdef ILD_1750_20 < handle
             y_pos = robot.class.current_y;
             z_pos = robot.class.current_z;
             meas_value = self.get_value();
+            shift = 0; % Deviation of the robot caused by correction
 
             % Error handling
-            if meas_value == "Error: Out of range"
+            if strcmp(meas_value, "Error: Out of range") == 1
                 % Measure again to confirm the error
                 meas_value_2 = self.get_value();
-                if meas_value_2 == "Error: Out of range"
+                if strcmp(meas_value_2, "Error: Out of range") == 1
                     % Error confirmed, we must now handle it
                     % First case: Assume that we are too low, limiting the risk
                     % of a collision
-                    while meas_value_2 == "Error: Out of range"
-                        new_z_pos = z_pos + self.repositioning_step;
+                    new_z_pos = z_pos;
+                    while strcmp(meas_value_2, "Error: Out of range") == 1
+                        new_z_pos = new_z_pos + self.repositioning_step;
                         if new_z_pos > z_pos + self.repositioning_range
                             break
                         end
@@ -57,9 +59,11 @@ classdef ILD_1750_20 < handle
                     
                     % Second case: Assume that we are too high, lowering the
                     % effector as long as it is safe to do so
-                    while meas_value_2 == "Error: Out of range"
-                        new_z_pos = z_pos - self.repositioning_step;
-                        if new_z_pos < z_pos - self.repositioning_range || new_z_pos < robot.stop_distance + parameters.surface_offset % Could take parameters.maximal_height as well for added safety
+                    shift = 0;
+                    new_z_pos = z_pos;
+                    while strcmp(meas_value_2, "Error: Out of range") == 1
+                        new_z_pos = new_z_pos - self.repositioning_step;
+                        if new_z_pos < z_pos - self.repositioning_range || new_z_pos < robot.class.stop_distance + parameters.surface_offset % Could take parameters.maximal_height as well for added safety
                             break
                         end
                         position = [x_pos, y_pos, new_z_pos, app.rotation(1), app.rotation(2), app.rotation(3)];
@@ -88,11 +92,13 @@ classdef ILD_1750_20 < handle
         function value = get_value(self) 
             flush(self.sensor_connection);
             raw = read(self.sensor_connection, 3, "uint8");
-            bin = dec2bin(raw);
-            bin = bin(:, 3:8); % Removes the two flag bits of each byte
+            bin_raw = dec2bin(raw);
+            idx = find(strcmp(bin_raw(:,1:2), "00"), 1, "first");
+
+            bin = bin_raw(idx: idx+2, 3:8); % Removes the two flag bits of each byte
             bin_final = strcat(bin(3,:), bin(2,:), bin(1,:));
 
-            if bin_final == "011101011001011101"
+            if strcmp(bin_final, "111111111110111100") == 1
                 value = "Error: Out of range";
                 return
             end

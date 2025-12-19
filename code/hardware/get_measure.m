@@ -8,7 +8,7 @@ function dist = get_measure(com)
     bin = bin_raw(idx:idx+2, 3:8); % Removes the two flag bits for each byte
     bin_final = strcat(bin(3,:), bin(2,:), bin(1,:));
     
-    if bin_final == "111111111110111100"/
+    if bin_final == "111111111110111100"
         dist = "Error: Out of range";
         return
     end
