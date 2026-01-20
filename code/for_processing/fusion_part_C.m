@@ -1,7 +1,7 @@
 function fusioned_array = fusion_part_C(app, raw_array)
 
-% This C step cost computing, so it's done during preprocessing, only if
-% data will be used to reconstruct image
+% This C step is compute-intensive, so it is performed during preprocessing only if
+% the data will be used to reconstruct an image
 
 % old name : fusion_part_2
 

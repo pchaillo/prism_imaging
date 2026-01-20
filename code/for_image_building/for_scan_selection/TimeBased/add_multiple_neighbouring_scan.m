@@ -1,4 +1,4 @@
-function all_scans = add_multiple_neighbourgh_scan(all_scans, selected_indices, neighbourgh_nb)
+function all_scans = add_multiple_neighbouring_scan(all_scans, selected_indices, neighbourgh_nb)
 
 % Function to add next scan fusion (To ensure all useful data is kept)
 

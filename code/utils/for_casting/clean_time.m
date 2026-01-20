@@ -1,6 +1,6 @@
 function clean_time_file = clean_time(file)
 
-% Function that convert all the time value in retentionTime variable from char to double 
+% Function that converts all time values in the retentionTime variable from char to double 
 
 clean_time_file = file; % #performance ? #TODO + meilleur nom de variable
 

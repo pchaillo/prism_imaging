@@ -19,13 +19,13 @@ end
 
 %fusion des lignes à fusionner
 
-%%% Removes empty datapoints // Supprimme les valeurs nulles
+%%% Removes empty datapoints // Supprime les valeurs nulles
 peak_array(peak_array(:,2) == 0, :) = [];
 
-%% Putting fused lines back where they should be // Remise en place des lignes qui fusionnent
+%% Putting merged lines back where they should be // Remise en place des lignes qui fusionnent
 peak_array = fusion_part_C(app, peak_array);
 
-%% binning ? #TODO
+%% binning ? #TODO, not currently implemented
 % peak_tab3 = binning(peak_tab2,win);
 
 processed_scan = scan;
