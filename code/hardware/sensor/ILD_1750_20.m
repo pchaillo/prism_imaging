@@ -8,6 +8,7 @@ classdef ILD_1750_20 < handle
         meas_start = 40; % In mm, minimal distance that can be measured
         repositioning_step = 1; % In mm
         repositioning_range = 10; % In mm, maximal distance in either direction for repositioning
+        sensor_offset = 89 % In mm, distance from the effector to the sensor. Can be deduced from a measurement on the ground
     end
 
     methods
@@ -48,6 +49,7 @@ classdef ILD_1750_20 < handle
                     new_z_pos = z_pos;
                     while strcmp(meas_value_2, "Error: Out of range") == 1
                         new_z_pos = new_z_pos + self.repositioning_step;
+                        shift = shift + 1;
                         if new_z_pos > z_pos + self.repositioning_range
                             break
                         end
@@ -63,6 +65,7 @@ classdef ILD_1750_20 < handle
                     new_z_pos = z_pos;
                     while strcmp(meas_value_2, "Error: Out of range") == 1
                         new_z_pos = new_z_pos - self.repositioning_step;
+                        shift = shift - 1;
                         if new_z_pos < z_pos - self.repositioning_range || new_z_pos < robot.class.stop_distance + parameters.surface_offset % Could take parameters.maximal_height as well for added safety
                             break
                         end
@@ -74,6 +77,7 @@ classdef ILD_1750_20 < handle
                     % Third case: Going up or down has not helped. Assume that
                     % the height is identical to the previous position and move
                     % on
+                    shift = 0;
                     position = [x_pos, y_pos, z_pos, app.rotation(1), app.rotation(2), app.rotation(3)];
                     robot.class.set_position(position);
                     pause(0.1)
@@ -85,13 +89,13 @@ classdef ILD_1750_20 < handle
                 clear meas_value_2
             end
 
-            sample_height = parameters.initial_height - meas_value + sample_height;
+            sample_height = parameters.initial_height + shift - meas_value - self.sensor_offset + sample_height;
 
         end
 
         function value = get_value(self) 
             flush(self.sensor_connection);
-            raw = read(self.sensor_connection, 3, "uint8");
+            raw = read(self.sensor_connection, 5, "uint8");
             bin_raw = dec2bin(raw);
             idx = find(strcmp(bin_raw(:,1:2), "00"), 1, "first");
 
