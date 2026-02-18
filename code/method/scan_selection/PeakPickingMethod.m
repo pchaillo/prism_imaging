@@ -34,6 +34,8 @@ classdef PeakPickingMethod < handle
             update_log(app, self.fusion_percentage)
             update_log(app, self.intern_trig)
 
+            % TODO: Internal Triggering is never checked weirdly enough
+
             [pixels_scans, time] = Peak_picking(app, mzXML_data, self.threshold_begin, self.t_b, self.min_threshold, intern_flag, self.fusion_percentage, map_time, self.aspiration_time); % take only the useful informations
 
         end
