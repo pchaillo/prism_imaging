@@ -1,7 +1,7 @@
 classdef PeakPickingMethod < handle
 
     properties
-           threshold_begin = 0; % put here data you need for you scan selection method !
+           threshold_begin = 0; % Put the data you need here for you scan selection method !
            t_b = 0;
            min_threshold = 0;
            fusion_percentage = 0;
@@ -11,10 +11,10 @@ classdef PeakPickingMethod < handle
 
     methods
         function init(self, app) % Liable to break if the corresponding names are every changed in the GUI
-            self.threshold_begin = app.BeginThresholdEditField.Value; 
-            self.t_b = app.TimebetweentwolaserburstssEditField.Value;
-            self.min_threshold = app.LoudThresholdEditField.Value;
-            self.fusion_percentage = app.FusionpercentageSlider.Value;
+            self.threshold_begin = app.StartThresholdEditField.Value; 
+            self.t_b = app.TimebetweenburstssEditField.Value;
+            self.min_threshold = app.NoiseThresholdEditField.Value;
+            self.fusion_percentage = app.FusionPercentageSlider.Value;
             self.intern_trig = app.InternalTriggeringSwitch.Value;
             self.aspiration_time = app.AspirationTimesEditField.Value;
 
