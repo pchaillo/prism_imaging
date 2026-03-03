@@ -1,12 +1,11 @@
 function all_peaks = plot_all_spectra(app, pixels_scans, compute_flag, all_peaks, valmin, valmax)
 
-% FR : compute_flag = booleen qui détermine s'il faut recalculer un spectre
-% ENG : compute_flag = boolean to check if there is a need to compute again spectra sum
+% ENG : compute_flag is a boolean to check if there is a need to recompute a spectral sum
 
 if compute_flag == 0 
     all_peaks = compute_all_spectra(app, pixels_scans);
-    % compute_flag = 1; % intuile, ici on se base sur la fait que c'est le
-    % meme nom plusieurs fois de suite
+    % compute_flag = 1; % Useless since we use the fact that the name is
+    % identical several times in a row
 end
 
 parsed_all_peaks = zeros(length(all_peaks), 2);
