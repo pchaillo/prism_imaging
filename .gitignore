@@ -25,4 +25,6 @@
 
 /files/*/*
 
+/resources/
+
 code/code_python/settings/*txt
