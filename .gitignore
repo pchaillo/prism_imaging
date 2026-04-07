@@ -15,18 +15,14 @@
 *.pptx
 *.tif
 
-files/txt files/*.txt
-
-# *.csv
-
-# /csv files/*.csv
-
 # /test.txt
 
 # /test2.txt
 
 # /test3.txt
 
-/OMG_MSI/
+/STORM_MSI/
+
+/files/*/*
 
 code/code_python/settings/*txt
