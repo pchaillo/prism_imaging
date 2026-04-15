@@ -30,7 +30,7 @@ if ~isempty(merge_centrepoints)
     loc_coll = merge_centrepoints(:, 1);
 end
 
-% Handle points that were selected without mergeing
+% Handle points that were selected without merging
 % TODO: normal_points should be a list identical to merged_points in shape
 if ~isempty(normal_points)
     pk_norm = merged_points(:, 2);

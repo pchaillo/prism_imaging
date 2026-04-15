@@ -8,7 +8,7 @@
 
 % avec la detection du temps de reconstruction recommandé !
 
-% avec mode trigerreint interne avec un flag en argument !
+% avec mode trigerreing interne avec un flag en argument !
 
 % avec le pourcentage de tolérance en argument !
 
@@ -44,13 +44,21 @@ if neighbour_nb > 0
     [pixels_scans, merged_points_id] = add_multiple_neighbouring_scan_alt(all_scans, selected_indices, neighbour_nb, l, trimmed_scans);
     merged_points = [scan_time_list(merged_points_id) ; TIC_list(merged_points_id)]';
     merge_centrepoints = [[pixels_scans(:).retentionTime] ; [pixels_scans(:).ionisationEnergy]]';
+    filler_points = [];
+    normal_points = [];
+else
+    pixels_scans(:) = all_scans(selected_indices);
+    merged_points = [];
+    merge_centrepoints = [];
+    filler_points = [];
+    normal_points = [scan_time_list(selected_indices) ; TIC_list(selected_indices)]';
 end
 
-%% Pour remettre les bonnes informations dans pixels_scans et pour afficher le chromatogramme avec les points
+%% Fully builds pixels_scans and displays the chromatogram
 
 %pixels_scans(:) = all_scans(selected_indices); % older method
 
-plot_selection_on_chromatogram_alt(scan_time_list, TIC_list, topography_time_list, merge_centrepoints, merged_points, [], []);
+plot_selection_on_chromatogram_alt(scan_time_list, TIC_list, topography_time_list, merge_centrepoints, merged_points, filler_points, normal_points);
 
 estimated_time_gap = 0;
 

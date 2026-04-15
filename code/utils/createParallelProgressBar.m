@@ -1,3 +1,4 @@
+% Modified version of the code below to support MatLab's later releases
 % ===========================================================
 % File: createParallelProgressBar.m
 % Description: This file defines the createParallelProgressBar parfor
@@ -36,22 +37,12 @@ function queue = createParallelProgressBar(totalIterations)
 
     % Initialize DataQueue and Progress Bar
     queue = parallel.pool.DataQueue;
-    progressBar = waitbar(0, 'Processing...', 'Name', 'Computation Progress');
+    progressBar = waitbar(0, 'Processing...', 'mzML Bulk Conversion', 'Conversion Progress');
     
-    % Access the Java-based components of the waitbar
-    barChildren = allchild(progressBar);
-    javaProgressBar = barChildren(1).JavaPeer;  % Access the Java progress bar
-
-    % Enable string painting to show percentage inside the bar
-    javaProgressBar.setStringPainted(true);
 
     % Reset persistent variable count
     persistent count
     count = 0;
-
-    % Define colors between which the bar interpolates
-    colorEnd = [12, 123, 220] / 255; % light blue
-    colorStart = [171, 94, 0] / 255; % brown-orange
 
     % Nested function to update progress and color
     function updateProgress(~)
@@ -61,19 +52,6 @@ function queue = createParallelProgressBar(totalIterations)
         % Update waitbar position
         waitbar(shareComplete, progressBar);
 
-        % Calculate color transition
-        currentColor = (1 - shareComplete) * colorStart + ...
-                        shareComplete * colorEnd;
-        red = currentColor(1);
-        green = currentColor(2);
-        blue = currentColor(3);
-
-        % Convert RGB triplet to Java Color
-        javaColor = java.awt.Color(red, green, blue);
-
-        % Set the progress bar color
-        javaProgressBar.setForeground(javaColor);
-        
         % Close progress bar when complete
         if count == totalIterations
             close(progressBar);
