@@ -76,6 +76,7 @@ class MSI_Visualizer(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("STORM-MSI Visualizer")
+        self.setWindowState(Qt.WindowMaximized)
 
         # Initialize default values
         self.data_types = []
@@ -99,9 +100,9 @@ class MSI_Visualizer(QMainWindow):
         self.worker = None
 
         # Initialize the central widget and layout
-        central_widget = QSplitter()
+        central_widget = QSplitter(Qt.Vertical)
         self.setCentralWidget(central_widget)
-        main_layout = QHBoxLayout(central_widget)
+        main_layout = QVBoxLayout(central_widget)
 
         # Initialize the data ingestion sublayout
         settings_widget = QGroupBox("Settings")
@@ -160,9 +161,6 @@ class MSI_Visualizer(QMainWindow):
         settings_layout.addWidget(self.interp_cbbx)
         settings_layout.addWidget(self.segmentation_chkbx)
 
-        # Initialize the visualization sublayout
-        vis_widget = QSplitter(Qt.Vertical)
-
         # Initialize the MSI visualizer
         self.topological_renderer = QSvgRenderer()
         self.topological_item = QGraphicsSvgItem()
@@ -183,14 +181,17 @@ class MSI_Visualizer(QMainWindow):
         self.spectrum_widget.setLabel('left', 'Intensity (A.U.)')
         self.spectrum_widget.setLimits(xMin=0, yMin=0)
 
-        # Populate the visualization sublayout
-        vis_widget.addWidget(self.topo_frag_view)
-        vis_widget.addWidget(self.spectrum_widget)
-        vis_widget.setSizes([400, 200])
+        # Create and populate a widget to handle settings and MSI data
+        settings_msi_widget = QSplitter(Qt.Horizontal)
+        settings_msi_layout = QHBoxLayout(settings_msi_widget)
+        settings_msi_layout.addWidget(settings_widget)
+        settings_msi_layout.addWidget(self.topo_frag_view)
+        settings_msi_widget.setSizes([100, 1000])
 
         # Create the final layout
-        main_layout.addWidget(settings_widget)
-        main_layout.addWidget(vis_widget)
+        main_layout.addWidget(settings_msi_widget)
+        main_layout.addWidget(self.spectrum_widget)
+        central_widget.setSizes([400,200])
 
         # Connect Click event
         self.spectrum_widget.scene().sigMouseClicked.connect(self.on_mouse_clicked)

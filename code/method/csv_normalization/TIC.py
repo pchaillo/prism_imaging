@@ -10,7 +10,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.getcwd() + "\code\code_python") # Needed so that MatLab can actually find the dependency
+sys.path.insert(0, os.getcwd() + "\\code\\code_python") # Needed so that MatLab can actually find the dependency
 
 import pandas
 from tkinter.filedialog import askopenfilename
