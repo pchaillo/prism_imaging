@@ -6,7 +6,7 @@ from PIL import Image
 import re
 import scipy
 
-def process_csv(filename, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base, cutoff_percentiles, segmentation_flag):
+def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base, cutoff_percentiles, segmentation_flag):
     """
     Converts selected parts of the CSV file into an images
     :param filename: Full path (including name and extension) to the CSV file
@@ -49,8 +49,8 @@ def process_csv(filename, data_type, main_mz, tolerance, itp_factor, itp_type, g
 
     # Recover the data of interest
     # Catch the edge case where data is X, Y or Z
+    old_dtype = copy(data_type)
     if data_type in ["x", "y", "z"]:
-        old_dtype = copy(data_type)
         data_type = data_type + "_data"
 
     if data_type != "m/Z":
@@ -64,14 +64,19 @@ def process_csv(filename, data_type, main_mz, tolerance, itp_factor, itp_type, g
         full_idx = full_csv.columns.to_list()
         mz_vals = [float(val) for val in full_idx if re.search(pattern, val)]
 
+        pattern = ".[0]{1,}+(?![1-9])"
         mz_vals_min = [abs(mz - mz_min) for mz in mz_vals]
         mz_idx_min = mz_vals_min.index(min(mz_vals_min))
         mz_bin_min = str(mz_vals[mz_idx_min])
+        if re.search(pattern, mz_bin_min):
+            mz_bin_min = mz_bin_min.split(".")[0]
         true_min_idx = full_csv.columns.get_loc(mz_bin_min)
 
         mz_vals_max = [abs(mz - mz_max) for mz in mz_vals]
         mz_idx_max = mz_vals_max.index(min(mz_vals_max))
         mz_bin_max = str(mz_vals[mz_idx_max])
+        if re.search(pattern, mz_bin_max):
+            mz_bin_max = mz_bin_max.split(".")[0]
         true_max_idx = full_csv.columns.get_loc(mz_bin_max)
 
         coordsfinal["data"] = full_csv.iloc[:, true_min_idx-1:true_max_idx].sum(1)
@@ -170,7 +175,7 @@ def process_csv(filename, data_type, main_mz, tolerance, itp_factor, itp_type, g
         for x in range(w):
             r, g, b = colours_export[y, x]
             msi_svg += (
-                f'<rect x="{x}" y="{y}" width="{res*2}" height="{res*2}" '
+                f'<rect x="{x}" y="{y}" width="1" height="1" '
                 f'fill="rgb({r},{g},{b})"/>\n'
             )
 
@@ -178,4 +183,3 @@ def process_csv(filename, data_type, main_mz, tolerance, itp_factor, itp_type, g
 
     viewbox = [0, 0, w, h]
     return msi_svg, viewbox
-

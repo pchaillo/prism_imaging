@@ -81,8 +81,9 @@ class MSI_Visualizer(QMainWindow):
         # Initialize default values
         self.data_types = []
         self.central_mz = None
-        self.csv = None
+        #self.csv = None
         self.filename = None
+        self.full_csv = None
         self.gradient_name = None
         self.itp_type = None
         self.region = None
@@ -201,8 +202,8 @@ class MSI_Visualizer(QMainWindow):
         initial_dir = os.path.dirname(os.path.abspath(__file__))
         filename = QFileDialog.getOpenFileName(self, "CSV File Selection", initial_dir, "STORM-MSI File (*.csv)")[0]
         self.filename = filename.replace("/", "\\")
-        storm_csv = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
-        data_list = storm_csv.index
+        self.full_csv = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
+        data_list = self.full_csv.index
         data_list = data_list.to_list()
         binning_win = round((float(data_list[12]) - float(data_list[11])), 5)  # Recovers the CSV binning
 
@@ -210,20 +211,20 @@ class MSI_Visualizer(QMainWindow):
         pattern = "[0-9]"
         data_list = [d for d in data_list if not re.search(pattern, d)]
 
-        self.csv = storm_csv.drop(data_list, axis=0)
+        #self.csv = self.full_csv.drop(data_list, axis=0)
 
         data_list.append("m/Z")
 
         self.data_cbbx.clear()
         self.data_cbbx.addItems(data_list)
-        self.plot_average_spectrum()
+        self.plot_average_spectrum(data_list[:-1]) # Removes the last entry for this purpose, as it is not a proper label
 
     def update_interp(self):
         value = self.interp_slider.value()
         self.interp_lbl.setText(f"Interpolation: x{str(value)}")
 
-    def plot_average_spectrum(self):
-        avg_spectrum = self.csv.mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+    def plot_average_spectrum(self, data_list):
+        avg_spectrum = self.full_csv.drop(data_list, axis=0).mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
         self.spectrum_widget.clear()
         plot = pg.PlotDataItem(avg_spectrum[0].values, avg_spectrum[1].values, pen=pg.mkPen(color="b", width=1))
         self.spectrum_widget.addItem(plot)
@@ -264,13 +265,14 @@ class MSI_Visualizer(QMainWindow):
         self.tolerance = self.tolerance_spnbx.value()
 
     def render_msi(self):
+        # TODO: Implement an overlay with key information, like the colour scale
         if not self.central_mz and self.selected_dtype == "m/Z":
             # Since this is going to be a recurring situation, it should fail silently instead
             # QMessageBox.warning(self, "Warning", "Please select a peak on the average spectrum, and try again.")
             return
         gradient = colours_dict.get(self.gradient_name)
         cutoff_percentiles = [0, 100] #TODO: Put this back in the interface
-        self.svg, viewbox = cvu.process_csv(self.filename, self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor, self.itp_type, gradient, cutoff_percentiles, self.segmentation)
+        self.svg, viewbox = cvu.process_csv(self.filename, self.full_csv, self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor, self.itp_type, gradient, cutoff_percentiles, self.segmentation)
         self.update_svg(self.svg.encode("utf-8"), viewbox)
 
     def update_svg(self, picture, viewbox):
