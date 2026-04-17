@@ -27,5 +27,5 @@ spectra_array = fusion_part_C(app, spectra_array_raw);
 
 win = 0.1;
 
-all_peaks = bining(spectra_array,win); % écriture du spectre global de la carte
+all_peaks = binning(spectra_array,win); % écriture du spectre global de la carte
 

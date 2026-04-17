@@ -12,7 +12,9 @@ band_end = band(2);
 
 p = 0;
 
-fixed_size = (band_end - band_begin)/binning_step ;
+% Start the array from 0, as this helps with a later step. Values outside
+% the target range will be culled later.
+fixed_size = band_end/binning_step ;
 
 binned_peak_array = zeros(fixed_size,2);
 
@@ -27,12 +29,17 @@ low_pass_delete = peak_array(:,1)<band_begin;
 peak_array(low_pass_delete,:) = [];
 high_pass_delete = peak_array(:,1)>band_end;
 peak_array(high_pass_delete,:) = [];
-si=size(peak_array);
+si = size(peak_array);
 
 for i = 1:si(1)
    % Determines the corresponding binned_peak_array index
    ind_in_binned_array=floor(peak_array(i,1)/binning_step)+1;
+   
    % Assigns the value
    binned_peak_array(ind_in_binned_array,2) = binned_peak_array(ind_in_binned_array,2) + peak_array(i,2);
 end
+
+% Cull mz out of the target mass range
+low_mz_delete = binned_peak_array(:,1)<band_end;
+binned_peak_array(low_mz_delete,:) = [];
 end

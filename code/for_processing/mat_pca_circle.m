@@ -7,7 +7,7 @@ ind_peak_tab = 0;
 for i = 1 : l
     if bio_dat(i).num > 0 % pour ne prendre en compte que les spectres vecteurs d'informations
         ind_peak_tab = ind_peak_tab + 1;
-        peak_tab(:,:,ind_peak_tab) = bining_fixed_size(bio_dat(i).peaks.mz,win,band);
+        peak_tab(:,:,ind_peak_tab) = binning_fixed_size(bio_dat(i).peaks.mz,win,band);
         h = waitbar(i/l);
     end
 end

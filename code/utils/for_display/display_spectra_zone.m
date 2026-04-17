@@ -35,13 +35,13 @@ band = [200 1500];
 
 % ENG : first line processed separatly % FR : 1ere ligne calculée séparemment
 raw_peak_array = peaks{1, 1}  ;
-fix_peak_array = bining_fixed_size(raw_peak_array,win,band);
+fix_peak_array = binning_fixed_size(raw_peak_array,win,band);
 all_selected_spectra_struct(1) = {fix_peak_array};
 peak_sum_array = fix_peak_array;
 
 for i = 2 : si_p(1)
     raw_peak_array = peaks{i, 1}  ;
-    fix_peak_array = bining_fixed_size(raw_peak_array,win,band);
+    fix_peak_array = binning_fixed_size(raw_peak_array,win,band);
     all_selected_spectra_struct(i) = {fix_peak_array};
     peak_sum_array(:,2) = peak_sum_array(:,2) + fix_peak_array(:,2);
 end
