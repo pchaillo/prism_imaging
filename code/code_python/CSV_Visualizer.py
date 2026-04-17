@@ -79,9 +79,7 @@ class MSI_Visualizer(QMainWindow):
         self.setWindowState(Qt.WindowMaximized)
 
         # Initialize default values
-        self.data_types = []
         self.central_mz = None
-        #self.csv = None
         self.filename = None
         self.full_csv = None
         self.gradient_name = None
@@ -89,6 +87,8 @@ class MSI_Visualizer(QMainWindow):
         self.region = None
         self.segmentation = None
         self.selected_dtype = None
+        self.smoothing = None # If True, Gaussian smoothing is applied to the image
+        self.smoothing_sigma = None # Standard deviation of smoothed values, higher increases the smoothing
         self.svg = None
         self.tolerance = None
 
@@ -152,6 +152,23 @@ class MSI_Visualizer(QMainWindow):
 
         self.segmentation_chkbx = QCheckBox("Segmentation")
 
+        # Create subwidget for smoothing
+        self.smoothing_widget = QWidget()
+        self.smoothing_layout = QHBoxLayout(self.smoothing_widget)
+
+        self.smoothing_chkbx = QCheckBox("Gaussian Smoothing")
+
+        self.smoothing_sigma_field = QDoubleSpinBox()
+        self.smoothing_sigma_field.setRange(0, 100)
+        self.smoothing_sigma_field.setValue(0.3)
+        self.smoothing_sigma_field.setSingleStep(0.1)
+        self.smoothing_sigma_field.setSuffix(" Sigma")
+        self.smoothing_layout.addWidget(self.smoothing_chkbx)
+        self.smoothing_layout.addWidget(self.smoothing_sigma_field)
+
+        update_btn = QPushButton("Update")
+        update_btn.clicked.connect(self.forceUpdate)
+
         # Populate the settings widget
         settings_layout.addWidget(load_btn)
         settings_layout.addWidget(self.data_cbbx)
@@ -161,6 +178,8 @@ class MSI_Visualizer(QMainWindow):
         settings_layout.addWidget(self.interp_slider)
         settings_layout.addWidget(self.interp_cbbx)
         settings_layout.addWidget(self.segmentation_chkbx)
+        settings_layout.addWidget(self.smoothing_widget)
+        settings_layout.addWidget(update_btn)
 
         # Initialize the MSI visualizer
         self.topological_renderer = QSvgRenderer()
@@ -168,7 +187,9 @@ class MSI_Visualizer(QMainWindow):
         self.topological_item.setSharedRenderer(self.topological_renderer)
         self.topo_frag_scene = QGraphicsScene()
         self.topo_frag_scene.addItem(self.topological_item)
+        self.topo_frag_scene.setBackgroundBrush(Qt.GlobalColor.darkGray)
         self.topo_frag_view = ZoomableGraphicsView(self.topo_frag_scene)
+
 
         self.topo_frag_view.setDragMode(QGraphicsView.ScrollHandDrag)
         self.topo_frag_view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
@@ -211,8 +232,6 @@ class MSI_Visualizer(QMainWindow):
         pattern = "[0-9]"
         data_list = [d for d in data_list if not re.search(pattern, d)]
 
-        #self.csv = self.full_csv.drop(data_list, axis=0)
-
         data_list.append("m/Z")
 
         self.data_cbbx.clear()
@@ -242,19 +261,20 @@ class MSI_Visualizer(QMainWindow):
         self.render_msi()
 
     def on_mouse_clicked(self, event):
-        if self.spectrum_widget.sceneBoundingRect().contains(event.scenePos()):
-            mouse_point = self.spectrum_widget.plotItem.vb.mapSceneToView(event.scenePos())
-            x = mouse_point.x()
-            y = mouse_point.y()
-            self.central_mz = x
+        if event._button == Qt.LeftButton:
+            if self.spectrum_widget.sceneBoundingRect().contains(event.scenePos()):
+                mouse_point = self.spectrum_widget.plotItem.vb.mapSceneToView(event.scenePos())
+                x = mouse_point.x()
+                y = mouse_point.y()
+                self.central_mz = x
 
-            self.get_settings()
-            self.spectrum_widget.removeItem(self.region)
-            self.region = pg.LinearRegionItem(values=(x-self.tolerance, x+self.tolerance), orientation="vertical", brush=pg.mkBrush(color=(255, 0, 0, 100)))
-            # Note: The region needs to be made persistent to be removable without clearing the full widget
-            self.spectrum_widget.addItem(self.region)
+                self.get_settings()
+                self.spectrum_widget.removeItem(self.region)
+                self.region = pg.LinearRegionItem(values=(x-self.tolerance, x+self.tolerance), orientation="vertical", brush=pg.mkBrush(color=(255, 0, 0, 100)))
+                # Note: The region needs to be made persistent to be removable without clearing the full widget
+                self.spectrum_widget.addItem(self.region)
 
-            self.render_msi()
+                self.render_msi()
 
     def get_settings(self):
         self.gradient_name = self.gradient_cbbx.currentText()
@@ -262,17 +282,20 @@ class MSI_Visualizer(QMainWindow):
         self.itp_type = self.interp_slider.value()
         self.segmentation = self.segmentation_chkbx.isChecked()
         self.selected_dtype = self.data_cbbx.currentText()
+        self.smoothing = self.smoothing_chkbx.isChecked()
+        self.smoothing_sigma = self.smoothing_sigma_field.value()
         self.tolerance = self.tolerance_spnbx.value()
 
     def render_msi(self):
         # TODO: Implement an overlay with key information, like the colour scale
         if not self.central_mz and self.selected_dtype == "m/Z":
-            # Since this is going to be a recurring situation, it should fail silently instead
-            # QMessageBox.warning(self, "Warning", "Please select a peak on the average spectrum, and try again.")
+            # Duplicate with the forceUpdate function, but fails silently instead
             return
         gradient = colours_dict.get(self.gradient_name)
         cutoff_percentiles = [0, 100] #TODO: Put this back in the interface
-        self.svg, viewbox = cvu.process_csv(self.filename, self.full_csv, self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor, self.itp_type, gradient, cutoff_percentiles, self.segmentation)
+        self.svg, viewbox = cvu.process_csv(self.filename, self.full_csv, self.selected_dtype, self.central_mz,
+                                            self.tolerance, self.itp_factor, self.itp_type, gradient,
+                                            cutoff_percentiles, self.segmentation, self.smoothing, self.smoothing_sigma)
         self.update_svg(self.svg.encode("utf-8"), viewbox)
 
     def update_svg(self, picture, viewbox):
@@ -285,6 +308,19 @@ class MSI_Visualizer(QMainWindow):
         # Tell Qt the item's geometry changed
         self.topo_frag_scene.setSceneRect(viewbox[0], viewbox[1], viewbox[2], viewbox[3])
         self.topo_frag_view.fitInView(self.topo_frag_scene.sceneRect(), Qt.KeepAspectRatio)
+
+    def forceUpdate(self):
+        self.get_settings()
+        if not self.filename:
+            QMessageBox.warning(self, "Error", "Please select a CSV file exported from STORM-MSI, and try again.")
+            return
+        if not self.central_mz and self.selected_dtype == "m/Z":
+            QMessageBox.warning(self, "Error", "Please select a peak on the average spectrum, and try again.")
+            return
+
+        else:
+            self.render_msi()
+
 
 
 if __name__ == "__main__":

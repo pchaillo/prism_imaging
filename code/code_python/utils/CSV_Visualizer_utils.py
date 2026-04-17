@@ -4,21 +4,27 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import re
-import scipy
+from scipy import interpolate
+from scipy.ndimage import gaussian_filter
 
-def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base, cutoff_percentiles, segmentation_flag):
+def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base, cutoff_percentiles, segmentation_flag, smoothing_flag, smoothing_sigma):
     """
     Converts selected parts of the CSV file into an images
     :param filename: Full path (including name and extension) to the CSV file
+    :param full_csv: Preloaded CSV file to improve performance
     :param data_type: Data type selected to be displayed
     :param main_mz: Central m/Z selected on the average spectrum, used only if m/Z selected as data_type
     :param tolerance: m/Z tolerance, used only if m/Z selected as data_type
+    :param itp_factor: Interpolation factor, higher creates more points
     :param itp_type: Interpolation type, unused if left at 1
     :param gradient_base: Gradient type used to reconstruct the image
+    :param cutoff_percentiles: List of the min and max percentile above which the colour scale clips to better visualize central values
     :param segmentation_flag: If true, data segmentation is locked to nearest neighbour
+    :param smoothing_flag: If true, data smoothing is applied to the image
+    :param smoothing_sigma: Sigma value [0-Infinity] of the Gaussian smoothing function, higher increases the smoothing
     :return: An SVG file of the image, to be displayed in the interface
     """
-    full_csv = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
+
     full_csv = full_csv.transpose()
     full_csv = full_csv.astype(float)
 
@@ -49,12 +55,9 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     # Recover the data of interest
     # Catch the edge case where data is X, Y or Z
-    old_dtype = copy(data_type)
-    if data_type in ["x", "y", "z"]:
-        data_type = data_type + "_data"
 
     if data_type != "m/Z":
-        coordsfinal[data_type] = full_csv[old_dtype]
+        coordsfinal["data"] = full_csv[data_type]
     else:
         mz_min = main_mz - tolerance
         mz_max = main_mz + tolerance
@@ -80,14 +83,19 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         true_max_idx = full_csv.columns.get_loc(mz_bin_max)
 
         coordsfinal["data"] = full_csv.iloc[:, true_min_idx-1:true_max_idx].sum(1)
-    coordsfinal = coordsfinal.rename(columns={'x': 0, 'y': 1, 'z': 2, data_type: 3})
+
+    # Gaussian Smoothing
+    if smoothing_flag:
+        preprocessed_coords = coordsfinal.pivot_table(index="x", columns="y", values="data")
+        coordinates_smoothed = gaussian_filter(preprocessed_coords, sigma=smoothing_sigma)
+        coordsfinal["data"] = coordinates_smoothed.ravel()
 
     if itp_factor != 1:
         # Data must be mapped in a grid for 2D interpolation. For 2D, we can only implement one dataset at a time. Z heights
         # and intensities therefore get their individual arrays
-        full_csv_z = coordsfinal.pivot_table(index=[0], columns=[1], values=[2])
+        full_csv_z = coordsfinal.pivot_table(index="x", columns="y", values="z")
         full_csv_z_np = full_csv_z.to_numpy(dtype=float)  # Conversion to numpy arrays is mandatory for proper indexing
-        full_csv_int = coordsfinal.pivot_table(index=[0], columns=[1], values=[3])
+        full_csv_int = coordsfinal.pivot_table(index="x", columns="y", values="data")
         full_csv_int_np = full_csv_int.to_numpy(dtype=float)
 
         # Computes all positions in X and Y to feed the 2D interpolator
@@ -99,11 +107,11 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         orderY = orderY.drop_duplicates()
 
         # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
-        interp_grid_z = scipy.interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method=itp_type)
+        interp_grid_z = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method=itp_type)
         if is_segmentation == 0:
-            interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
+            interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
         elif is_segmentation == 1:
-            interp_grid_int = scipy.interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method='nearest')
+            interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method='nearest')
 
         # Computes every position in X and Y for which we want interpolated data
         neworderX = np.arange(min(orderX), max(orderX) + res/itp_factor, res/itp_factor)
@@ -127,15 +135,15 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         ovspcoords = np.vstack([z_interpol, int_interpol])
         ovspcoords = ovspcoords.transpose()
         ovspcoords = np.hstack([target_pts, ovspcoords])
+        intensities = ovspcoords[:, 3]
+        ovspcoords = ovspcoords[:, :3]
 
     # MS intensities extraction
-    if itp_factor == 1:
+    else:
         intensities = coordsfinal.iloc[:, 3]
         ovspcoords = coordsfinal.iloc[:, :3]
         ovspcoords = ovspcoords.to_numpy()
-    else:
-        intensities = ovspcoords[:, 3]
-        ovspcoords = ovspcoords[:, :3]
+
     imax = max(intensities)
     itstlst = []
     for i in intensities:

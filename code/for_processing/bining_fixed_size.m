@@ -5,7 +5,7 @@
 % forme finie => comparable entre elles
 % Normalizes the shape of the array
 
-function binned_peak_array = bining_fixed_size(peak_array, binning_step, band)
+function binned_peak_array = binning_fixed_size(peak_array, binning_step, band)
 
 band_begin = band(1);
 band_end = band(2);
@@ -22,15 +22,17 @@ for mz = band_begin : binning_step : band_end - binning_step
     binned_peak_array(p,1) = mz;
 end
 
+% Remove values outside of the mass range
+low_pass_delete = peak_array(:,1)<band_begin;
+peak_array(low_pass_delete,:) = [];
+high_pass_delete = peak_array(:,1)>band_end;
+peak_array(high_pass_delete,:) = [];
 si=size(peak_array);
 
 for i = 1:si(1)
    % Determines the corresponding binned_peak_array index
-   ind_in_bined_array=floor(peak_array(i,1)/binning_step)+1;
-   % Checks whether we are in the allowed data range
-   if ind_in_bined_array < fixed_size
-       % Assigns the value
-       binned_peak_array(ind_in_bined_array,2) = binned_peak_array(ind_in_bined_array,2) + peak_array(i,2);
-   end
+   ind_in_binned_array=floor(peak_array(i,1)/binning_step)+1;
+   % Assigns the value
+   binned_peak_array(ind_in_binned_array,2) = binned_peak_array(ind_in_binned_array,2) + peak_array(i,2);
 end
 end

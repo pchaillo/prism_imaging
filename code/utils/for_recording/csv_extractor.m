@@ -1,6 +1,5 @@
 function csv = csv_extractor(app, csv_map, csv_mat, band, win)
 
-    % Version with binning
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
 % One of those names needs to change, too unclear #TODO
@@ -13,7 +12,7 @@ m = m.pixels_scans;
 disp("Files loaded. Starting preprocessing.")
 
 peak_array = m(1).peaks.mz;
-peak_array_fixed = bining_fixed_size(peak_array, win, band);
+peak_array_fixed = binning_fixed_size(peak_array, win, band);
 mz_list = peak_array_fixed(:,1)'; % ' to transpose the array
 l = length(mz_list);
 
@@ -122,7 +121,7 @@ parfor ind = 1:total_pixels
     temp(10) = bp(ind);
     temp(11) = bpi(ind);
 
-    peak_array_fixed = bining_fixed_size(mz{ind}, win, band);
+    peak_array_fixed = binning_fixed_size(mz{ind}, win, band);
     temp(12:12+l-1) = peak_array_fixed(:, 2);
 
     % Store the temporary variable in the cell array
