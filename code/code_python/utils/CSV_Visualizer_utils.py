@@ -7,7 +7,8 @@ import re
 from scipy import interpolate
 from scipy.ndimage import gaussian_filter
 
-def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base, cutoff_percentiles, segmentation_flag, smoothing_flag, smoothing_sigma):
+def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
+                cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, roc_flag):
     """
     Converts selected parts of the CSV file into an images
     :param filename: Full path (including name and extension) to the CSV file
@@ -19,9 +20,11 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     :param itp_type: Interpolation type, unused if left at 1
     :param gradient_base: Gradient type used to reconstruct the image
     :param cutoff_percentiles: List of the min and max percentile above which the colour scale clips to better visualize central values
-    :param segmentation_flag: If true, data segmentation is locked to nearest neighbour
     :param smoothing_flag: If true, data smoothing is applied to the image
     :param smoothing_sigma: Sigma value [0-Infinity] of the Gaussian smoothing function, higher increases the smoothing
+    :param clustering_flag
+    :param cluster_nb: Number of clusters formed by k-means
+    :param roc_flag: Determines whether to perform ROC analysis
     :return: An SVG file of the image, to be displayed in the interface
     """
 
@@ -84,6 +87,34 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
         coordsfinal["data"] = full_csv.iloc[:, true_min_idx-1:true_max_idx].sum(1)
 
+    # Clustering
+    if clustering_flag:
+        from sklearn.cluster import KMeans
+        #TODO: Push settings into the GUI
+        #Only retains non-mz entries
+        pattern = "[0-9]"
+        columns_list = [col for col in full_csv.columns if not re.search(pattern, col)]
+
+        input_data = full_csv.drop(columns_list, axis=1)
+        kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
+
+
+        # Fit the full dataset
+        kmeans.fit(input_data)
+
+        clustering_labels = kmeans.labels_
+        coordsfinal["data"] = clustering_labels
+
+        # Test ROC analysis
+        roc_flag = True
+        roc_aucs = []
+        #y_true = clustering_labels[clustering_labels == 1]
+        if roc_flag:
+            from sklearn.metrics import roc_auc_score
+            for idx, _ in enumerate(input_data):
+                auc = roc_auc_score(clustering_labels, input_data.iloc[:, idx], average="weighted")
+                roc_aucs.append(auc)
+
     # Gaussian Smoothing
     if smoothing_flag:
         preprocessed_coords = coordsfinal.pivot_table(index="x", columns="y", values="data")
@@ -107,11 +138,10 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         orderY = orderY.drop_duplicates()
 
         # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
-        interp_grid_z = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method=itp_type)
-        if is_segmentation == 0:
-            interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
-        elif is_segmentation == 1:
-            interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method='nearest')
+        # z is kept, but interpolated as nearest neighbour for now as it is unused. This also makes the usual
+        # segmentation flag pointless, and it was thus removed
+        interp_grid_z = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method="nearest")
+        interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
 
         # Computes every position in X and Y for which we want interpolated data
         neworderX = np.arange(min(orderX), max(orderX) + res/itp_factor, res/itp_factor)
@@ -190,4 +220,9 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     msi_svg += '</svg>'
 
     viewbox = [0, 0, w, h]
-    return msi_svg, viewbox
+
+    if roc_flag:
+        #TODO: Export each cluster's color at some point
+        return msi_svg, viewbox, roc_aucs, clustering_labels
+    else:
+        return msi_svg, viewbox, None, None
