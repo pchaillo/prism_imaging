@@ -15,12 +15,13 @@ import sys
 sys.path.insert(0, os.getcwd() + "\\code\\code_python") # Needed so that MatLab can actually find the dependency
 
 from coloraide import Color
+from copy import copy
 import numpy as np
 import pandas as pd
 from PIL import Image
 import scipy
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QGraphicsScene,
-                               QGraphicsView, QGroupBox, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton,
+                               QGraphicsView, QGroupBox, QGridLayout, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton,
                                QRadioButton, QSlider, QSplitter, QVBoxLayout, QWidget)
 from PySide6.QtCore import Qt, QByteArray
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
@@ -113,6 +114,8 @@ class MSI_Visualizer(QMainWindow):
         # Initialize the data ingestion sublayout
         settings_widget = QGroupBox("Settings")
         settings_layout = QVBoxLayout(settings_widget)
+        settings_layout.setContentsMargins(5, 0, 5, 5)
+        settings_layout.setSpacing(1)
 
         # File loading and data selection, combined in a single widget
         load_widget = QWidget()
@@ -209,17 +212,26 @@ class MSI_Visualizer(QMainWindow):
 
         # Create an analysis widget
         analysis_widget = QGroupBox("Analysis")
-        self.analysis_layout = QVBoxLayout(analysis_widget)
+        analysis_layout = QVBoxLayout(analysis_widget)
+        analysis_layout.setContentsMargins(5, 0, 5, 5)
+        analysis_layout.setSpacing(0)
 
+        analysis_btns_widget = QWidget()
+        analysis_btns_widget.setMaximumHeight(30)
+        analysis_btns_layout = QHBoxLayout(analysis_btns_widget)
+        analysis_btns_layout.setContentsMargins(0, 0, 0, 0)
         roc_analysis_btn = QPushButton("ROC Analysis")
         roc_analysis_btn.clicked.connect(self.plot_roc_analysis)
         roc_export_btn = QPushButton("ROC Export")
-        spectrum_view = QGroupBox("Toggle Spectra")
-        spectrum_view.setFlat(True)
 
-        self.analysis_layout.addWidget(roc_analysis_btn)
-        self.analysis_layout.addWidget(roc_export_btn)
-        self.analysis_layout.addWidget(spectrum_view)
+        spectrum_view_widget = QGroupBox("Toggle Spectra")
+        spectrum_view_widget.setFlat(True)
+        self.spectrum_view_layout = QGridLayout(spectrum_view_widget)
+        analysis_btns_layout.addWidget(roc_analysis_btn)
+        analysis_btns_layout.addWidget(roc_export_btn)
+
+        analysis_layout.addWidget(analysis_btns_widget)
+        analysis_layout.addWidget(spectrum_view_widget)
 
         # Populate the Settings/Analysis Widget
         stgs_anls_layout.addWidget(settings_widget)
@@ -253,7 +265,6 @@ class MSI_Visualizer(QMainWindow):
         settings_msi_layout.addWidget(self.topo_frag_view)
         settings_msi_widget.setSizes([100, 1000])
 
-
         # Create the final layout
         main_layout.addWidget(settings_msi_widget)
         main_layout.addWidget(self.spectrum_widget)
@@ -272,11 +283,10 @@ class MSI_Visualizer(QMainWindow):
         data_list = data_list.to_list()
         binning_win = round((float(data_list[12]) - float(data_list[11])), 5)  # Recovers the CSV binning
 
-        self.data_list = data_list # Useful for later analyses
-
         # Only retains non-mz entries
         pattern = "[0-9]"
         data_list = [d for d in data_list if not re.search(pattern, d)]
+        self.data_list = copy(data_list) # Useful for later analyses
 
         data_list.append("m/Z")
 
@@ -307,7 +317,7 @@ class MSI_Visualizer(QMainWindow):
 
     def plot_average_spectrum(self, data_list):
         avg_spectrum = self.full_csv.drop(data_list, axis=0).mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
-        self.spectrum_widget.clear()
+        self.clear_spectra("Total")
         self.plot_spectrum("Global_Avg", avg_spectrum[0], avg_spectrum[1], pg.mkPen(color="b", width=1), True)
 
         self.spectrum_widget.setLimits(xMin= avg_spectrum[0].min(), xMax= avg_spectrum[0].max(), yMin= 0, yMax= 1)
@@ -407,6 +417,14 @@ class MSI_Visualizer(QMainWindow):
         self.clear_spectra("ROC")
         self.plot_spectrum("ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
 
+        global_data = self.full_csv.copy()
+        global_data.columns = clustering_lbls
+        # Plot the average spectrum of each cluster
+        for label in np.unique(clustering_lbls):
+            avg_spectrum = global_data[label].drop(self.data_list, axis=0).mean(
+                axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+            self.plot_spectrum(f"Cluster_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen("orange", width=1))
+
     def plot_spectrum(self, name:str, spectrum_x, spectrum_y, pen:pg.mkPen, normalize=True):
         # Helper function that can normalize spectra before rendering them, helpful for ROC visualization
         if normalize:
@@ -421,7 +439,12 @@ class MSI_Visualizer(QMainWindow):
         checkbox.toggled.connect(lambda state:[plot.setVisible(state), self.sort_plots(name, checkbox)])
 
         self.plots[name] = {"checkbox":checkbox, "plot":plot}
-        self.analysis_layout.addWidget(checkbox)
+
+        count = self.spectrum_view_layout.count()
+        row = count // 2
+        col = count % 2
+
+        self.spectrum_view_layout.addWidget(checkbox, row, col)
 
     def sort_plots(self, name, checkbox):
         # Recomputes which element is in the foreground, if and only if the target spectrum has already been drawn once.
@@ -437,6 +460,7 @@ class MSI_Visualizer(QMainWindow):
 
             for i in range(len(self.plots)):
                 self.plots[z_values.loc[i, "name"]].get("plot").setZValue(i)
+            self.topo_frag_view.update()
 
     def clear_spectra(self, extent="Total"):
         # Extent: Total = Everything / ROC = ROC Analysis & Clusters / Clusters = Cluster Average Spectra Only
