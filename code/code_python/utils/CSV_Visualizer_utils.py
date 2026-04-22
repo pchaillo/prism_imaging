@@ -25,7 +25,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     :param clustering_flag
     :param cluster_nb: Number of clusters formed by k-means
     :param roc_flag: Determines whether to perform ROC analysis
-    :return: An SVG file of the image, to be displayed in the interface
+    :return: An SVG file of the image, to be displayed in the interface, several helper values
     """
 
     full_csv = full_csv.transpose()
@@ -106,7 +106,6 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         coordsfinal["data"] = clustering_labels
 
         # Test ROC analysis
-        roc_flag = True
         roc_aucs = []
         #y_true = clustering_labels[clustering_labels == 1]
         if roc_flag:
@@ -200,9 +199,12 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
         rank = rank + 1
 
+    # Retrieve cluster colours for ROC analysis
+    if roc_flag:
+        cluster_colours = [colour for colour in np.unique(colours, axis=0)]
+
     # SVG Creation and Exportation
 
-    #colours_int = colours.astype(int)
     colours_export = colours.reshape((int(dimY), int(dimX), 3))
 
     h, w, _ = colours_export.shape
@@ -223,6 +225,6 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     if roc_flag:
         #TODO: Export each cluster's color at some point
-        return msi_svg, viewbox, roc_aucs, clustering_labels
+        return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours
     else:
-        return msi_svg, viewbox, None, None
+        return msi_svg, viewbox, None, None, None

@@ -19,7 +19,7 @@ fixed_size = band_end/binning_step ;
 binned_peak_array = zeros(fixed_size,2);
 
 % Creates the base list
-for mz = band_begin : binning_step : band_end - binning_step
+for mz = 0 : binning_step : band_end - binning_step
     p = p + 1;
     binned_peak_array(p,1) = mz;
 end
@@ -40,6 +40,6 @@ for i = 1:si(1)
 end
 
 % Cull mz out of the target mass range
-low_mz_delete = binned_peak_array(:,1)<band_end;
+low_mz_delete = binned_peak_array(:,1)<band_begin;
 binned_peak_array(low_mz_delete,:) = [];
 end
