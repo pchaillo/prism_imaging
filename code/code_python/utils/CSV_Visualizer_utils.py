@@ -228,3 +228,24 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours
     else:
         return msi_svg, viewbox, None, None, None
+
+def cross_project_roc(cluster_data_dict):
+    from sklearn.metrics import roc_auc_score
+
+    roc_aucs = []
+    full_labels = []
+    full_data_list = []
+    for key in cluster_data_dict:
+        # Concatenate labels
+        #TODO: Finish this, export this data clearly, and we're done
+        cluster_data = cluster_data_dict[key]["data"]
+        full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.iloc[0,:]))
+        full_data_list.append(cluster_data)
+    full_data = pd.concat(full_data_list, axis=1, join='inner', ignore_index=True).T
+    full_labels = [label for sublist in full_labels for label in sublist]
+    for mz in full_data:
+        auc = roc_auc_score(full_labels, full_data.loc[:, mz], average="weighted")
+        roc_aucs.append(auc)
+
+    # Exports the aucs and the mz array so that the file may be saved
+    return roc_aucs, full_data.columns.array
