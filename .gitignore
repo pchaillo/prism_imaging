@@ -28,3 +28,7 @@
 /resources/
 
 code/code_python/settings/*txt
+
+code/utils/for_recording/fcell2csv/*
+
+code/utils/for_recording/easyh5-0.9/*
