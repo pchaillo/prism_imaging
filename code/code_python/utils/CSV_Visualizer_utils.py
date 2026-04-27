@@ -6,9 +6,11 @@ from PIL import Image
 import re
 from scipy import interpolate
 from scipy.ndimage import gaussian_filter
+from PLY_ColourScale_Headless import generate_scale
 
 def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
-                cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, roc_flag):
+                cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, main_cluster,
+                roc_flag, roi_mask):
     """
     Converts selected parts of the CSV file into an images
     :param filename: Full path (including name and extension) to the CSV file
@@ -24,7 +26,9 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     :param smoothing_sigma: Sigma value [0-Infinity] of the Gaussian smoothing function, higher increases the smoothing
     :param clustering_flag
     :param cluster_nb: Number of clusters formed by k-means
+    :param main_cluster: Cluster used as ground value for ROC analysis
     :param roc_flag: Determines whether to perform ROC analysis
+    :param roi_mask: Sequential list that retrieves pixels found in the ROI
     :return: An SVG file of the image, to be displayed in the interface, several helper values
     """
 
@@ -59,13 +63,46 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     # Recover the data of interest
     # Catch the edge case where data is X, Y or Z
 
-    if data_type != "m/Z":
+    if clustering_flag:
+        from sklearn.cluster import KMeans
+        # Only retains non-mz entries
+        pattern = "[0-9]"
+        columns_list = [col for col in full_csv.columns if not re.search(pattern, col)]
+        input_data = full_csv.drop(columns_list, axis=1)
+        full_length = len(input_data)
+        if roi_mask:
+            # Second round of trimming if an ROI was specified
+            input_data = input_data[roi_mask]
+
+        kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
+
+        # Fit the full dataset
+        kmeans.fit(input_data)
+        clustering_labels = kmeans.labels_
+
+        # Now accomodates masking properly
+        # Modify the clustering to include -1 values for proper padding
+        # Those -1 entries will be shown either black or transparent in the final SVG
+        coordsfinal.loc[input_data.index, "data"] = clustering_labels
+        coordsfinal.fillna({"data":-1}, inplace=True)
+
+        # Test ROC analysis
+        roc_aucs = []
+        y_true = clustering_labels[clustering_labels == main_cluster]
+        if roc_flag:
+            from sklearn.metrics import roc_auc_score
+            for idx, _ in enumerate(input_data):
+                auc = roc_auc_score(clustering_labels, input_data.iloc[:, idx], average="weighted")
+                roc_aucs.append(auc)
+
+    elif data_type != "m/Z":
         coordsfinal["data"] = full_csv[data_type]
+
     else:
         mz_min = main_mz - tolerance
         mz_max = main_mz + tolerance
 
-        # Find columns of interest, chosing bins closest to the specified edges
+        # Find columns of interest, choosing bins closest to the specified edges
         pattern = "[0-9]"
         full_idx = full_csv.columns.to_list()
         mz_vals = [float(val) for val in full_idx if re.search(pattern, val)]
@@ -87,35 +124,8 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
         coordsfinal["data"] = full_csv.iloc[:, true_min_idx-1:true_max_idx].sum(1)
 
-    # Clustering
-    if clustering_flag:
-        from sklearn.cluster import KMeans
-        #TODO: Push settings into the GUI
-        #Only retains non-mz entries
-        pattern = "[0-9]"
-        columns_list = [col for col in full_csv.columns if not re.search(pattern, col)]
-
-        input_data = full_csv.drop(columns_list, axis=1)
-        kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
-
-
-        # Fit the full dataset
-        kmeans.fit(input_data)
-
-        clustering_labels = kmeans.labels_
-        coordsfinal["data"] = clustering_labels
-
-        # Test ROC analysis
-        roc_aucs = []
-        #y_true = clustering_labels[clustering_labels == 1]
-        if roc_flag:
-            from sklearn.metrics import roc_auc_score
-            for idx, _ in enumerate(input_data):
-                auc = roc_auc_score(clustering_labels, input_data.iloc[:, idx], average="weighted")
-                roc_aucs.append(auc)
-
     # Gaussian Smoothing
-    if smoothing_flag:
+    if smoothing_flag and not clustering_flag:
         preprocessed_coords = coordsfinal.pivot_table(index="x", columns="y", values="data")
         coordinates_smoothed = gaussian_filter(preprocessed_coords, sigma=smoothing_sigma)
         coordsfinal["data"] = coordinates_smoothed.ravel()
@@ -140,6 +150,8 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         # z is kept, but interpolated as nearest neighbour for now as it is unused. This also makes the usual
         # segmentation flag pointless, and it was thus removed
         interp_grid_z = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method="nearest")
+        if clustering_flag:
+            itp_type = "nearest"
         interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
 
         # Computes every position in X and Y for which we want interpolated data
@@ -174,9 +186,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         ovspcoords = ovspcoords.to_numpy()
 
     imax = max(intensities)
-    itstlst = []
-    for i in intensities:
-        itstlst.append(i)  # Creates a list of intensities
+    itstlst = [i for i in intensities]
 
     col = Color.interpolate(gradient_base[:-1],
                             space="oklab",
@@ -185,8 +195,10 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     rank = 0
 
     max_cutoff = np.percentile(itstlst, cutoff_percentiles[1])
-    min_cutoff = np.percentile(itstlst, cutoff_percentiles[0])
-
+    if roi_mask:
+        min_cutoff = max(np.percentile(itstlst, cutoff_percentiles[0]), 0)
+    else:
+        min_cutoff = np.percentile(itstlst, cutoff_percentiles[0])
     for i in itstlst:
         if i >= int(max_cutoff):
             hue = col(1)
@@ -210,24 +222,41 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     h, w, _ = colours_export.shape
 
     msi_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">\n'
-
+    idx = 0
+    coordsfinal.reset_index(inplace=True, drop=True)
     for y in range(h):
         for x in range(w):
+            if coordsfinal.loc[idx, "data"] == -1 and roi_mask:
+                opacity = 0
+            else:
+                opacity = 1
             r, g, b = colours_export[y, x]
             msi_svg += (
                 f'<rect x="{x}" y="{y}" width="1" height="1" '
-                f'fill="rgb({r},{g},{b})"/>\n'
+                f'fill="rgb({r},{g},{b})" fill-opacity="{opacity}"/>\n'
             )
+            idx+=1
 
     msi_svg += '</svg>'
 
     viewbox = [0, 0, w, h]
 
+    # Create the colour scale:
+    # Note: Path names are optional since this function call does not save anything. Will update arguments to reflect
+    # that at some point.
+    scale = generate_scale(name="",
+                           gradient=col,
+                           intensities_min=round(min(intensities)),
+                           intensities_max=round(max(intensities)),
+                           min_cutoff=min_cutoff,
+                           max_cutoff=max_cutoff,
+                           export_path_scale="",
+                           save=False)
+
     if roc_flag:
-        #TODO: Export each cluster's color at some point
-        return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours
+        return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours, scale
     else:
-        return msi_svg, viewbox, None, None, None
+        return msi_svg, viewbox, None, None, None, scale
 
 def cross_project_roc(cluster_data_dict):
     from sklearn.metrics import roc_auc_score
@@ -237,7 +266,6 @@ def cross_project_roc(cluster_data_dict):
     full_data_list = []
     for key in cluster_data_dict:
         # Concatenate labels
-        #TODO: Finish this, export this data clearly, and we're done
         cluster_data = cluster_data_dict[key]["data"]
         full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.iloc[0,:]))
         full_data_list.append(cluster_data)

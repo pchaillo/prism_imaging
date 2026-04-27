@@ -10,12 +10,13 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import scipy
-from PySide6.QtWidgets import (QApplication, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox, QFileDialog, QGraphicsScene,
-                               QGraphicsView, QGroupBox, QGridLayout, QHBoxLayout, QLabel, QLayout, QMainWindow,
-                               QMessageBox, QGraphicsLineItem, QGraphicsPolygonItem, QInputDialog, QPushButton, QRadioButton,
-                               QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
-from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, Signal
-from PySide6.QtGui import QPainterPath, QPen, QPolygonF
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
+                               QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsView,
+                               QGroupBox, QGridLayout, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
+                               QMessageBox,  QPushButton, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
+                               QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, Signal
+from PySide6.QtGui import QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
 import pyqtgraph as pg
@@ -32,14 +33,16 @@ class ZoomableGraphicsView(QGraphicsView):
         self._zoom_step = 1.25
         self._zoom_range = (-10, 20)
 
-        self.pen = None
-        self.scene_polygon = None
         self.draw_mode = False
+        self.pen = None
         self.points = []
-        self.temp_lines = []
         self.polygon_points = []
-        self.preview_line = None
+        #self.preview_line = None #TODO
+        self.scale_pixmap = None
+        self.scale_rect = None
+        self.scene_polygon = None
         self.snap_distance = 3
+        self.temp_lines = []
 
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
@@ -104,6 +107,19 @@ class ZoomableGraphicsView(QGraphicsView):
 
         self.roi_drawn.emit()
 
+    def drawForeground(self, painter, rect):
+        super().drawForeground(painter, rect)
+
+        if self.scale_pixmap is None:
+            return
+
+        painter.setOpacity(1)
+        painter.save()
+        painter.resetTransform()
+
+        painter.drawPixmap(self.scale_rect, self.scale_pixmap)
+        painter.restore()
+
 class MSI_Visualizer(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -120,6 +136,7 @@ class MSI_Visualizer(QMainWindow):
         self.gradient_name = None
         self.global_roc_display = None
         self.itp_type = None
+        self.main_cluster = None
         self.projects= {} # Stores project values
         self.roc_panel = None
         self.selected_dtype = None
@@ -292,18 +309,22 @@ class MSI_Visualizer(QMainWindow):
         roc_export_btn.setIcon(icon("ei.download-alt"))
         roc_export_btn.setFixedWidth(30)
         roc_export_btn.clicked.connect(self.export_roc)
-        custom_roi_btn = QPushButton()
-        custom_roi_btn.setIcon(icon("ei.edit"))
-        custom_roi_btn.setFixedWidth(30)
-        custom_roi_btn.clicked.connect(self.create_roi)
+        self.custom_roi_btn = QPushButton()
+        self.custom_roi_btn.setIcon(icon("ei.edit"))
+        self.custom_roi_btn.setFixedWidth(30)
+        self.custom_roi_btn.clicked.connect(self.create_roi)
 
         self.spectrum_view_widget = QGroupBox("Toggle Spectra")
         self.spectrum_view_widget.setFlat(True)
         self.spectrum_view_layout = QGridLayout(self.spectrum_view_widget)
+        self.roi_widget = QButtonGroup(exclusive=True)
+        self.roi_widget.buttonClicked.connect(self.on_button_clicked)
+        self.roi_widget.buttonPressed.connect(self.on_button_pressed)
+
         analysis_btns_layout.addWidget(roc_analysis_btn)
         analysis_btns_layout.addWidget(self.roc_main_cluster_spnbx)
         analysis_btns_layout.addWidget(roc_export_btn)
-        analysis_btns_layout.addWidget(custom_roi_btn)
+        analysis_btns_layout.addWidget(self.custom_roi_btn)
 
         analysis_layout.addWidget(analysis_btns_widget)
         analysis_layout.addWidget(self.spectrum_view_widget)
@@ -469,10 +490,8 @@ class MSI_Visualizer(QMainWindow):
             return
         if self.data_cbbx.currentText() != "m/Z":
             self.tolerance_spnbx.setEnabled(False)
-            self.spectrum_widget.setEnabled(False)
         else:
             self.tolerance_spnbx.setEnabled(True)
-            self.spectrum_widget.setEnabled(True)
         self.get_settings()
         self.render_msi("Data_Type_Selection")
 
@@ -498,6 +517,7 @@ class MSI_Visualizer(QMainWindow):
         self.itp_type = self.interp_slider.value()
         self.clustering = self.clustering_chkbx.isChecked()
         self.cluster_nb = int(self.cluster_nb_spnbx.value())
+        self.main_cluster = int(self.roc_main_cluster_spnbx.value())
         self.selected_dtype = self.data_cbbx.currentText()
         self.smoothing = self.smoothing_chkbx.isChecked()
         self.smoothing_sigma = self.smoothing_sigma_field.value()
@@ -508,36 +528,42 @@ class MSI_Visualizer(QMainWindow):
         if not self.central_mz and self.selected_dtype == "m/Z":
             # Duplicate with the forceUpdate function, but fails silently instead
             return
-        gradient = self.colours_dict.get(self.gradient_name)
-        cutoff_percentiles = [0, 100] #TODO: Put this back in the interface
+        # Recover certain variables prior to function call
+        clustering_flag = self.clustering
         csv = self.projects[self.current_project]["full_csv"]
+        cutoff_percentiles = [0, 100]  # TODO: Put this back in the interface
+        gradient = self.colours_dict.get(self.gradient_name)
+        roc_flag = False
+        roi_mask = None
 
         if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
-            #TODO: Support this tomorrow
-            print("G'night")
+            # Perform segmentation and/or ROC on the cluster region alone
+            roi = self.selected_dtype
+            clustering_flag = True
+            roi_mask = self.projects[self.current_project]["plots"][roi]["mask"]
 
         if origin == "ROC_Analysis":
             # Overrides settings to ensure proper behaviour
-            self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours = cvu.process_csv(self.projects[self.current_project]["current_filename"],
-                                                                           csv,
-                                                                           self.selected_dtype, self.central_mz,
-                                                                           self.tolerance, self.itp_factor,
-                                                                           self.itp_type, gradient, cutoff_percentiles,
-                                                                           self.smoothing,
-                                                                           self.smoothing_sigma, True,
-                                                                           self.cluster_nb, True)
+            clustering_flag = True
+            roc_flag = True
+
+        self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale = (
+            cvu.process_csv(self.projects[self.current_project]["current_filename"], csv, self.selected_dtype,
+                            self.central_mz, self.tolerance, self.itp_factor, self.itp_type, gradient,
+                            cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag, self.cluster_nb,
+                            self.main_cluster, roc_flag, roi_mask))
+
+        # Renders the new colour scale
+        self.update_scale(scale)
+
+        if origin == "ROC_Analysis":
             self.projects[self.current_project]["clusters"] = clustering_lbls
             self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
             return roc_aucs, clustering_lbls, cluster_colours
 
         else:
-            self.projects[self.current_project]["svg"], viewbox, _, _, _ = cvu.process_csv(self.projects[self.current_project]["current_filename"],
-                                            csv,
-                                            self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor,
-                                            self.itp_type, gradient, cutoff_percentiles, self.smoothing,
-                                            self.smoothing_sigma, self.clustering, self.cluster_nb, False)
-        self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
-        self.projects[self.current_project]["viewbox"] = viewbox
+            self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
+            self.projects[self.current_project]["viewbox"] = viewbox
 
     def update_svg(self, picture, viewbox):
         self.topological_img = QByteArray(picture)
@@ -568,17 +594,32 @@ class MSI_Visualizer(QMainWindow):
 
         # Lone exception that will not be normalized, as the maximum value is already 1
         self.clear_spectra("Current", "ROC", True)
-        self.plot_spectrum("ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
+        if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
+            prefix = f"{self.selected_dtype}-"
+        else:
+            prefix = ""
+        self.plot_spectrum(f"{prefix}ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
 
         global_data = self.projects[self.current_project]["full_csv"].copy()
+        global_data.drop(self.projects[self.current_project]["data_list"], axis=0, inplace=True)
+        if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
+            roi = self.selected_dtype
+            mask = self.projects[self.current_project]["plots"][roi]["mask"]
+            global_data = global_data.loc[:,mask]
+
         global_data.columns = clustering_lbls
+
+        if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
+            # Perform segmentation and/or ROC on the cluster region alone
+            plot_name_prefix = f"{self.selected_dtype}-Cluster"
+        else:
+            plot_name_prefix = "Cluster"
         # Plot the average spectrum of each cluster
         for idx, label in enumerate(np.unique(clustering_lbls)):
-            avg_spectrum = global_data[label].drop(self.projects[self.current_project]["data_list"], axis=0).mean(
-                axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
-            self.plot_spectrum(f"Cluster_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
+            avg_spectrum = global_data[label].mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+            self.plot_spectrum(f"{plot_name_prefix}_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
             # Add children to the file tree for later cluster analysis
-            child = QTreeWidgetItem({f"Cluster_{label}":[]})
+            child = QTreeWidgetItem({f"{plot_name_prefix}_{label}":[]})
             child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
             child.setCheckState(1, Qt.Checked)
             self.projects[self.current_project]["tree_entry"].addChild(child)
@@ -616,6 +657,9 @@ class MSI_Visualizer(QMainWindow):
         row = count // 2
         col = count % 2
 
+        # Add to either the exclusive ROI widget or the global widget
+        if len(args) != 0:
+            self.roi_widget.addButton(checkbox)
         self.spectrum_view_layout.addWidget(checkbox, row, col)
 
     def sort_plots(self, name, checkbox):
@@ -653,48 +697,89 @@ class MSI_Visualizer(QMainWindow):
                      "ROC": ["Global_Avg"],
                      "Clusters": ["Global_Avg", "ROC_Analysis"]}
 
+        if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
+            for roi in self.projects[self.current_project]["roi_names"]:
+                # Protect ROIs
+                whitelist["ROC"].append(roi)
+                whitelist["Clusters"].append(roi)
+
         target_ids = []
         for name in self.projects[idx]["plots"].keys():
             if name not in whitelist[extent]:
                 checkbox = self.projects[idx]["plots"][name]["checkbox"]
                 plot = self.projects[idx]["plots"][name]["plot"]
-                checkbox_idx = self.spectrum_view_layout.indexOf(checkbox)
-                delete_order = self.spectrum_view_layout.takeAt(checkbox_idx)
-                delete_order.widget().deleteLater()
+
                 # removeWidget apparently is not the command needed to properly delete: https://stackoverflow.com/questions/9899409/pyside-removing-a-widget-from-a-layout
-                self.spectrum_view_layout.removeWidget(self.projects[idx]["plots"][name]["checkbox"])
+                # Remove widget/item do not destroy the item, they just break the parent/child link
+                self.projects[idx]["plots"][name]["checkbox"].setVisible(False)
+                #self.spectrum_view_layout.removeWidget(self.projects[idx]["plots"][name]["checkbox"])
                 self.spectrum_widget.removeItem(self.projects[idx]["plots"][name]["plot"])
+
+                if name in self.projects[idx]["roi_names"]:
+                    # Remove the ROI polygon
+                    self.projects[idx]["plots"][name]["polygon"].setVisible(False)
 
                 target_ids.append(name)
 
-        # Dict culling must come later to avoid errors related to dictionary size changing during iterations
+        # When Dict culling happens, completely remove items from memory
         if dict_culling:
             for name in target_ids:
+                self.topo_frag_view.scene().removeItem(self.projects[idx]["plots"][name]["polygon"])
                 self.projects[idx]["plots"].pop(name) # Drops the entry from the dictionary
+                checkbox_idx = self.spectrum_view_layout.indexOf(checkbox)
+                delete_order = self.spectrum_view_layout.takeAt(checkbox_idx)
+                delete_order.widget().deleteLater()
 
     def export_roc(self):
+        #TODO: Overhaul based on the later export function
         if not self.projects[self.current_project]["plots"]:
             return
         if not self.projects[self.current_project]["plots"]["ROC_Analysis"]:
             QMessageBox.warning(self, "Error", "Please perform a ROC analysis first, and try again." )
             return
         else:
-            roc = pd.DataFrame([self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").xData,
-                                self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").yData]).T
+            roc_aucs_df = pd.DataFrame([self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").xData,
+                                self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").yData],
+                               index=["m/Z", "ROC Score"]).T
             filename = self.projects[self.current_project]["current_filename"]
             export_name = f"{os.path.split(filename)[0]}\\ROC\\{os.path.split(filename)[1].split(".")[0]}-ROC.csv"
-            os.mkdir(os.path.split(export_name)[0])
-            roc.to_csv(export_name, index=None, header=None, columns=None, sep=",")
+
+            # Create folder if non-existent
+            if not os.path.isdir(os.path.split(export_name)[0]):
+                os.mkdir(os.path.split(export_name)[0])
+
+            # Renames the file if existent
+            if os.path.isfile(export_name):
+                idx = 1
+                export_name_raw = export_name.split(".")[0]
+                export_name = f"{export_name_raw}({idx}).csv"
+                while os.path.isfile(export_name):
+                    idx += 1
+                    export_name = f"{export_name_raw}({idx}).csv"
+            roc_aucs_df.to_csv(export_name, index=None, header=None, columns=None, sep=",")
             QMessageBox.information(self, "Sucess", f"ROC exported in {os.path.split(export_name)[0]}.")
 
-    def project_changed(self, item, previous): # Should work fine outside project creation
-        #print(f"Change: idx{self.current_project} -> idx{self.file_tree.indexOfTopLevelItem(item)}\nFormer Project Idx: {self.former_project}")
+        # Not going to implement this yet
+        #main_cluster_keys = [key for key, value in clusters.items() if value == 1]
+        #alternative_cluster_keys = [key for key, value in clusters.items() if value == 0]
+
+        with open(export_name, "a", newline="") as roc_export:
+            roc_export.write(f"#Cross-Project ROC Analysis from STORM-MSI's visualizer,\n"
+                             f"#Cluster 1 is the chosen reference, corresponding to high on the ROC analysis,\n"
+                             f"#Cluster 1 ROI: {self.main_cluster},\n"
+                             f"#Cluster 2 is the alternative, containing every other cluster created prior to analysis,\n"
+                             f"#Change the main cluster in the global ROC panel for other references,\n")
+                             #f"#Cluster 2 ROIs: {',\n#'.join(alternative_cluster_keys)},\n")
+
+            roc_aucs_df.to_csv(roc_export, index=None, header=None, columns=["m/Z", "ROC Score"], sep=",")
+        QMessageBox.information(self, "Sucess", f"ROC exported in {os.path.split(export_name)[0]}.")
+
+    def project_changed(self, item, previous):
         new_project_flag = False
         if item is None:
             return
-        if (item.parent() is not None
-                or item == previous):
-                #or self.current_project == self.file_tree.indexOfTopLevelItem(item)):
+
+        if item.parent() is not None or item == previous:
             # Filter only parent items
             # Discard project creations
             return
@@ -714,8 +799,11 @@ class MSI_Visualizer(QMainWindow):
             # Spots the initial project and new projects after that
             return
         else:
+            # Restore the data type list
             local_list = copy(self.projects[self.current_project]["data_list"])
             local_list.append("m/Z")
+            for roi in self.projects[self.current_project]["roi_names"]:
+                local_list.append(roi)
             self.data_cbbx.addItems(local_list)
             self.spectrum_widget.setLimits(xMin=self.projects[self.current_project]["mass_range"][0],
                                            xMax=self.projects[self.current_project]["mass_range"][1])
@@ -726,7 +814,10 @@ class MSI_Visualizer(QMainWindow):
             for item in self.projects[self.current_project]["plots"].keys():
                 plot = self.projects[self.current_project]["plots"][item]["plot"]
                 self.spectrum_widget.addItem(plot)
-                self.create_checkbox(item, plot)
+
+                #self.create_checkbox(item, plot) #TODO: This breaks with ROI checkboxes
+                # Alternative
+                self.projects[self.current_project]["plots"][item]["checkbox"].setVisible(True)
             # Update plots
             if self.projects[self.current_project]["svg"] is not None:
                 self.update_svg(self.projects[self.current_project]["svg"], self.projects[self.current_project]["viewbox"])
@@ -756,16 +847,11 @@ class MSI_Visualizer(QMainWindow):
                             if "Cluster" in label:
                                 # Clusters derived from k-means
                                 # roi_cluster = self.projects[idx]["clusters"]
-                                cluster_idx = int(label.split("_")[1])
-                            else:
-                                # Manual regions of interest
-                                #TODO: Implement this logic once manual region selection is finalized
-                                print("TBD")
+                                cluster_idx = int(label.split("_")[-1])
                             local_checked_rois[child_idx] = {"name":roi_name,
                                                              "idx":cluster_idx}
                     checked_rois[idx] = local_checked_rois
 
-            #TODO: Assign a cluster to each ROI
             self.roc_panel = GlobalRocPanel(checked_rois)
             self.roc_panel.export_ready.connect(self.start_cross_project_roc)
             self.roc_panel.show()
@@ -815,7 +901,7 @@ class MSI_Visualizer(QMainWindow):
         filename = self.projects[self.current_project]["current_filename"]
         export_name = f"{os.path.split(filename)[0]}\\ROC\\Global-ROC.csv"
 
-        # Create folder if non-existant
+        # Create folder if non-existent
         if not os.path.isdir(os.path.split(export_name)[0]):
             os.mkdir(os.path.split(export_name)[0])
 
@@ -860,7 +946,7 @@ class MSI_Visualizer(QMainWindow):
         self.topo_frag_view.pen = QPen(roi_colour)
         self.topo_frag_view.pen.setWidth(1)
 
-        if result and roi_name.strip() != "":
+        if result and roi_name.strip() != "" and roi_name not in self.projects[self.current_project]["roi_names"]:
             self.topo_frag_view.draw_mode = True
             self.topo_frag_view.points.clear()
             self.topo_frag_view.roi_drawn.connect(lambda:self.store_roi(roi_name, roi_colour))
@@ -872,7 +958,6 @@ class MSI_Visualizer(QMainWindow):
     def store_roi(self, roi_name, roi_colour):
         roi_points = self.topo_frag_view.polygon_points
         polygon = self.topo_frag_view.scene_polygon
-
 
         # Adapt the CSV locally
         local_csv = self.projects[self.current_project]["full_csv"].copy()
@@ -896,6 +981,37 @@ class MSI_Visualizer(QMainWindow):
         self.projects[self.current_project]["plots"][roi_name]["colour"] = roi_colour
         mask_range = range(len(self.projects[self.current_project]["full_csv"].columns))
         self.projects[self.current_project]["plots"][roi_name]["mask"] = [i in roi_idx for i in mask_range]
-        self.projects[self.current_project]["data_list"].append(roi_name)
-        self.projects[self.current_project]["roi_names"]
+        self.projects[self.current_project]["roi_names"].append(roi_name)
         self.data_cbbx.addItem(roi_name)
+        self.topo_frag_view.roi_drawn.disconnect()
+
+    def update_scale(self, scale):
+        scale_item = QPixmap.fromImage(scale)
+        painter = QPainter(self.topo_frag_view.viewport())
+
+        scale_dimensions = [scale_item.width(), scale_item.height()]
+        scene_w = self.topo_frag_view.viewport().width()
+        scene_h = self.topo_frag_view.viewport().height()
+
+        # Downsize if the scale appears too large
+        if scale_dimensions[0] > 0.2 * scene_w:
+            factor = (0.3 * scene_w) / scale_dimensions[0]
+            w = round(scale_dimensions[0] * factor)
+            h = round(scale_dimensions[1] * factor)
+        else:
+            w, h = scale_dimensions
+
+        rect = QRect(scene_w - w - 10, scene_h - h - 10, w, h)
+
+        self.topo_frag_view.scale_pixmap = scale_item
+        self.topo_frag_view.scale_rect = rect
+        self.topo_frag_view.viewport().update()
+
+    def on_button_pressed(self, button):
+        # If the pressed button is already checked, allow it to be unchecked
+        if button.isChecked():
+            self.roi_widget.setExclusive(False)
+
+    def on_button_clicked(self, button):
+        # Re-enable exclusivity after the click is processed
+        self.roi_widget.setExclusive(True)

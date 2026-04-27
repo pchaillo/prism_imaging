@@ -453,6 +453,7 @@ if coreg_img is None and is_segmentation == 0:
                    intensities_max=round(max(intensities)),
                    min_cutoff=round(min_cutoff),
                    max_cutoff=round(max_cutoff),
-                   export_path_scale = export_path_scale)
+                   export_path_scale = export_path_scale,
+                   save=True)
 
     print(f'The corresponding colour scale was recorded in {export_path_scale}')
