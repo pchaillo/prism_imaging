@@ -1,4 +1,4 @@
-function csv = csv_extractor(app, csv_map, csv_mat, band, win)
+function csv = csv_extractor(app, csv_map, csv_mat, band, win, compression_flag)
 
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
@@ -95,8 +95,10 @@ csv_cell{1,1} = ["x", "y", "z", "Time", "Cluster index", "TIC", "Retention Time"
 
 parfor ind = 1:total_pixels
     % update_log(app, ind)
-    disp(ind) % #TODO : Replace with percentage of completion
-
+    if mod(ind, 100) == 0
+        disp(ind) % #TODO : Replace with percentage of completion
+    end
+    
     % Use a temporary variable to store the data
     temp = zeros(1, 12 + l - 1);
     temp(1) = x(ind); % Y
@@ -137,7 +139,6 @@ csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Needs a header ro
 clear csv_concatenate csv_cell
 
 % Concatenate the results from the cell array into the final array
-export_name = strrep(csv_mat, '.mat', ".csv");
 header_row = num2cell(zeros(1, total_pixels + 1));
 
 for i = 1:total_pixels + 1
@@ -147,11 +148,24 @@ end
 header_row{1,1} = "Data Type";
 csv_export = vertcat(header_row, csv_export);
 
-disp('Data successfuly sorted. Creating the CSV file. This may take a while...')
+if compression_flag == True
+    % For now, go from CSV export. Something might be manageable at an
+    % earlier point, speeding up the export
+    export_name = strrep(csv_mat, '.mat', ".parquet");
+    csv_table = array2table(csv_export);
+    parquetwrite(export_name, csv_table)
+else
+    export_name = strrep(csv_mat, '.mat', ".csv");
+    disp('Data successfuly sorted. Creating the CSV file. This may take a while...')
 
-writematrix(csv_export, export_name)
+    writematrix(csv_export, export_name)
+end
 
-%fcell2csv(export_name, csv_export)
+%fcell2csv(export_name, csv_export) % I have not got this to work yet
+%https://github.com/NeuroJSON/easyh5
+%HDF5 might be possible with some tweaking
+% Parquet seems like the best alternative with parquetwrite, but needs the
+% data to be converted to a table
 
 out_path = strrep(app.map_path, "map_files", "csv_files");
 movefile(export_name, out_path)
