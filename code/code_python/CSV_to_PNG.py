@@ -22,7 +22,7 @@ import scipy
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
-from utils.utils import file_name_recovery
+from utils.utils import file_name_recovery, parse_imaging_file
 
 # Creation of global variables
 filename = None
@@ -193,9 +193,8 @@ ttk.Button(frm, text="Proceed", command=lambda: [set_gradient_type(), set_data_t
 gui.mainloop()
 
 # End of the GUI loop
-biomap = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
-biomap = biomap.transpose()
-biomap = biomap.astype(float)
+biomap, ext = parse_imaging_file(filename)
+biomap = biomap.T.astype(float)
 if coreg_img is not None:
     coreg = Image.open(coreg_img)
 

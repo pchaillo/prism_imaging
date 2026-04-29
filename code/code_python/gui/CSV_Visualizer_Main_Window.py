@@ -23,6 +23,7 @@ import pyqtgraph as pg
 from qtawesome import icon
 from CSV_Visualizer_ROC_Window import GlobalRocPanel
 from CSV_Visualizer_ROC_Display_Popup import GlobalRocDisplay
+from utils import parse_imaging_file
 import CSV_Visualizer_utils as cvu
 
 class ZoomableGraphicsView(QGraphicsView):
@@ -196,7 +197,7 @@ class MSI_Visualizer(QMainWindow):
         load_widget = QWidget()
         load_layout = QHBoxLayout(load_widget)
 
-        load_btn = QPushButton("CSV")
+        load_btn = QPushButton("New")
         load_btn.setIcon(icon("ei.file"))
         load_btn.clicked.connect(self.upload_action)
 
@@ -415,7 +416,7 @@ class MSI_Visualizer(QMainWindow):
         self.create_project(idx)
 
         self.projects[idx]["current_filename"] = filename
-        self.projects[idx]["full_csv"] = pd.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)
+        self.projects[idx]["full_csv"], _ = parse_imaging_file(filename)
         data_list = self.projects[idx]["full_csv"].index
         data_list = data_list.to_list()
         binning_win = round((float(data_list[12]) - float(data_list[11])), 5)  # Recovers the CSV binning

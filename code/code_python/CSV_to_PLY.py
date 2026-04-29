@@ -23,6 +23,7 @@ import scipy
 import tkinter
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
+from utils.utils import parse_imaging_file
 
 # Creation of global variables
 filename = None
@@ -200,7 +201,7 @@ gui.mainloop()
 
 # End of the GUI loop
 #biomap = pd.read_csv(filename, sep=',', index_col='cell1', low_memory=False)  # Reads the opened CSV, old format
-biomap = pd.read_csv(filename, sep=',', index_col='Data Type',low_memory=False)  # Reads the opened CSV
+biomap, extension = parse_imaging_file(filename)  # Reads the opened CSV
 biomap = biomap.transpose()
 biomap = biomap.astype(float)
 if coreg_img is not None:

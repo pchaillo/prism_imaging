@@ -15,7 +15,7 @@ sys.path.insert(0, os.getcwd() + "\\code\\code_python") # Needed so that MatLab 
 import pandas
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
-from utils.utils import file_name_recovery
+from utils.utils import file_name_recovery, parse_imaging_file
 
 norm_name = 'TIC'
 
@@ -23,9 +23,9 @@ Tk().withdraw()
 filename = askopenfilename()
 filename = filename.replace("/", "\\")
 
-csv = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)  # Reads the opened CSV, deprecated
-head = csv.iloc[:11, :]
-tail = csv.iloc[11:, :]
+file, ext = parse_imaging_file(filename)
+head = file.iloc[:11, :]
+tail = file.iloc[11:, :]
 tic = head.loc["TIC"]
 
 tic.loc[tic == 0.0] = 1  # Some TICs are equal to zero. This is an issue that can prevent normalization from working.
@@ -35,11 +35,16 @@ proportional_tic = tic/max(tic)
 
 tail = tail / proportional_tic
 
-csv_norm = pandas.concat([head, tail])
+file_norm = pandas.concat([head, tail])
 
 # Export the TIC-normalized data
 in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
-out_name = f"{in_filename}-{norm_name}-norm.csv"
-csv_norm.to_csv(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
+out_name = f"{in_filename}-{norm_name}-norm.{ext}]"
+
+if ext == "csv":
+    file_norm.to_csv(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
+elif ext == "parquet":
+    file_norm.to_parquet(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
 
 print(f"{out_name} was properly saved in files/{project}/csv_files/")
+

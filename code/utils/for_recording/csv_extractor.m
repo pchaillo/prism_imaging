@@ -142,13 +142,13 @@ clear csv_concatenate csv_cell
 header_row = num2cell(zeros(1, total_pixels + 1));
 
 for i = 1:total_pixels + 1
-    header_row{1, i} = i;
+    header_row{1, i} = i - 1;
 end
 
 header_row{1,1} = "Data Type";
 csv_export = vertcat(header_row, csv_export);
 
-if compression_flag == True
+if compression_flag == 1
     % For now, go from CSV export. Something might be manageable at an
     % earlier point, speeding up the export
     export_name = strrep(csv_mat, '.mat', ".parquet");

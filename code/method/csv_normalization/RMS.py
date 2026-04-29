@@ -1,5 +1,5 @@
 # Validated on Python 3.8.10
-# To run manunally through MatLab:
+# To run manually through MatLab:
 #   path(path, 'code/code_python')
 #   pyrunfile('#SCRIPT_NAME#.py')
 # This version will instead work on the sum of intensities in each pixel
@@ -13,7 +13,7 @@ import pandas
 import numpy
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk
-from utils.utils import file_name_recovery
+from utils.utils import file_name_recovery, parse_imaging_file
 
 norm_name = 'RMS'
 
@@ -21,9 +21,9 @@ Tk().withdraw()
 filename = askopenfilename()
 filename = filename.replace("/", "\\")
 
-csv = pandas.read_csv(filename, sep=',', index_col='Data Type', low_memory=False)  # Reads the opened CSV
-head = csv.iloc[:11, :]
-tail = csv.iloc[11:, :]
+file, ext = parse_imaging_file(filename)
+head = file.iloc[:11, :]
+tail = file.iloc[11:, :]
 
 tail_sum = tail.copy()
 tail_sum = tail_sum.sum(axis=0)  # This should equate to the TIC, but it is much larger.
@@ -38,12 +38,15 @@ tail_rms = tail_rms.round()
 
 tail = tail/tail_rms
 
-csv_norm = pandas.concat([head, tail])
+file_norm = pandas.concat([head, tail])
 
 # Export the RMS-normalized data
 in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
-out_name = f"{in_filename}-{norm_name}-norm.csv"
-csv_norm.to_csv(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
+out_name = f"{in_filename}-{norm_name}-norm.{ext}]"
+
+if ext == "csv":
+    file_norm.to_csv(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
+elif ext == "parquet":
+    file_norm.to_parquet(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
 
 print(f"{out_name} was properly saved in files/{project}/csv_files/")
-
