@@ -34,4 +34,5 @@ def parse_imaging_file(filename):
             file.drop(0, inplace=True)
             file.index = file.iloc[:,0]
             file.drop("Data Type", axis=1, inplace=True)
+            file = file.astype(float)
         return file, extension

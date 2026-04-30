@@ -42,11 +42,11 @@ file_norm = pandas.concat([head, tail])
 
 # Export the RMS-normalized data
 in_filename, in_filename_ext, project = file_name_recovery(filepath=filename)
-out_name = f"{in_filename}-{norm_name}-norm.{ext}]"
+out_name = f"{in_filename}-{norm_name}-norm.{ext}"
 
 if ext == "csv":
     file_norm.to_csv(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
 elif ext == "parquet":
-    file_norm.to_parquet(path_or_buf=(f"files\\{project}\\csv_files\\{out_name}"))
+    file_norm.to_parquet(path=(f"files\\{project}\\csv_files\\{out_name}"))
 
 print(f"{out_name} was properly saved in files/{project}/csv_files/")

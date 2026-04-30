@@ -394,12 +394,14 @@ class MSI_Visualizer(QMainWindow):
 
     def upload_action(self, *args):
         if args:
+            # Hijacks this function for ROI definition
             roi_name = args[0]
             temp_filename = self.projects[idx]["current_filename"].split(".")
             filename = f"{temp_filename[0]}-{roi_name}.{temp_filename[1]}"
         else:
             initial_dir = os.path.dirname(os.path.abspath(__file__))
-            filename = QFileDialog.getOpenFileName(self, "CSV File Selection", initial_dir, "STORM-MSI File (*.csv)")[0]
+            filename = QFileDialog.getOpenFileName(self, "CSV File Selection", initial_dir,
+                                                   "STORM-MSI File (*.csv *.parquet)")[0]
             if not filename:
                 return
             filename = filename.replace("/", "\\")
