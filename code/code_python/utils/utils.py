@@ -30,9 +30,11 @@ def parse_imaging_file(filename):
             file = pd.read_csv(filename, sep=",", index_col='Data Type', low_memory=False)
         elif extension == "parquet":
             file = pd.read_parquet(filename)
-            file.columns = file.iloc[0, :]
-            file.drop(0, inplace=True)
-            file.index = file.iloc[:,0]
-            file.drop("Data Type", axis=1, inplace=True)
-            file = file.astype(float)
+            # Files exported through MatLab, as always, do not behave as expected. This is how to manage them:
+            if "x" in file.index:
+                file.columns = file.iloc[0, :]
+                file.drop(0, inplace=True)
+                file.index = file.iloc[:,0]
+                file.drop("Data Type", axis=1, inplace=True)
+                file = file.astype(float)
         return file, extension
