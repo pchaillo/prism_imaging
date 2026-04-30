@@ -12,12 +12,13 @@ set /p answer=
 if %answer% == y goto py381
 if %answer% == n goto py311
 echo.
-echo Please only answer through y (Yes) or n (No).
+echo Please only answer by typing y (Yes) or n (No).
 goto VERSION
 
 :py381
 echo.
 echo An older MatLab version is used. Installing Python 3.8.10 and the corresponding libraries.
+echo Warning: Support for older MatLab versions is being phased out. Some python libraries may not be available to use, and certain instructions cannot be replicated in those older versions.
 choco install python --version=3.8.10 -y --override --installarguments "'/quiet  InstallAllUsers=1 TargetDir=c:\Python38'"
 python -m pip install --upgrade pip
 py -3.8 -m pip install coloraide
@@ -45,6 +46,12 @@ py -3.11 -m pip install pandas
 py -3.11 -m pip install Pillow
 py -3.11 -m pip install scipy
 py -3.11 -m pip install Tk
+py -3.11 -m pip install PySide6
+py -3.11 -m pip install qtawesome
+py -3.11 -m pip install pyarrow
+py -3.11 -m pip install fastparquet
+py -3.11 -m pip install pyqtgraph
+
 echo Moving some tkinter folders around to accomodate MatLab looking for them in the wrong space.
 powershell -command "Xcopy C:\Python311\tcl\tcl8.6 C:\Python311\lib\tcl8.6 /v /i /e"
 powershell -command "Xcopy C:\Python311\tcl\tk8.6 C:\Python311\lib\tk8.6 /v /i /e"
@@ -52,5 +59,5 @@ goto END
 
 :END
 echo.
-echo Done! Start this program over if some libraries did not install as expected.
+echo Done! Restart this program as an Administrator if some libraries did not install as expected.
 pause
