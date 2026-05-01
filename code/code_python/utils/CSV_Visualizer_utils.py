@@ -1,4 +1,6 @@
 from copy import copy
+
+import PySide6.QtWidgets
 from coloraide import Color
 import numpy as np
 import pandas as pd
@@ -277,3 +279,85 @@ def cross_project_roc(cluster_data_dict):
 
     # Exports the aucs and the mz array so that the file may be saved
     return roc_aucs, full_data.columns.array
+
+def save_project(app:PySide6.QtWidgets.QMainWindow):
+    import json
+    #TODO: Finalize and implement
+    settings_dict = {}
+    settings_dict["projects"] = app.projects
+    settings_dict["visualizer"] = {
+        "draw_mode": app.topo_frag_view.draw_mode,
+        "pen": app.topo_frag_view.pen,
+        "points": app.topo_frag_view.points,
+        "polygon_points": app.topo_frag_view.polygon_points,
+        "scale_pixmap": app.topo_frag_view.scale_pixmap,
+        "scale_rect": app.topo_frag_view.scale_rect,
+        "scene_polygon": app.topo_frag_view.scene_polygon,
+        "snap_distance": app.topo_frag_view.snap_distance,
+        "temp_lines":app.topo_frag_view.temp_lines
+    }
+
+    settings_dict = json.JSONEncoder.encode(settings_dict)
+
+def take_screenshot(app):
+    from PySide6.QtGui import QImage, QPixmap, QPainter
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QMessageBox
+    import os
+
+    if app.current_project is None:
+        QMessageBox.warning(app, "Error", "Please first load a file before trying to take a screenshot.")
+        return
+
+    # Screenshot the SVG Widget
+    svg_pixmap = app.topo_frag_view.viewport().grab()
+    svg_pixmap.setDevicePixelRatio(1)
+    svg_width = svg_pixmap.width()
+    svg_height = svg_pixmap.height()
+
+    # Screenshot the corresponding spectrum
+    spectrum_pixmap = app.spectrum_widget.viewport().grab()
+    spectrum_pixmap.setDevicePixelRatio(1)
+    spectrum_width = spectrum_pixmap.width()
+    spectrum_height = spectrum_pixmap.height()
+
+    # Resize the SVG pixmap to match the spectrum's width
+    svg_scaled_pixmap = svg_pixmap.scaledToWidth(spectrum_width, Qt.TransformationMode.FastTransformation)
+    svg_scaled_height = svg_scaled_pixmap.height()
+
+    # Create an empty PixMap for export
+    export = QImage(spectrum_width, svg_scaled_height + spectrum_height, QImage.Format.Format_ARGB32)
+
+    painter = QPainter(export)
+    painter.drawPixmap(0, 0, svg_scaled_pixmap)
+    painter.drawPixmap(0, svg_scaled_height, spectrum_pixmap)
+    painter.end()
+
+    # Recover the export name
+    project_filename = app.projects[app.current_project]["current_filename"]
+    if app.clustering_chkbx.isChecked():
+        #TODO: Implement a proper way to check that clustering data is displayed. This is weak
+        dtype = "Clustering"
+    else:
+        dtype = app.selected_dtype
+        if dtype == "m/Z":
+            if app.central_mz is not None:
+                central_mz = str(round(app.central_mz, 3)).replace(".", "-")
+                dtype = f"mZ-{central_mz}"
+            else:
+                QMessageBox.warning(app, "Error", "No m/Z selected. To take a screenshot, select an m/Z or pick another category.")
+                return
+    export_folder = f"{os.path.split(project_filename)[0]}\\screenshots\\"
+    if not os.path.isdir(export_folder):
+        os.mkdir(export_folder)
+
+    export_name = f"{export_folder}{os.path.split(project_filename)[1].split('.')[0]}-{dtype}.png"
+    if os.path.isfile(export_name):
+        export_name_raw = export_name.split(".")[0]
+        idx = 1
+        while os.path.isfile(export_name):
+            export_name = f"{export_name_raw}({idx}).png"
+            idx +=1
+
+    export.save(export_name, quality=-1)
+    QMessageBox.information(app, "Success", f"Screenshot saved in {export_folder}")

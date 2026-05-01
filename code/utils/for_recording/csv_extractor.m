@@ -88,19 +88,63 @@ end
 clear m num_order map pixels_number
 disp('Done. Starting data processing.')
 
+% Always modify accordingly when adding/subtracting information from pixels_scans
+header = ["x", "y", "z", "Time", "Cluster index", "TIC", "Retention Time", "Scan Start", "Scan End", "Base Peak m/Z", "Base Peak Intensity", string(mz_list)];
 
-%temp_results(1,12:12+l-1) = mz_list; % Always modify accordingly when adding/subtracting information from pixels_scans
-csv_cell = num2cell(zeros(total_pixels + 1, 1));
-csv_cell{1,1} = ["x", "y", "z", "Time", "Cluster index", "TIC", "Retention Time", "Scan Start", "Scan End", "Base Peak m/Z", "Base Peak Intensity", string(mz_list)];
+% csv_cell = cell(total_pixels + 1, 1);
+% csv_cell{1,1} = header;
+% 
+% % It is important that the parfor loop only writes to a single cell per
+% % iteration to avoid overhead
+% parfor ind = 1:total_pixels
+%     % update_log(app, ind)
+%     if mod(ind, 100) == 0
+%         disp(ind) % #TODO : Replace with percentage of completion
+%     end
+% 
+%     % Use a temporary variable to store the data
+%     temp = zeros(1, 12 + l - 1);
+%     temp(1) = x(ind); % Y
+%     temp(2) = y(ind); % X
+%     temp(3) = z(ind); % Z
+%     temp(4) = time(ind); % Time
+%     temp(6) = tic(ind);
+%     temp(7) = rt(ind);
+% 
+%     fusion_list = deisotoped{ind};
+%     l2 = length(fusion_list);
+% 
+%     if l2 == 1
+%         temp(8) = fusion_list;
+%         temp(9) = fusion_list;
+%     else
+%         sorted_fusion_list = sort(fusion_list);
+%         temp(8) = sorted_fusion_list(1);
+%         temp(9) = sorted_fusion_list(l2);
+%     end
+% 
+%     temp(10) = bp(ind);
+%     temp(11) = bpi(ind);
+% 
+%     peak_array_fixed = binning_fixed_size(mz{ind}, win, band);
+%     temp(12:12+l-1) = peak_array_fixed(:, 2);
+% 
+%     % Store the temporary variable in the cell array
+%     csv_cell{ind+1} = temp;
+% end
+
+% Experimental variant
+ncols = length(header);
+csv_data = zeros(total_pixels + 1, ncols);
 
 parfor ind = 1:total_pixels
     % update_log(app, ind)
     if mod(ind, 100) == 0
         disp(ind) % #TODO : Replace with percentage of completion
     end
-    
+
     % Use a temporary variable to store the data
-    temp = zeros(1, 12 + l - 1);
+    temp = zeros(1, ncols);
     temp(1) = x(ind); % Y
     temp(2) = y(ind); % X
     temp(3) = z(ind); % Z
@@ -124,42 +168,46 @@ parfor ind = 1:total_pixels
     temp(11) = bpi(ind);
 
     peak_array_fixed = binning_fixed_size(mz{ind}, win, band);
-    temp(12:12+l-1) = peak_array_fixed(:, 2);
+    temp(12:end) = peak_array_fixed(:, 2);
 
     % Store the temporary variable in the cell array
-    csv_cell{ind+1} = temp;
+    csv_data(ind,:) = temp;
 end
 
-csv_concatenate = {};
-parfor i=1:length(csv_cell)
-    csv_concatenate = [csv_concatenate, csv_cell{i}];
-end
-csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Needs a header row
-
-clear csv_concatenate csv_cell
+csv_table = array2table(csv_data', "RowNames", header);
 
 % Concatenate the results from the cell array into the final array
-header_row = num2cell(zeros(1, total_pixels + 1));
+% header_row = num2cell(zeros(1, total_pixels + 1));
 
-for i = 1:total_pixels + 1
-    header_row{1, i} = i - 1;
-end
-
-header_row{1,1} = "Data Type";
-csv_export = vertcat(header_row, csv_export);
+% for i = 1:total_pixels + 1
+%     header_row{1, i} = i - 1;
+% end
+% 
+% header_row{1,1} = "Data Type";
+% csv_export = vertcat(header_row, csv_export);
 
 if compression_flag == 1
     % For now, go from CSV export. Something might be manageable at an
     % earlier point, speeding up the export
     export_name = strrep(csv_mat, '.mat', ".parquet");
-    csv_table = array2table(csv_export);
     parquetwrite(export_name, csv_table)
 else
     export_name = strrep(csv_mat, '.mat', ".csv");
     disp('Data successfuly sorted. Creating the CSV file. This may take a while...')
 
-    writematrix(csv_export, export_name)
+    % writematrix(csv_export, export_name) % Works, but requires fiddling
+    % with putting the header back in
+    writetable(csv_table, export_name, "WriteVariableNames", false, "WriteRowNames", true)
 end
+
+% csv_concatenate = {};
+% parfor i=1:length(csv_data)
+%     csv_concatenate = [csv_concatenate, csv_data{i}];
+% end
+% csv_export = reshape(csv_concatenate, [], total_pixels + 1); % Needs a header row
+% 
+% clear csv_concatenate csv_data
+
 
 %fcell2csv(export_name, csv_export) % I have not got this to work yet
 %https://github.com/NeuroJSON/easyh5

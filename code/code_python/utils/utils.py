@@ -27,7 +27,11 @@ def parse_imaging_file(filename):
         raise TypeError
     else:
         if extension == "csv":
-            file = pd.read_csv(filename, sep=",", index_col='Data Type', low_memory=False)
+            # For older files: file = pd.read_csv(filename, sep=",", index_col="Data Type", low_memory=False)
+            file = pd.read_csv(filename, sep=",", header=None, index_col=0, low_memory=False)
+            # Compatibility layer for older files
+            if "Data Type" in file.index:
+                file.drop("Data Type", inplace=True)
         elif extension == "parquet":
             file = pd.read_parquet(filename)
             # Files exported through MatLab, as always, do not behave as expected. This is how to manage them:

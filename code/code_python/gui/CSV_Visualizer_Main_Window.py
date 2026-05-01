@@ -12,10 +12,10 @@ from PIL import Image
 import scipy
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
                                QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsView,
-                               QGroupBox, QGridLayout, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
+                               QGroupBox, QGridLayout, QHeaderView, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
                                QMessageBox,  QPushButton, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
                                QVBoxLayout, QWidget)
-from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, Signal
+from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QTimer, Signal
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
@@ -196,16 +196,26 @@ class MSI_Visualizer(QMainWindow):
         # File loading and data selection, combined in a single widget
         load_widget = QWidget()
         load_layout = QHBoxLayout(load_widget)
+        load_layout.setSpacing(1)
 
-        load_btn = QPushButton("New")
-        load_btn.setIcon(icon("ei.file"))
+        load_btn = QPushButton()
+        load_btn.setIcon(icon("ei.file-new"))
+        load_btn.setFixedWidth(30)
+        load_btn.setToolTip("Load an imaging (CSV/Parquet) file from STORM-MSI")
         load_btn.clicked.connect(self.upload_action)
+
+        screenshot_btn = QPushButton()
+        screenshot_btn.setIcon(icon("ei.camera"))
+        screenshot_btn.setFixedWidth(30)
+        screenshot_btn.setToolTip("Take a picture of the current spectrum and MSI data")
+        screenshot_btn.clicked.connect(lambda:cvu.take_screenshot(self))
 
         self.data_cbbx = QComboBox()
         self.data_cbbx.setEditable(False)
         self.data_cbbx.currentIndexChanged.connect(self.on_dtype_selection)
 
         load_layout.addWidget(load_btn)
+        load_layout.addWidget(screenshot_btn)
         load_layout.addWidget(self.data_cbbx)
 
         ## Subwidget for m/Z tolerance
@@ -362,11 +372,10 @@ class MSI_Visualizer(QMainWindow):
 
         self.file_tree = QTreeWidget(columnCount=2)
         self.file_tree.setHeaderHidden(True)
-        #self.file_tree.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        #self.file_tree.header().setSectionResizeMode(1, QHeaderView.Fixed)
-        self.file_tree.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.file_tree.header().setSectionsMovable(False)
         self.file_tree.setColumnWidth(0, 180)
         self.file_tree.setColumnWidth(1, 20)
+        self.file_tree.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.file_tree.currentItemChanged.connect(self.project_changed)
 
         cross_project_roc_btn = QPushButton("Cross-Project Analysis")
@@ -383,6 +392,7 @@ class MSI_Visualizer(QMainWindow):
         settings_msi_layout.addWidget(self.topo_frag_view)
         settings_msi_layout.addWidget(file_tree_widget)
         settings_msi_widget.setSizes([145, 800, 200])
+        settings_msi_widget.handle(2).setEnabled(False)
 
         # Create the final layout
         main_layout.addWidget(settings_msi_widget)
@@ -426,6 +436,7 @@ class MSI_Visualizer(QMainWindow):
         # Populate the file tree
         filename_tree = os.path.split(filename)[1]
         tree_entry = QTreeWidgetItem({filename_tree: []})
+        tree_entry.setToolTip(0, filename_tree)
         self.projects[idx]["tree_entry"] = tree_entry
         self.file_tree.addTopLevelItem(tree_entry)
         delete_btn = QPushButton()
@@ -480,13 +491,16 @@ class MSI_Visualizer(QMainWindow):
         self.interp_lbl.setText(f"Interpolation: x{str(value)}")
 
     def plot_average_spectrum(self, data_list):
-        avg_spectrum = self.projects[self.current_project]["full_csv"].drop(data_list, axis=0).mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
-        self.plot_spectrum("Global_Avg", avg_spectrum[0], avg_spectrum[1], pg.mkPen(color="b", width=1), True)
+        full_spectrum = self.projects[self.current_project]["full_csv"].drop(data_list, axis=0)
+        xvals = full_spectrum.index.values.to_numpy().astype("float64")
+        yvals = full_spectrum.mean(axis=1).astype("float64")
+        full_vals = pd.DataFrame([xvals, yvals]).T
+        self.plot_spectrum("Global_Avg", full_vals[0], full_vals[1], pg.mkPen(color="b", width=1), True)
 
-        self.spectrum_widget.setLimits(xMin= avg_spectrum[0].min(), xMax= avg_spectrum[0].max(), yMin= 0, yMax= 1)
-        self.spectrum_widget.setRange(xRange=(avg_spectrum[0].min(), avg_spectrum[0].max()), yRange =(0, avg_spectrum[1].max()), padding=1)
+        self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max(), yMin=0, yMax=1.05)
+        self.spectrum_widget.setRange(xRange=(xvals.min(), xvals.max()), yRange =(0, yvals.max()), padding=0.1)
 
-        self.projects[self.current_project]["mass_range"] = [avg_spectrum[0].min(), avg_spectrum[0].max()]
+        self.projects[self.current_project]["mass_range"] = [xvals.min(),xvals.max()]
 
     def on_dtype_selection(self):
         if self.data_cbbx.currentText() == "":
@@ -1004,7 +1018,7 @@ class MSI_Visualizer(QMainWindow):
         else:
             w, h = scale_dimensions
 
-        rect = QRect(scene_w - w - 10, scene_h - h - 10, w, h)
+        rect = QRect(scene_w - w - 10, scene_h - h, w, h)
 
         self.topo_frag_view.scale_pixmap = scale_item
         self.topo_frag_view.scale_rect = rect

@@ -49,16 +49,16 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
 
 
 def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale , save=False):
-    bar_width = 2500
+    bar_width = 2000
     bar_height = 100
     padding_x = 500
     padding_x_offset = 100 # Gives leeway for annotations to extend away from the image
-    padding_y =250
+    padding_y = 250
     txt_y_padding = 100
     alpha = 50
     font_size = 100
 
-    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4))  # That +10 is a workaround to fully
+    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4)) # That +10 is a workaround to fully
     # retain the rightmost extremity if a higher threshold is applied
 
     if min_cutoff != intensities_min:
