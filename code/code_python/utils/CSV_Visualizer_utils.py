@@ -84,7 +84,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
         # Now accomodates masking properly
         # Modify the clustering to include -1 values for proper padding
-        # Those -1 entries will be shown either black or transparent in the final SVG
+        # Those -1 entries will be transparent on the final SVG
         coordsfinal.loc[input_data.index, "data"] = clustering_labels
         coordsfinal.fillna({"data":-1}, inplace=True)
 
@@ -213,8 +213,8 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         colours[rank] = ([hue['r'] * 255, hue['g'] * 255, hue['b'] * 255])
         rank = rank + 1
 
-    # Retrieve cluster colours for ROC analysis
-    if roc_flag:
+    # Retrieve cluster colours for ROC analysis and/or clustering
+    if clustering_flag:
         cluster_colours = [colour for colour in np.unique(colours, axis=0)]
 
     # SVG Creation and Exportation
@@ -257,6 +257,8 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     if roc_flag:
         return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours, scale
+    elif clustering_flag:
+        return msi_svg, viewbox, None, clustering_labels, cluster_colours, scale
     else:
         return msi_svg, viewbox, None, None, None, scale
 

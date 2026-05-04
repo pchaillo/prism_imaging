@@ -36,6 +36,7 @@ def parse_imaging_file(filename):
             file = pd.read_parquet(filename)
             if "x" in file.columns:
                 file = file.T
+
             # Files exported through MatLab, as always, do not behave as expected. This is how to manage them:
             if "x" not in file.index:
                 file.columns = range(len(file.columns))
@@ -44,5 +45,12 @@ def parse_imaging_file(filename):
                     file.drop(0, axis=0, inplace=True)
                 file.index = file.iloc[:,0]
                 file.drop(0, axis=1, inplace=True)
-                file = file.astype(float)
+
+            file = file.astype(float)
+            file.columns = file.columns.astype("int")
+
+            # Sometimes an empty column is created at the end of the file. This deals with it.
+            if file.loc["x"].iloc[-1] == 0:
+                file.drop(file.columns[-1], axis=1, inplace=True)
+
         return file, extension

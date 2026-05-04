@@ -13,7 +13,7 @@ import scipy
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
                                QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsView,
                                QGroupBox, QGridLayout, QHeaderView, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
-                               QMessageBox,  QPushButton, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
+                               QMessageBox,  QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
                                QVBoxLayout, QWidget)
 from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QTimer, Signal
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QPixmap, QPolygonF
@@ -325,9 +325,18 @@ class MSI_Visualizer(QMainWindow):
         self.custom_roi_btn.setFixedWidth(30)
         self.custom_roi_btn.clicked.connect(self.create_roi)
 
+        #TODO; Check back on this
+        self.scroll_view = QScrollArea()
+        self.scroll_view.setWidgetResizable(True)
+        self.scroll_view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scroll_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_container = QWidget()
         self.spectrum_view_widget = QGroupBox("Toggle Spectra")
         self.spectrum_view_widget.setFlat(True)
-        self.spectrum_view_layout = QGridLayout(self.spectrum_view_widget)
+        self.scroll_view.setWidget(self.scroll_container)
+        self.spectrum_view_layout = QGridLayout(self.scroll_container)
+
+
         self.roi_widget = QButtonGroup(exclusive=True)
         self.roi_widget.buttonClicked.connect(self.on_button_clicked)
         self.roi_widget.buttonPressed.connect(self.on_button_pressed)
@@ -338,7 +347,7 @@ class MSI_Visualizer(QMainWindow):
         analysis_btns_layout.addWidget(self.custom_roi_btn)
 
         analysis_layout.addWidget(analysis_btns_widget)
-        analysis_layout.addWidget(self.spectrum_view_widget)
+        analysis_layout.addWidget(self.scroll_view)
 
         # Populate the Settings/Analysis Widget
         stgs_anls_layout.addWidget(settings_widget)
@@ -588,6 +597,9 @@ class MSI_Visualizer(QMainWindow):
         else:
             self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
             self.projects[self.current_project]["viewbox"] = viewbox
+            if clustering_flag:
+                # Displays average spectra found from clustering
+                self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, False)
 
     def update_svg(self, picture, viewbox):
         self.topological_img = QByteArray(picture)
@@ -613,16 +625,20 @@ class MSI_Visualizer(QMainWindow):
 
     def plot_roc_analysis(self):
         roc_aucs, clustering_lbls, cluster_colours = self.render_msi(origin="ROC_Analysis")
+        self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, True)
 
+    def plot_clustering(self, roc_aucs, clustering_lbls, cluster_colours, roc_flag):
         indices = list(self.projects[self.current_project]["plots"]["Global_Avg"].get("plot").xData)
 
         # Lone exception that will not be normalized, as the maximum value is already 1
         self.clear_spectra("Current", "ROC", True)
-        if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
-            prefix = f"{self.selected_dtype}-"
-        else:
-            prefix = ""
-        self.plot_spectrum(f"{prefix}ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
+
+        if roc_flag:
+            if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
+                prefix = f"{self.selected_dtype}-"
+            else:
+                prefix = ""
+            self.plot_spectrum(f"{prefix}ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
 
         global_data = self.projects[self.current_project]["full_csv"].copy()
         global_data.drop(self.projects[self.current_project]["data_list"], axis=0, inplace=True)
@@ -748,13 +764,24 @@ class MSI_Visualizer(QMainWindow):
         # When Dict culling happens, completely remove items from memory
         if dict_culling:
             for name in target_ids:
-                polygon = self.projects[idx]["plots"][name]["polygon"]
+                polygon = self.projects[idx]["plots"][name].get("polygon")
                 if polygon is not None:
                     self.topo_frag_view.scene().removeItem(polygon)
+
+                tree_entry = self.projects[self.current_project]["tree_entry"]
+                for child_idx in range(tree_entry.childCount()):
+                    if name == tree_entry.child(child_idx).text(0):
+                        tree_entry.takeChild(child_idx)
+                        break
+
+                checkbox = self.projects[idx]["plots"][name]["checkbox"]
+
                 self.projects[idx]["plots"].pop(name) # Drops the entry from the dictionary
                 checkbox_idx = self.spectrum_view_layout.indexOf(checkbox)
                 delete_order = self.spectrum_view_layout.takeAt(checkbox_idx)
                 delete_order.widget().deleteLater()
+
+
 
     def export_roc(self):
         #TODO: Overhaul based on the later export function
@@ -816,6 +843,10 @@ class MSI_Visualizer(QMainWindow):
         # Populating the new project
         self.former_project = copy(self.current_project)
         self.current_project = self.file_tree.indexOfTopLevelItem(item)
+
+        if self.projects[self.current_project]["mass_range"] is None:
+            new_project_flag = True
+
         if not new_project_flag:
             self.data_cbbx.clear()
             self.clear_spectra("Former", "Total", False)
@@ -993,8 +1024,11 @@ class MSI_Visualizer(QMainWindow):
         local_csv.columns = range(len(local_csv.iloc[0, :]))
         local_csv = local_csv.iloc[:, roi_idx]
 
-        avg_spectrum = local_csv.drop(self.projects[self.current_project]["data_list"], axis=0).mean(
-                axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+        local_csv = local_csv.drop(self.projects[self.current_project]["data_list"], axis=0)
+        xvals = local_csv.index.values.to_numpy().astype("float64")
+        yvals = local_csv.mean(axis=1).astype("float64")
+        avg_spectrum = pd.DataFrame([xvals, yvals]).T
+
         self.plot_spectrum(roi_name, avg_spectrum[0], avg_spectrum[1], pg.mkPen(roi_colour, width=1), True, polygon)
 
         # Add children to the file tree for later cluster analysis
