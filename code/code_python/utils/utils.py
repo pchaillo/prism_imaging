@@ -34,6 +34,8 @@ def parse_imaging_file(filename):
                 file.drop("Data Type", inplace=True)
         elif extension == "parquet":
             file = pd.read_parquet(filename)
+            if "x" in file.columns:
+                file = file.T
             # Files exported through MatLab, as always, do not behave as expected. This is how to manage them:
             if "x" not in file.index:
                 file.columns = file.iloc[0, :]
