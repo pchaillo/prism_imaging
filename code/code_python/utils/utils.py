@@ -38,9 +38,11 @@ def parse_imaging_file(filename):
                 file = file.T
             # Files exported through MatLab, as always, do not behave as expected. This is how to manage them:
             if "x" not in file.index:
-                file.columns = file.iloc[0, :]
-                file.drop(0, inplace=True)
+                file.columns = range(len(file.columns))
+                if file.iloc[0,0] != "x":
+                    # Removes the first row if it is supposed to be column headers
+                    file.drop(0, axis=0, inplace=True)
                 file.index = file.iloc[:,0]
-                file.drop("Data Type", axis=1, inplace=True)
+                file.drop(0, axis=1, inplace=True)
                 file = file.astype(float)
         return file, extension
