@@ -404,7 +404,7 @@ class MSI_Visualizer(QMainWindow):
 
     def upload_action(self, *args):
         if args:
-            # Hijacks this function for ROI definition
+            # Hijacks this function for ROI definition, no longer used
             roi_name = args[0]
             temp_filename = self.projects[idx]["current_filename"].split(".")
             filename = f"{temp_filename[0]}-{roi_name}.{temp_filename[1]}"
@@ -413,6 +413,7 @@ class MSI_Visualizer(QMainWindow):
             filename = QFileDialog.getOpenFileName(self, "CSV File Selection", initial_dir,
                                                    "STORM-MSI File (*.csv *.parquet)")[0]
             if not filename:
+                print("error")
                 return
             filename = filename.replace("/", "\\")
 
@@ -421,10 +422,11 @@ class MSI_Visualizer(QMainWindow):
         else:
             # Finds the first unused index and uses it
             idx = max(self.projects.keys())+1
-            for i in range(max(self.projects.keys())):
-                if self.projects.get(idx) is None:
+            for i in range(max(self.projects.keys())+1):
+                if self.projects.get(i) is None:
                     idx = i
-                    return
+                    break
+
         self.create_project(idx)
 
         self.projects[idx]["current_filename"] = filename
@@ -459,6 +461,11 @@ class MSI_Visualizer(QMainWindow):
         data_list.append("m/Z")
         self.data_cbbx.clear()
         self.data_cbbx.addItems(data_list)
+
+        # Set TIC as default value, as it is more expressive than XYZ
+        if "TIC" in data_list:
+            tic_idx = data_list.index("TIC")
+            self.data_cbbx.setCurrentIndex(tic_idx)
 
     def create_project(self, idx):
         self.projects[idx] = {
@@ -741,7 +748,9 @@ class MSI_Visualizer(QMainWindow):
         # When Dict culling happens, completely remove items from memory
         if dict_culling:
             for name in target_ids:
-                self.topo_frag_view.scene().removeItem(self.projects[idx]["plots"][name]["polygon"])
+                polygon = self.projects[idx]["plots"][name]["polygon"]
+                if polygon is not None:
+                    self.topo_frag_view.scene().removeItem(polygon)
                 self.projects[idx]["plots"].pop(name) # Drops the entry from the dictionary
                 checkbox_idx = self.spectrum_view_layout.indexOf(checkbox)
                 delete_order = self.spectrum_view_layout.takeAt(checkbox_idx)
@@ -798,7 +807,6 @@ class MSI_Visualizer(QMainWindow):
 
         if item.parent() is not None or item == previous:
             # Filter only parent items
-            # Discard project creations
             return
 
         if self.current_project == self.file_tree.indexOfTopLevelItem(item):
@@ -813,7 +821,7 @@ class MSI_Visualizer(QMainWindow):
             self.clear_spectra("Former", "Total", False)
 
         if self.former_project == -1 or new_project_flag:
-            # Spots the initial project and new projects after that
+            # Spots the initial project and new projects thereafter
             return
         else:
             # Restore the data type list
@@ -822,6 +830,11 @@ class MSI_Visualizer(QMainWindow):
             for roi in self.projects[self.current_project]["roi_names"]:
                 local_list.append(roi)
             self.data_cbbx.addItems(local_list)
+            # Set TIC as default value, as it is more expressive than XYZ
+            if "TIC" in local_list:
+                tic_idx = local_list.index("TIC")
+                self.data_cbbx.setCurrentIndex(tic_idx)
+
             self.spectrum_widget.setLimits(xMin=self.projects[self.current_project]["mass_range"][0],
                                            xMax=self.projects[self.current_project]["mass_range"][1])
             self.spectrum_widget.setRange(xRange=(self.projects[self.current_project]["mass_range"][0],
@@ -831,9 +844,6 @@ class MSI_Visualizer(QMainWindow):
             for item in self.projects[self.current_project]["plots"].keys():
                 plot = self.projects[self.current_project]["plots"][item]["plot"]
                 self.spectrum_widget.addItem(plot)
-
-                #self.create_checkbox(item, plot) #TODO: This breaks with ROI checkboxes
-                # Alternative
                 self.projects[self.current_project]["plots"][item]["checkbox"].setVisible(True)
             # Update plots
             if self.projects[self.current_project]["svg"] is not None:
