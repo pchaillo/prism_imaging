@@ -519,7 +519,7 @@ class MSI_Visualizer(QMainWindow):
         self.projects[self.current_project]["mass_range"] = [xvals.min(),xvals.max()]
 
     def on_dtype_selection(self):
-        if self.data_cbbx.currentText() == "":
+        if self.data_cbbx.currentText() == "" or self.file_tree.topLevelItemCount() == 0:
             return
         if self.data_cbbx.currentText() != "m/Z":
             self.tolerance_spnbx.setEnabled(False)
@@ -598,7 +598,12 @@ class MSI_Visualizer(QMainWindow):
             self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
             self.projects[self.current_project]["viewbox"] = viewbox
             if clustering_flag:
-                # Displays average spectra found from clustering
+                if roi_mask is not None:
+
+                    self.projects[self.current_project]["plots"][roi]["clusters"] = clustering_lbls
+                else:
+                    self.projects[self.current_project]["clusters"] = clustering_lbls
+                # Display average spectra found from clustering
                 self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, False)
 
     def update_svg(self, picture, viewbox):
@@ -656,7 +661,12 @@ class MSI_Visualizer(QMainWindow):
             plot_name_prefix = "Cluster"
         # Plot the average spectrum of each cluster
         for idx, label in enumerate(np.unique(clustering_lbls)):
-            avg_spectrum = global_data[label].mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+            parsed_data = global_data[label]
+            if type(parsed_data) == pd.Series:
+                # In cases where clusters are made of a single pixel
+                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data]).T.astype("float64")
+            else:
+                avg_spectrum = parsed_data.mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
             self.plot_spectrum(f"{plot_name_prefix}_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
             # Add children to the file tree for later cluster analysis
             child = QTreeWidgetItem({f"{plot_name_prefix}_{label}":[]})
@@ -781,8 +791,6 @@ class MSI_Visualizer(QMainWindow):
                 delete_order = self.spectrum_view_layout.takeAt(checkbox_idx)
                 delete_order.widget().deleteLater()
 
-
-
     def export_roc(self):
         #TODO: Overhaul based on the later export function
         if not self.projects[self.current_project]["plots"]:
@@ -901,7 +909,8 @@ class MSI_Visualizer(QMainWindow):
                         if child.checkState(1) == Qt.Checked:
                             # Add to list
                             label = child.text(0)
-                            roi_name = f"{project.text(0)}_{label}"
+                            roi_name = f"{project.text(0)}/{label}"
+                            cluster_idx = None
                             if "Cluster" in label:
                                 # Clusters derived from k-means
                                 # roi_cluster = self.projects[idx]["clusters"]
@@ -921,13 +930,26 @@ class MSI_Visualizer(QMainWindow):
         cluster_data_dict = {}
 
         for key in clusters.keys():
-            project_filename = key.split(".csv_Cluster_")[0]
-            project_roi = key.split(".csv_")[1]
+            project_filename = key.split(".")[0]
+            project_roi = key.split("/")[-1]
+            project_subregion = None
+            full_region = None
+
             if "Cluster" in project_roi:
-                project_roi_idx = int(project_roi.split("_")[1])
+                project_roi_idx = int(project_roi.split("_")[-1])
+                full_region = False
             else:
                 # Custom region, the following logic will be part of the region's definition
                 project_roi_idx = 1
+
+            # Find clusters from a sub-region
+            if "-" in project_roi:
+                project_subregion = project_roi.split("-")[0]
+                full_region = False
+
+            if full_region is None:
+                # If full_region was not defined beforehand, conditions have been met for it to be true
+                full_region = True
 
             project_idx = None
 
@@ -941,9 +963,15 @@ class MSI_Visualizer(QMainWindow):
                                                    f"Reported Name: {key}")
                 return
             else:
-                data_clusters = self.projects[project_idx]["clusters"]
-                # Find indices of values of interest in the CSV
-                data_indices = np.where(data_clusters == project_roi_idx)[0]
+                if full_region:
+                    data_indices = self.projects[project_idx]["plots"][project_roi]["mask"]
+                else:
+                    if project_subregion:
+                        data_clusters = self.projects[project_idx]["plots"][project_subregion]["clusters"]
+                    else:
+                        data_clusters = self.projects[project_idx]["clusters"]
+                    # Find indices of values of interest in the CSV
+                    data_indices = np.where(data_clusters == project_roi_idx)[0]
                 sorted_data = self.projects[project_idx]["full_csv"].iloc[:, data_indices]
                 sorted_data.columns = range(len(sorted_data.columns))
 
@@ -1042,6 +1070,7 @@ class MSI_Visualizer(QMainWindow):
         self.projects[self.current_project]["plots"][roi_name]["colour"] = roi_colour
         mask_range = range(len(self.projects[self.current_project]["full_csv"].columns))
         self.projects[self.current_project]["plots"][roi_name]["mask"] = [i in roi_idx for i in mask_range]
+        self.projects[self.current_project]["plots"][roi_name]["clusters"] = None # Stores clustering information for regions separately from global clustering
         self.projects[self.current_project]["roi_names"].append(roi_name)
         self.data_cbbx.addItem(roi_name)
         self.topo_frag_view.roi_drawn.disconnect()

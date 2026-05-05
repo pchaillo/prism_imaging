@@ -51,7 +51,7 @@ class GlobalRocDisplay(QMainWindow):
         self.roc_spectrum_widget = pg.PlotWidget()
         self.roc_spectrum_widget.setLabel('bottom', 'm/Z')
         self.roc_spectrum_widget.setLabel('left', 'Intensity (A.U.)')
-        self.roc_spectrum_widget.setLimits(xMin=0, yMin=0, yMax=1)
+        self.roc_spectrum_widget.setLimits(xMin=0, yMin=-0.1, yMax=1.1)
 
         # Build the final layout
         main_layout.addWidget(self.roc_spectrum_widget)
@@ -73,4 +73,6 @@ class GlobalRocDisplay(QMainWindow):
         plot = pg.PlotDataItem(mz, self.roc_auc["ROC Score"].astype(float), pen=pg.mkPen(color="b", width=1))
 
         self.roc_spectrum_widget.addItem(plot)
-        self.roc_spectrum_widget.setRange(xRange(mz.min(), mz.max()), yRange=(0, 1), padding=0.1)
+        self.roc_spectrum_widget.setRange(xRange=(mz.min(), mz.max()), yRange=(0, 1), padding=0.1)
+        self.roc_spectrum_widget.setLimits(xMin=mz.min(), xMax=mz.max(), yMin=-0.1, yMax=1.1)
+
