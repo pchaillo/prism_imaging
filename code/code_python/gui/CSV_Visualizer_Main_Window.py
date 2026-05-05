@@ -16,11 +16,13 @@ from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDial
                                QMessageBox,  QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
                                QVBoxLayout, QWidget)
 from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QTimer, Signal
-from PySide6.QtGui import QPainter, QPainterPath, QPen, QPixmap, QPolygonF
+from PySide6.QtGui import QIcon, QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
 import pyqtgraph as pg
 from qtawesome import icon
+from superqt import QLabeledDoubleRangeSlider
+
 from CSV_Visualizer_ROC_Window import GlobalRocPanel
 from CSV_Visualizer_ROC_Display_Popup import GlobalRocDisplay
 from utils import parse_imaging_file
@@ -130,10 +132,11 @@ class MSI_Visualizer(QMainWindow):
         # Initialize default values
         ## Class-wide interface values
         self.central_mz = None
-        self.clustering = None
+        self.clustering = False
         self.cluster_nb = None
         self.former_project = None # Temporarily stores the old project's name for deletion purposes
         self.current_project = None  # Stores project index, for the project dictionary
+        self.cutoff_percentiles = None
         self.gradient_name = None
         self.global_roc_display = None
         self.itp_type = None
@@ -141,7 +144,7 @@ class MSI_Visualizer(QMainWindow):
         self.projects= {} # Stores project values
         self.roc_panel = None
         self.selected_dtype = None
-        self.smoothing = None  # If True, Gaussian smoothing is applied to the image
+        self.smoothing = False  # If True, Gaussian smoothing is applied to the image
         self.smoothing_sigma = None  # Standard deviation of smoothed values, higher increases the smoothing
         self.tolerance = None
         #TODO: Add clipping here
@@ -233,12 +236,10 @@ class MSI_Visualizer(QMainWindow):
         tolerance_layout.addWidget(self.tolerance_spnbx)
         ##
 
-        self.gradient_cbbx = QComboBox()
-        self.gradient_cbbx.setEditable(False)
-        self.gradient_cbbx.addItems(list(self.colours_dict.keys()))
-
         self.interp_lbl = QLabel("Interpolation: x1")
 
+        self.interp_widget = QWidget()
+        self.interp_layout = QHBoxLayout(self.interp_widget)
         self.interp_slider = QSlider(Qt.Horizontal)
         self.interp_slider.setMinimum(1)
         self.interp_slider.setMaximum(10)
@@ -251,11 +252,18 @@ class MSI_Visualizer(QMainWindow):
         self.interp_cbbx.setEditable(False)
         self.interp_cbbx.addItems(list(self.interp_dict.keys()))
 
+        self.interp_layout.addWidget(self.interp_slider)
+        self.interp_layout.addWidget(self.interp_cbbx)
+
         # Create a subwidget for clustering
         clustering_widget = QWidget()
         clustering_layout = QHBoxLayout(clustering_widget)
 
-        self.clustering_chkbx = QCheckBox("Clustering")
+        self.clustering_chkbx = QPushButton()
+        self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-off.svg")))
+        self.clustering_chkbx.setFixedWidth(30)
+        self.clustering_chkbx.clicked.connect(self.toggle_clustering)
+        #self.clustering_chkbx = QCheckBox("Clustering")
         self.clustering_chkbx.setToolTip("Performs clustering on the entire image")
 
         self.cluster_nb_spnbx = QDoubleSpinBox()
@@ -273,7 +281,13 @@ class MSI_Visualizer(QMainWindow):
         smoothing_widget = QWidget()
         smoothing_layout = QHBoxLayout(smoothing_widget)
 
-        self.smoothing_chkbx = QCheckBox("Smoothing")
+        self.smoothing_chkbx = QPushButton()
+        self.smoothing_chkbx.setIcon(QIcon(QPixmap("resources\\smoothing-off.svg")))
+        self.smoothing_chkbx.setFixedWidth(30)
+        self.smoothing_chkbx.clicked.connect(self.toggle_smoothing)
+
+        #self.smoothing_chkbx = QCheckBox("Smoothing")
+        #self.smoothing_chkbx.setIcon(QIcon(QPixmap(r"C:\Users\Adel\Documents\PRISM\OBJ Conversion\resources\Smoothing.png")))
         self.smoothing_chkbx.setToolTip("Adds Gaussian Smoothing to the data\nto preserve features as much as possible.")
 
         self.smoothing_sigma_field = QDoubleSpinBox()
@@ -281,23 +295,42 @@ class MSI_Visualizer(QMainWindow):
         self.smoothing_sigma_field.setValue(0.3)
         self.smoothing_sigma_field.setSingleStep(0.1)
         self.smoothing_sigma_field.setSuffix(" Sigma")
+        self.smoothing_sigma_field.setEnabled(False)
         smoothing_layout.addWidget(self.smoothing_chkbx)
         smoothing_layout.addWidget(self.smoothing_sigma_field)
+
+        self.min_max_threshold_widget = QWidget()
+        min_max_threshold_layout = QHBoxLayout(self.min_max_threshold_widget)
+        min_max_threshold_label = QLabel("Intensity Cutoffs")
+        self.min_max_threshold_dbsldr = QLabeledDoubleRangeSlider(Qt.Orientation.Horizontal)
+        self.min_max_threshold_dbsldr.setRange(0, 100)
+        self.min_max_threshold_dbsldr.setSingleStep(1)
+        self.min_max_threshold_dbsldr.setDecimals(0)
+        self.min_max_threshold_dbsldr.setValue((0, 95))
+        min_max_threshold_layout.addWidget(min_max_threshold_label)
+        min_max_threshold_layout.addWidget(self.min_max_threshold_dbsldr)
+
+        self.gradient_update_widget = QWidget()
+        self.gradient_update_layout = QHBoxLayout(self.gradient_update_widget)
+        self.gradient_cbbx = QComboBox()
+        self.gradient_cbbx.setEditable(False)
+        self.gradient_cbbx.addItems(list(self.colours_dict.keys()))
 
         update_btn = QPushButton("Update")
         update_btn.setIcon(icon("ei.refresh"))
         update_btn.clicked.connect(self.forceUpdate)
+        self.gradient_update_layout.addWidget(self.gradient_cbbx)
+        self.gradient_update_layout.addWidget(update_btn)
 
         # Populate the settings widget
         settings_layout.addWidget(load_widget)
         settings_layout.addWidget(tolerance_widget)
-        settings_layout.addWidget(self.gradient_cbbx)
         settings_layout.addWidget(self.interp_lbl)
-        settings_layout.addWidget(self.interp_slider)
-        settings_layout.addWidget(self.interp_cbbx)
+        settings_layout.addWidget(self.interp_widget)
         settings_layout.addWidget(clustering_widget)
         settings_layout.addWidget(smoothing_widget)
-        settings_layout.addWidget(update_btn)
+        settings_layout.addWidget(self.min_max_threshold_widget)
+        settings_layout.addWidget(self.gradient_update_widget)
 
         # Create an analysis widget
         analysis_widget = QGroupBox("Analysis")
@@ -410,6 +443,28 @@ class MSI_Visualizer(QMainWindow):
 
         # Connect Click event
         self.spectrum_widget.scene().sigMouseClicked.connect(self.on_mouse_clicked)
+
+    def toggle_smoothing(self):
+        if self.smoothing:
+            self.smoothing = False
+            self.smoothing_sigma_field.setEnabled(False)
+            self.smoothing_chkbx.setIcon(QIcon(QPixmap("resources\\smoothing-off.svg")))
+
+        else:
+            self.smoothing = True
+            self.smoothing_sigma_field.setEnabled(True)
+            self.smoothing_chkbx.setIcon(QIcon(QPixmap("resources\\smoothing-on.svg")))
+
+    def toggle_clustering(self):
+        if self.clustering:
+            self.clustering = False
+            self.cluster_nb_spnbx.setEnabled(False)
+            self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-off.svg")))
+
+        else:
+            self.clustering = True
+            self.cluster_nb_spnbx.setEnabled(True)
+            self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-on.svg")))
 
     def upload_action(self, *args):
         if args:
@@ -548,23 +603,24 @@ class MSI_Visualizer(QMainWindow):
         self.gradient_name = self.gradient_cbbx.currentText()
         self.itp_factor = self.interp_slider.value()
         self.itp_type = self.interp_slider.value()
-        self.clustering = self.clustering_chkbx.isChecked()
+        #self.clustering = self.clustering_chkbx.isChecked()
         self.cluster_nb = int(self.cluster_nb_spnbx.value())
         self.main_cluster = int(self.roc_main_cluster_spnbx.value())
         self.selected_dtype = self.data_cbbx.currentText()
-        self.smoothing = self.smoothing_chkbx.isChecked()
+        #self.smoothing = self.smoothing_chkbx.isChecked()
         self.smoothing_sigma = self.smoothing_sigma_field.value()
         self.tolerance = self.tolerance_spnbx.value()
+        self.cutoff_percentiles = [int(i) for i in self.min_max_threshold_dbsldr.value()]
 
     def render_msi(self, origin):
-        # TODO: Implement an overlay with key information, like the colour scale
         if not self.central_mz and self.selected_dtype == "m/Z":
             # Duplicate with the forceUpdate function, but fails silently instead
             return
+
         # Recover certain variables prior to function call
         clustering_flag = self.clustering
         csv = self.projects[self.current_project]["full_csv"]
-        cutoff_percentiles = [0, 100]  # TODO: Put this back in the interface
+        cutoff_percentiles = self.cutoff_percentiles
         gradient = self.colours_dict.get(self.gradient_name)
         roc_flag = False
         roi_mask = None
