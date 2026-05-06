@@ -49,14 +49,14 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
 
 
 def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale , save=False):
-    bar_width = 2000
+    bar_width = 1200
     bar_height = 100
-    padding_x = 500
+    padding_x = 800
     padding_x_offset = 100 # Gives leeway for annotations to extend away from the image
     padding_y = 250
     txt_y_padding = 100
     alpha = 50
-    font_size = 100
+    font_size = 80
 
     scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4)) # That +10 is a workaround to fully
     # retain the rightmost extremity if a higher threshold is applied
@@ -96,47 +96,69 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
     # font = ImageFont.truetype(font="Agency FB", size=10)
 
     if min_cutoff != intensities_min:
-        scale_legend.text((padding_x_offset, txt_y_padding), f"{round(intensities_min*100/max_cutoff)}%", font_size=font_size, anchor="ms")
+        # Minimum Absolute Intensity
+        scale_legend.text((padding_x_offset, txt_y_padding), f"{intensities_min}%", font_size=font_size, anchor="ls")
+        # Minimum Cutoff
+        scale_legend.text((padding_x / 2 + 100, txt_y_padding), f"{min_cutoff}%", font_size=font_size, anchor="rs")
+        # Padding lines
         scale_legend.line(
-            xy=[(padding_x / 2, (bar_height + padding_y) / 2), ((padding_x / 2) - 30, (bar_height + padding_y) / 2)],
+            xy=[(padding_x / 2, (bar_height + padding_y) / 2), ((padding_x / 2) - 50, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[((padding_x / 2) - 40, (bar_height + padding_y) / 2),
-                ((padding_x / 2) - 70, (bar_height + padding_y) / 2)],
+            xy=[((padding_x / 2) - 70, (bar_height + padding_y) / 2),
+                ((padding_x / 2) - 120, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[((padding_x / 2) - 80, (bar_height + padding_y) / 2),
-                ((padding_x / 2) - 110, (bar_height + padding_y) / 2)],
+            xy=[((padding_x / 2) - 140, (bar_height + padding_y) / 2),
+                ((padding_x / 2) - 190, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[((padding_x / 2) - 120, (bar_height + padding_y) / 2),
-                ((padding_x / 2) - 150, (bar_height + padding_y) / 2)],
+            xy=[((padding_x / 2) - 210, (bar_height + padding_y) / 2),
+                ((padding_x / 2) - 260, (bar_height + padding_y) / 2)],
+            width=5)
+        scale_legend.line(
+            xy=[((padding_x / 2) - 280, (bar_height + padding_y) / 2),
+                ((padding_x / 2) - 300, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(xy=[(padding_x_offset, bar_height + padding_y / 2), (padding_x_offset, (padding_y / 2) - 5)],
                           width=5)
+    else:
+        scale_legend.text((padding_x / 2 + 50, txt_y_padding), f"{intensities_min}%", font_size=font_size, anchor="rs")
+
     if max_cutoff != intensities_max:
-        scale_legend.text((bar_width + padding_x - padding_x_offset, txt_y_padding), f"{round(intensities_max*100/max_cutoff)}%",
-                          font_size=font_size, anchor="ms")
+        # Maximum Absolute Intensity
+        scale_legend.text((bar_width + padding_x - padding_x_offset, txt_y_padding), f"{intensities_max}%",
+                          font_size=font_size, anchor="rs")
+        # Maximum Cutoff
+        scale_legend.text((bar_width + padding_x / 2 - 100, txt_y_padding), f"{max_cutoff}%", font_size=font_size,
+                          anchor="ls")
+        # Padding lines
         scale_legend.line(
             xy=[(bar_width + padding_x / 2, (bar_height + padding_y) / 2),
-                (bar_width + (padding_x / 2) + 30, (bar_height + padding_y) / 2)],
+                (bar_width + (padding_x / 2) + 50, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[(bar_width + (padding_x / 2) + 40, (bar_height + padding_y) / 2),
-                (bar_width + (padding_x / 2) + 70, (bar_height + padding_y) / 2)],
+            xy=[(bar_width + (padding_x / 2) + 70, (bar_height + padding_y) / 2),
+                (bar_width + (padding_x / 2) + 120, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[(bar_width + (padding_x / 2) + 80, (bar_height + padding_y) / 2),
-                (bar_width + (padding_x / 2) + 110, (bar_height + padding_y) / 2)],
+            xy=[(bar_width + (padding_x / 2) + 140, (bar_height + padding_y) / 2),
+                (bar_width + (padding_x / 2) + 190, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(
-            xy=[(bar_width + (padding_x / 2) + 120, (bar_height + padding_y) / 2),
-                (bar_width + (padding_x / 2) + 150, (bar_height + padding_y) / 2)],
+            xy=[(bar_width + (padding_x / 2) + 210, (bar_height + padding_y) / 2),
+                (bar_width + (padding_x / 2) + 260, (bar_height + padding_y) / 2)],
+            width=5)
+        scale_legend.line(
+            xy=[(bar_width + (padding_x / 2) + 280, (bar_height + padding_y) / 2),
+                (bar_width + (padding_x / 2) + 300, (bar_height + padding_y) / 2)],
             width=5)
         scale_legend.line(xy=[(bar_width + padding_x - padding_x_offset, bar_height + padding_y / 2),
                               (bar_width + padding_x - padding_x_offset, (padding_y / 2) - 5)], width=5)
-    scale_legend.text((padding_x / 2, txt_y_padding), f"{round(min_cutoff*100/max_cutoff)}%", font_size=font_size, anchor="ms")
-    scale_legend.text((bar_width + padding_x / 2, txt_y_padding), f"{round(max_cutoff*100/max_cutoff)}%", font_size=font_size, anchor="ms")
+    else:
+        scale_legend.text((bar_width + padding_x / 2 - 50, txt_y_padding), f"{intensities_max}%", font_size=font_size,
+                          anchor="ls")
+
 
     scale_legend.line(xy=[(padding_x / 2, bar_height + padding_y / 2), (padding_x / 2, (padding_y / 2) - 5)], width=5)
     scale_legend.line(
