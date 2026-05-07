@@ -57,6 +57,7 @@ class GlobalRocPanel(QMainWindow):
     def __init__(self, checked_rois):
         super().__init__()
         self.setWindowTitle("STORM-MSI Visualizer - Global ROC Panel")
+        self.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
         self.setWindowState(Qt.WindowState.WindowActive)
 
         # Create a class variable for clusters

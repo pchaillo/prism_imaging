@@ -71,6 +71,18 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         pattern = "[0-9]"
         columns_list = [col for col in full_csv.columns if not re.search(pattern, col)]
         input_data = full_csv.drop(columns_list, axis=1)
+
+        if smoothing_flag:
+            # Try smoothing the data before clustering
+            w, h, d = [len(full_csv["x"].unique()), len(full_csv["y"].unique()), len(input_data.columns)]
+            input_cube = np.zeros((w, h, d))
+            for width in range(w):
+                for height in range(h):
+                    idx = width * height + height
+                    input_cube[width, height, :] = input_data.iloc[idx, :].values
+            smoothed_cube = gaussian_filter(input_cube, sigma=(smoothing_sigma, smoothing_sigma, 0))
+            input_data = pd.DataFrame(smoothed_cube.reshape(-1, d), columns=input_data.columns, index=input_data.index)
+
         full_length = len(input_data)
         if roi_mask:
             # Second round of trimming if an ROI was specified
@@ -181,6 +193,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         intensities = ovspcoords[:, 3]
         ovspcoords = ovspcoords[:, :3]
 
+
     # MS intensities extraction
     else:
         intensities = coordsfinal.iloc[:, 3]
@@ -202,9 +215,9 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     else:
         min_cutoff = np.percentile(itstlst, cutoff_percentiles[0])
     for i in itstlst:
-        if i >= int(max_cutoff):
+        if i >= int(max_cutoff) and not clustering_flag:
             hue = col(1)
-        elif i <= int(min_cutoff):
+        elif i <= int(min_cutoff) and not clustering_flag:
             hue = col(0)
         else:
             scaled_value = (i - min_cutoff)/(max_cutoff - min_cutoff)
@@ -228,6 +241,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     coordsfinal.reset_index(inplace=True, drop=True)
     for y in range(h):
         for x in range(w):
+            #TODO: Using coordsfinal breaks interpolation. A switch to ovspcoords must happen soon.
             if coordsfinal.loc[idx, "data"] == -1 and roi_mask:
                 opacity = 0
             else:
@@ -248,10 +262,10 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     # that at some point.
     scale = generate_scale(name="",
                            gradient=col,
-                           intensities_min=round(min(intensities)),
-                           intensities_max=round(max(intensities)),
-                           min_cutoff=min_cutoff,
-                           max_cutoff=max_cutoff,
+                           intensities_min=0,
+                           intensities_max=100,
+                           min_cutoff=cutoff_percentiles[0],
+                           max_cutoff=cutoff_percentiles[1],
                            export_path_scale="",
                            save=False)
 

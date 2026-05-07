@@ -127,11 +127,13 @@ class MSI_Visualizer(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("STORM-MSI Visualizer")
+        self.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
         self.setWindowState(Qt.WindowMaximized)
 
         # Initialize default values
         ## Class-wide interface values
         self.central_mz = None
+        self.central_mz_region = None
         self.clustering = False
         self.cluster_nb = None
         self.former_project = None # Temporarily stores the old project's name for deletion purposes
@@ -292,7 +294,7 @@ class MSI_Visualizer(QMainWindow):
 
         self.smoothing_sigma_field = QDoubleSpinBox()
         self.smoothing_sigma_field.setRange(0, 100)
-        self.smoothing_sigma_field.setValue(0.3)
+        self.smoothing_sigma_field.setValue(0.6)
         self.smoothing_sigma_field.setSingleStep(0.1)
         self.smoothing_sigma_field.setSuffix(" Sigma")
         self.smoothing_sigma_field.setEnabled(False)
@@ -307,6 +309,10 @@ class MSI_Visualizer(QMainWindow):
         self.min_max_threshold_dbsldr.setSingleStep(1)
         self.min_max_threshold_dbsldr.setDecimals(0)
         self.min_max_threshold_dbsldr.setValue((0, 95))
+        self.min_max_threshold_dbsldr.setBarMovesAllHandles(False)
+        self.min_max_threshold_dbsldr._min_label.setReadOnly(True)
+        self.min_max_threshold_dbsldr._max_label.setReadOnly(True)
+
         min_max_threshold_layout.addWidget(min_max_threshold_label)
         min_max_threshold_layout.addWidget(self.min_max_threshold_dbsldr)
 
@@ -315,6 +321,12 @@ class MSI_Visualizer(QMainWindow):
         self.gradient_cbbx = QComboBox()
         self.gradient_cbbx.setEditable(False)
         self.gradient_cbbx.addItems(list(self.colours_dict.keys()))
+
+        # Set Viridis as default gradient, as it seems to be the most pleasing
+        if "Viridis" in self.colours_dict.keys():
+            viridis_idx = list(self.colours_dict.keys()).index("Viridis")
+            viridis_idx = list(self.colours_dict.keys()).index("Viridis")
+            self.gradient_cbbx.setCurrentIndex(viridis_idx)
 
         update_btn = QPushButton("Update")
         update_btn.setIcon(icon("ei.refresh"))
@@ -540,7 +552,6 @@ class MSI_Visualizer(QMainWindow):
             "mass_range":None,
             "plots":{},
             "roi_names":[],
-            "region":None,
             "svg":None,
             "tree_entry":None,
             "viewbox":None
@@ -592,17 +603,17 @@ class MSI_Visualizer(QMainWindow):
                 self.central_mz = x
 
                 self.get_settings()
-                self.spectrum_widget.removeItem(self.projects[self.current_project]["region"])
-                self.projects[self.current_project]["region"]  = pg.LinearRegionItem(values=(x-self.tolerance, x+self.tolerance), orientation="vertical", brush=pg.mkBrush(color=(255, 0, 0, 100)))
+                self.spectrum_widget.removeItem(self.central_mz_region)
+                self.central_mz_region  = pg.LinearRegionItem(values=(x-self.tolerance, x+self.tolerance), orientation="vertical", brush=pg.mkBrush(color=(255, 0, 0, 100)))
                 # Note: The region needs to be made persistent to be removable without clearing the full widget
-                self.spectrum_widget.addItem(self.projects[self.current_project]["region"])
+                self.spectrum_widget.addItem(self.central_mz_region)
 
                 self.render_msi("m/Z_Selection")
 
     def get_settings(self):
         self.gradient_name = self.gradient_cbbx.currentText()
         self.itp_factor = self.interp_slider.value()
-        self.itp_type = self.interp_slider.value()
+        self.itp_type = self.interp_dict.get(self.interp_cbbx.currentText())
         #self.clustering = self.clustering_chkbx.isChecked()
         self.cluster_nb = int(self.cluster_nb_spnbx.value())
         self.main_cluster = int(self.roc_main_cluster_spnbx.value())
