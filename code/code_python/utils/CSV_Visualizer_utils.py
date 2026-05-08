@@ -2,6 +2,8 @@ from copy import copy
 
 import PySide6.QtWidgets
 from coloraide import Color
+from functools import partial
+from multiprocessing import Pool
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -9,10 +11,11 @@ import re
 from scipy import interpolate
 from scipy.ndimage import gaussian_filter
 from PLY_ColourScale_Headless import generate_scale
+from snr_compute import noise_estimation_ms
 
-def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
+def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
                 cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, main_cluster,
-                roc_flag, roi_mask):
+                roc_flag, roi_mask, noise_thresholding, thresholds=None):
     """
     Converts selected parts of the CSV file into an images
     :param filename: Full path (including name and extension) to the CSV file
@@ -33,9 +36,9 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     :param roi_mask: Sequential list that retrieves pixels found in the ROI
     :return: An SVG file of the image, to be displayed in the interface, several helper values
     """
+    worker.updateProgress.emit("Recovering File Dimensions")
 
-    full_csv = full_csv.transpose()
-    full_csv = full_csv.astype(float)
+    full_csv = full_csv.transpose().astype(float)
 
     # Dimensions recovery, necessary for CSV files
     yvals = full_csv.iloc[:, 0].drop_duplicates()
@@ -44,6 +47,37 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     xvals = full_csv.iloc[:, 1].drop_duplicates()
     xvals = xvals.shape[0]  # Number of acquired pixels in the X axis
+    
+    #TODO: Make more concise
+    # Estimate the number of steps for each workflow
+    # Dimensions recovery - 1
+    total_steps = 1
+    if clustering_flag:
+        # Preprocessing - 1 / Clustering Proper - 1
+        total_steps += 2
+        if smoothing_flag:
+            # Smoothing - Data Cube Creation - 1 per pixel / Gaussian Filtering - 1
+            total_steps += (xvals * yvals) + 1
+        if noise_thresholding:
+            if not thresholds:
+                # Per-pixel thresholding
+                total_steps += xvals * yvals
+            # DataFrame rebuilding
+            total_steps += 1
+        if roi_mask:
+            # ROI masking
+            total_steps += 1
+        if roc_flag:
+            total_steps += len(full_csv.colums)
+    else:
+        # Recovery of the portion of interest
+        total_steps += 1
+    if smoothing_flag and not clustering_flag:
+        # Easier smoothing
+        total_steps += 1
+    # Assembling coordinates, interpolating colours, creating the SVG and the colour scale
+    total_steps += 4
+    worker.updateProgressMax.emit(total_steps)
 
     if itp_factor == 1:
         dimX = xvals
@@ -67,6 +101,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     if clustering_flag:
         from sklearn.cluster import KMeans
+        worker.updateProgress.emit("Preprocessing for Clustering")
         # Only retains non-mz entries
         pattern = "[0-9]"
         columns_list = [col for col in full_csv.columns if not re.search(pattern, col)]
@@ -75,19 +110,44 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         if smoothing_flag:
             # Try smoothing the data before clustering
             w, h, d = [len(full_csv["x"].unique()), len(full_csv["y"].unique()), len(input_data.columns)]
+            total = w*h
             input_cube = np.zeros((w, h, d))
             for width in range(w):
                 for height in range(h):
                     idx = width * height + height
                     input_cube[width, height, :] = input_data.iloc[idx, :].values
+                    worker.updateProgress.emit(f"Preparing Full-File Smoothing: {idx}/{total}")
+            worker.updateProgress.emit("Gaussian Filtering")
             smoothed_cube = gaussian_filter(input_cube, sigma=(smoothing_sigma, smoothing_sigma, 0))
             input_data = pd.DataFrame(smoothed_cube.reshape(-1, d), columns=input_data.columns, index=input_data.index)
 
+        #TODO: Do we normalize internally before clustering? Note that we already normalize on TIC. If so, we would
+        # ensure that clustering is performed only based on spectral profile rather than intensity, but intensity
+        # should already be accounted for by normalization, so maybe this is redundant? Ponder this.
         full_length = len(input_data)
+
+        # Perform noise thresholding if enabled
+        if noise_thresholding:
+            if not thresholds:
+                thresholds = np.zeros(len(input_data.index))
+                pool = Pool()
+
+                indices = input_data.index.values
+
+                partial_func = partial(noise_estimation_wrapper, input_data=input_data)
+                for result in pool.imap_unordered(partial_func, indices, chunksize=20):
+                    worker.updateProgress.emit(f"Computing Signal Thresholds: {result[1]}/{vertices}")
+                    thresholds[result[1]-1] = result[0]
+
+            threshold_mask = input_data.T >= thresholds
+            input_data[threshold_mask.T] = 0
+
         if roi_mask:
+            worker.updateProgress.emit("Parsing ROI")
             # Second round of trimming if an ROI was specified
             input_data = input_data[roi_mask]
 
+        worker.updateProgress.emit("Performing Clustering")
         kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
 
         # Fit the full dataset
@@ -97,22 +157,26 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         # Now accomodates masking properly
         # Modify the clustering to include -1 values for proper padding
         # Those -1 entries will be transparent on the final SVG
+        coordsfinal["data"] = -1
         coordsfinal.loc[input_data.index, "data"] = clustering_labels
-        coordsfinal.fillna({"data":-1}, inplace=True)
 
-        # Test ROC analysis
-        roc_aucs = []
-        y_true = clustering_labels[clustering_labels == main_cluster]
+        # ROC analysis
         if roc_flag:
             from sklearn.metrics import roc_auc_score
+            roc_aucs = []
+            y_true = clustering_labels[clustering_labels == main_cluster]
+            total_length = len(input_data)
             for idx, _ in enumerate(input_data):
-                auc = roc_auc_score(clustering_labels, input_data.iloc[:, idx], average="weighted")
+                worker.updateProgress.emit(f"Computing ROC Scores: {idx}/{total_length}")
+                auc = roc_auc_score(y_true, input_data.iloc[:, idx], average="weighted")
                 roc_aucs.append(auc)
 
     elif data_type != "m/Z":
+        worker.updateProgress.emit("Grabbing Data")
         coordsfinal["data"] = full_csv[data_type]
 
     else:
+        worker.updateProgress.emit("Recovering m/Z window")
         mz_min = main_mz - tolerance
         mz_max = main_mz + tolerance
 
@@ -140,6 +204,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
 
     # Gaussian Smoothing
     if smoothing_flag and not clustering_flag:
+        worker.updateProgress.emit("Smoothing Selected Data")
         preprocessed_coords = coordsfinal.pivot_table(index="x", columns="y", values="data")
         coordinates_smoothed = gaussian_filter(preprocessed_coords, sigma=smoothing_sigma)
         coordsfinal["data"] = coordinates_smoothed.ravel()
@@ -200,6 +265,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         ovspcoords = coordsfinal.iloc[:, :3]
         ovspcoords = ovspcoords.to_numpy()
 
+    worker.updateProgress.emit("Interpolating Colour Values")
     imax = max(intensities)
     itstlst = [i for i in intensities]
 
@@ -231,7 +297,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
         cluster_colours = [colour for colour in np.unique(colours, axis=0)]
 
     # SVG Creation and Exportation
-
+    worker.updateProgress.emit("Creating SVG visual")
     colours_export = colours.reshape((int(dimY), int(dimX), 3))
 
     h, w, _ = colours_export.shape
@@ -260,6 +326,7 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
     # Create the colour scale:
     # Note: Path names are optional since this function call does not save anything. Will update arguments to reflect
     # that at some point.
+    worker.updateProgress.emit("Generating Colour Scale")
     scale = generate_scale(name="",
                            gradient=col,
                            intensities_min=0,
@@ -267,14 +334,21 @@ def process_csv(filename, full_csv, data_type, main_mz, tolerance, itp_factor, i
                            min_cutoff=cutoff_percentiles[0],
                            max_cutoff=cutoff_percentiles[1],
                            export_path_scale="",
-                           save=False)
+                           save=False,
+                           central_mz=main_mz,
+                           tolerance=tolerance)
 
     if roc_flag:
-        return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours, scale
+        return msi_svg, viewbox, roc_aucs, clustering_labels, cluster_colours, scale, thresholds
     elif clustering_flag:
-        return msi_svg, viewbox, None, clustering_labels, cluster_colours, scale
+        return msi_svg, viewbox, None, clustering_labels, cluster_colours, scale, thresholds
     else:
-        return msi_svg, viewbox, None, None, None, scale
+        return msi_svg, viewbox, None, None, None, scale, thresholds
+
+def noise_estimation_wrapper(spectrum_idx, input_data):
+    local_spectrum = input_data.loc[spectrum_idx, :]
+    threshold = noise_estimation_ms(local_spectrum, False)
+    return [threshold, spectrum_idx]
 
 def cross_project_roc(cluster_data_dict):
     from sklearn.metrics import roc_auc_score
@@ -285,6 +359,9 @@ def cross_project_roc(cluster_data_dict):
     for key in cluster_data_dict:
         # Concatenate labels
         cluster_data = cluster_data_dict[key]["data"]
+        intensity_max = cluster_data.max().max()
+        # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
+        cluster_data = (cluster_data/intensity_max)*100000
         full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.iloc[0,:]))
         full_data_list.append(cluster_data)
     full_data = pd.concat(full_data_list, axis=1, join='inner', ignore_index=True).T

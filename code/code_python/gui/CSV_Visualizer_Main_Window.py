@@ -13,9 +13,9 @@ import scipy
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
                                QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsView,
                                QGroupBox, QGridLayout, QHeaderView, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
-                               QMessageBox,  QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QTreeWidget, QTreeWidgetItem,
-                               QVBoxLayout, QWidget)
-from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QTimer, Signal
+                               QMessageBox, QProgressBar, QProgressDialog, QPushButton, QScrollArea, QSizePolicy,
+                               QSlider, QSplitter, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QIcon, QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
@@ -26,6 +26,7 @@ from superqt import QLabeledDoubleRangeSlider
 from CSV_Visualizer_ROC_Window import GlobalRocPanel
 from CSV_Visualizer_ROC_Display_Popup import GlobalRocDisplay
 from utils import parse_imaging_file
+from workers.workers import Worker
 import CSV_Visualizer_utils as cvu
 
 class ZoomableGraphicsView(QGraphicsView):
@@ -143,12 +144,15 @@ class MSI_Visualizer(QMainWindow):
         self.global_roc_display = None
         self.itp_type = None
         self.main_cluster = None
+        self.progressDialog = None # Used for progress updates during reconstruction
         self.projects= {} # Stores project values
         self.roc_panel = None
         self.selected_dtype = None
         self.smoothing = False  # If True, Gaussian smoothing is applied to the image
         self.smoothing_sigma = None  # Standard deviation of smoothed values, higher increases the smoothing
+        self.thresholding = False
         self.tolerance = None
+
         #TODO: Add clipping here
 
         # Dictionaries
@@ -196,7 +200,7 @@ class MSI_Visualizer(QMainWindow):
         settings_widget = QGroupBox("Settings")
         settings_layout = QVBoxLayout(settings_widget)
         settings_layout.setContentsMargins(5, 0, 5, 5)
-        settings_layout.setSpacing(1)
+        settings_layout.setSpacing(0)
 
         # File loading and data selection, combined in a single widget
         load_widget = QWidget()
@@ -205,13 +209,13 @@ class MSI_Visualizer(QMainWindow):
 
         load_btn = QPushButton()
         load_btn.setIcon(icon("ei.file-new"))
-        load_btn.setFixedWidth(30)
+        load_btn.setFixedWidth(32)
         load_btn.setToolTip("Load an imaging (CSV/Parquet) file from STORM-MSI")
         load_btn.clicked.connect(self.upload_action)
 
         screenshot_btn = QPushButton()
         screenshot_btn.setIcon(icon("ei.camera"))
-        screenshot_btn.setFixedWidth(30)
+        screenshot_btn.setFixedWidth(32)
         screenshot_btn.setToolTip("Take a picture of the current spectrum and MSI data")
         screenshot_btn.clicked.connect(lambda:cvu.take_screenshot(self))
 
@@ -238,6 +242,7 @@ class MSI_Visualizer(QMainWindow):
         tolerance_layout.addWidget(self.tolerance_spnbx)
         ##
 
+        #TODO: Phase-out interpolation, as it is not really useful since smoothing has been implemented
         self.interp_lbl = QLabel("Interpolation: x1")
 
         self.interp_widget = QWidget()
@@ -263,10 +268,19 @@ class MSI_Visualizer(QMainWindow):
 
         self.clustering_chkbx = QPushButton()
         self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-off.svg")))
-        self.clustering_chkbx.setFixedWidth(30)
+        self.clustering_chkbx.setFixedWidth(32)
         self.clustering_chkbx.clicked.connect(self.toggle_clustering)
         #self.clustering_chkbx = QCheckBox("Clustering")
         self.clustering_chkbx.setToolTip("Performs clustering on the entire image")
+
+        self.thresholding_btn = QPushButton()
+        self.thresholding_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_off.svg")))
+        self.thresholding_btn.setFixedWidth(32)
+        self.thresholding_btn.clicked.connect(self.toggle_thresholding)
+        self.thresholding_btn.setToolTip("Applies an automatic threshold to each pixel for clustering. This operation,\n"
+                                         "while expensive, helps with clustering accuracy. Note that it is only performed\n"
+                                         "once per project to save computation time.")
+        self.thresholding_btn.setEnabled(False)
 
         self.cluster_nb_spnbx = QDoubleSpinBox()
         self.cluster_nb_spnbx.setToolTip("Determines how many clusters are formed")
@@ -275,8 +289,10 @@ class MSI_Visualizer(QMainWindow):
         self.cluster_nb_spnbx.setSingleStep(1)
         self.cluster_nb_spnbx.setDecimals(0)
         self.cluster_nb_spnbx.setSuffix(" Clusters")
+        self.cluster_nb_spnbx.setEnabled(False)
 
         clustering_layout.addWidget(self.clustering_chkbx)
+        clustering_layout.addWidget(self.thresholding_btn)
         clustering_layout.addWidget(self.cluster_nb_spnbx)
 
         # Create subwidget for smoothing
@@ -285,11 +301,8 @@ class MSI_Visualizer(QMainWindow):
 
         self.smoothing_chkbx = QPushButton()
         self.smoothing_chkbx.setIcon(QIcon(QPixmap("resources\\smoothing-off.svg")))
-        self.smoothing_chkbx.setFixedWidth(30)
+        self.smoothing_chkbx.setFixedWidth(32)
         self.smoothing_chkbx.clicked.connect(self.toggle_smoothing)
-
-        #self.smoothing_chkbx = QCheckBox("Smoothing")
-        #self.smoothing_chkbx.setIcon(QIcon(QPixmap(r"C:\Users\Adel\Documents\PRISM\OBJ Conversion\resources\Smoothing.png")))
         self.smoothing_chkbx.setToolTip("Adds Gaussian Smoothing to the data\nto preserve features as much as possible.")
 
         self.smoothing_sigma_field = QDoubleSpinBox()
@@ -325,7 +338,6 @@ class MSI_Visualizer(QMainWindow):
         # Set Viridis as default gradient, as it seems to be the most pleasing
         if "Viridis" in self.colours_dict.keys():
             viridis_idx = list(self.colours_dict.keys()).index("Viridis")
-            viridis_idx = list(self.colours_dict.keys()).index("Viridis")
             self.gradient_cbbx.setCurrentIndex(viridis_idx)
 
         update_btn = QPushButton("Update")
@@ -337,8 +349,8 @@ class MSI_Visualizer(QMainWindow):
         # Populate the settings widget
         settings_layout.addWidget(load_widget)
         settings_layout.addWidget(tolerance_widget)
-        settings_layout.addWidget(self.interp_lbl)
-        settings_layout.addWidget(self.interp_widget)
+        #settings_layout.addWidget(self.interp_lbl)
+        #settings_layout.addWidget(self.interp_widget)
         settings_layout.addWidget(clustering_widget)
         settings_layout.addWidget(smoothing_widget)
         settings_layout.addWidget(self.min_max_threshold_widget)
@@ -363,11 +375,11 @@ class MSI_Visualizer(QMainWindow):
                                                      maximum=self.cluster_nb_spnbx.value()-1, singleStep=1)
         roc_export_btn = QPushButton()
         roc_export_btn.setIcon(icon("ei.download-alt"))
-        roc_export_btn.setFixedWidth(30)
+        roc_export_btn.setFixedWidth(32)
         roc_export_btn.clicked.connect(self.export_roc)
         self.custom_roi_btn = QPushButton()
         self.custom_roi_btn.setIcon(icon("ei.edit"))
-        self.custom_roi_btn.setFixedWidth(30)
+        self.custom_roi_btn.setFixedWidth(32)
         self.custom_roi_btn.clicked.connect(self.create_roi)
 
         #TODO; Check back on this
@@ -380,7 +392,6 @@ class MSI_Visualizer(QMainWindow):
         self.spectrum_view_widget.setFlat(True)
         self.scroll_view.setWidget(self.scroll_container)
         self.spectrum_view_layout = QGridLayout(self.scroll_container)
-
 
         self.roi_widget = QButtonGroup(exclusive=True)
         self.roi_widget.buttonClicked.connect(self.on_button_clicked)
@@ -472,11 +483,21 @@ class MSI_Visualizer(QMainWindow):
             self.clustering = False
             self.cluster_nb_spnbx.setEnabled(False)
             self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-off.svg")))
+            self.thresholding_btn.setEnabled(False)
 
         else:
             self.clustering = True
             self.cluster_nb_spnbx.setEnabled(True)
             self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-on.svg")))
+            self.thresholding_btn.setEnabled(True)
+
+    def toggle_thresholding(self):
+        if self.thresholding:
+            self.thresholding = False
+            self.thresholding_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_off.svg")))
+        else:
+            self.thresholding = True
+            self.thresholding_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_on.svg")))
 
     def upload_action(self, *args):
         if args:
@@ -536,12 +557,16 @@ class MSI_Visualizer(QMainWindow):
 
         data_list.append("m/Z")
         self.data_cbbx.clear()
-        self.data_cbbx.addItems(data_list)
 
         # Set TIC as default value, as it is more expressive than XYZ
         if "TIC" in data_list:
+            self.data_cbbx.currentIndexChanged.disconnect()
+            self.data_cbbx.addItems(data_list)
+            self.data_cbbx.currentIndexChanged.connect(self.on_dtype_selection)
             tic_idx = data_list.index("TIC")
             self.data_cbbx.setCurrentIndex(tic_idx)
+        else:
+            self.data_cbbx.addItems(data_list)
 
     def create_project(self, idx):
         self.projects[idx] = {
@@ -553,6 +578,7 @@ class MSI_Visualizer(QMainWindow):
             "plots":{},
             "roi_names":[],
             "svg":None,
+            "thresholds":None,
             "tree_entry":None,
             "viewbox":None
         }
@@ -592,7 +618,7 @@ class MSI_Visualizer(QMainWindow):
         else:
             self.tolerance_spnbx.setEnabled(True)
         self.get_settings()
-        self.render_msi("Data_Type_Selection")
+        self.render_msi_wrapper("Data_Type_Selection")
 
     def on_mouse_clicked(self, event):
         if event._button == Qt.LeftButton:
@@ -608,22 +634,36 @@ class MSI_Visualizer(QMainWindow):
                 # Note: The region needs to be made persistent to be removable without clearing the full widget
                 self.spectrum_widget.addItem(self.central_mz_region)
 
-                self.render_msi("m/Z_Selection")
+                self.render_msi_wrapper("m/Z_Selection")
 
     def get_settings(self):
         self.gradient_name = self.gradient_cbbx.currentText()
         self.itp_factor = self.interp_slider.value()
         self.itp_type = self.interp_dict.get(self.interp_cbbx.currentText())
-        #self.clustering = self.clustering_chkbx.isChecked()
         self.cluster_nb = int(self.cluster_nb_spnbx.value())
         self.main_cluster = int(self.roc_main_cluster_spnbx.value())
         self.selected_dtype = self.data_cbbx.currentText()
-        #self.smoothing = self.smoothing_chkbx.isChecked()
         self.smoothing_sigma = self.smoothing_sigma_field.value()
         self.tolerance = self.tolerance_spnbx.value()
         self.cutoff_percentiles = [int(i) for i in self.min_max_threshold_dbsldr.value()]
 
-    def render_msi(self, origin):
+    def render_msi_wrapper(self, origin):
+        self.progressDialog = QProgressDialog(autoClose=True, 
+                                              labelText="Starting Reconstruction", 
+                                              minimumDuration=5)
+        self.progressDialog.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
+        self.progressDialog.setWindowTitle("Reconstruction In Progress...")
+        self.worker = Worker(self.render_msi, origin)
+        self.worker.updateProgress.connect(lambda signal:[self.progressDialog.setLabelText(signal),
+                                                     self.progressDialog.setValue(self.progressDialog.value()+1)])
+        self.worker.updateProgressMax.connect(lambda signal:self.progressDialog.setMaximum(signal))
+        self.worker.finished.connect(lambda:[self.progressDialog.destroy(), self.worker.deleteLater()])
+        self.worker.start()
+
+    def render_msi(self, origin, **kwargs):
+        if kwargs.get("origin") is not None:
+            origin = kwargs.get("origin")
+
         if not self.central_mz and self.selected_dtype == "m/Z":
             # Duplicate with the forceUpdate function, but fails silently instead
             return
@@ -635,6 +675,7 @@ class MSI_Visualizer(QMainWindow):
         gradient = self.colours_dict.get(self.gradient_name)
         roc_flag = False
         roi_mask = None
+        thresholds = self.projects[self.current_project]["thresholds"]
 
         if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
             # Perform segmentation and/or ROC on the cluster region alone
@@ -647,14 +688,17 @@ class MSI_Visualizer(QMainWindow):
             clustering_flag = True
             roc_flag = True
 
-        self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale = (
-            cvu.process_csv(self.projects[self.current_project]["current_filename"], csv, self.selected_dtype,
-                            self.central_mz, self.tolerance, self.itp_factor, self.itp_type, gradient,
-                            cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag, self.cluster_nb,
-                            self.main_cluster, roc_flag, roi_mask))
+        self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale, thresholds = (
+            cvu.process_csv(self.worker, self.projects[self.current_project]["current_filename"], csv,
+                            self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor, self.itp_type,
+                            gradient, cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag,
+                            self.cluster_nb, self.main_cluster, roc_flag, roi_mask, self.thresholding, thresholds))
 
         # Renders the new colour scale
         self.update_scale(scale)
+
+        if thresholds is not None:
+            self.projects[self.current_project]["thresholds"] = thresholds
 
         if origin == "ROC_Analysis":
             self.projects[self.current_project]["clusters"] = clustering_lbls
@@ -693,10 +737,11 @@ class MSI_Visualizer(QMainWindow):
             QMessageBox.warning(self, "Error", "Please select a peak on the average spectrum, and try again.")
             return
         else:
-            self.render_msi("Forced_Update")
+            self.render_msi_wrapper("Forced_Update")
+            #self.render_msi("Forced_Update")
 
     def plot_roc_analysis(self):
-        roc_aucs, clustering_lbls, cluster_colours = self.render_msi(origin="ROC_Analysis")
+        roc_aucs, clustering_lbls, cluster_colours = self.render_msi_wrapper(origin="ROC_Analysis")
         self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, True)
 
     def plot_clustering(self, roc_aucs, clustering_lbls, cluster_colours, roc_flag):
@@ -935,11 +980,16 @@ class MSI_Visualizer(QMainWindow):
             local_list.append("m/Z")
             for roi in self.projects[self.current_project]["roi_names"]:
                 local_list.append(roi)
-            self.data_cbbx.addItems(local_list)
+
             # Set TIC as default value, as it is more expressive than XYZ
             if "TIC" in local_list:
+                self.data_cbbx.currentIndexChanged.disconnect()
+                self.data_cbbx.addItems(local_list)
+                self.data_cbbx.currentIndexChanged.connect(self.on_dtype_selection)
                 tic_idx = local_list.index("TIC")
                 self.data_cbbx.setCurrentIndex(tic_idx)
+            else:
+                self.data_cbbx.addItems(local_list)
 
             self.spectrum_widget.setLimits(xMin=self.projects[self.current_project]["mass_range"][0],
                                            xMax=self.projects[self.current_project]["mass_range"][1])
@@ -1095,12 +1145,18 @@ class MSI_Visualizer(QMainWindow):
             return
 
         roi_name, result = QInputDialog.getText(self, "ROI Name", "New ROI Name:")
+        if "Cluster" in roi_name:
+            QMessageBox.warning(self, "Error", "Writing 'Cluster' in the name can affect downstream processing. Please\n"
+                                               "pick another name and try again.")
+            return
+
         roi_colour = QColorDialog.getColor(parent=self, title="ROI Colour Choice")
         self.topo_frag_view.pen = QPen(roi_colour)
         self.topo_frag_view.pen.setWidth(1)
 
         if result and roi_name.strip() != "" and roi_name not in self.projects[self.current_project]["roi_names"]:
             self.topo_frag_view.draw_mode = True
+            self.topo_frag_view.polygon_points.clear()
             self.topo_frag_view.points.clear()
             self.topo_frag_view.roi_drawn.connect(lambda:self.store_roi(roi_name, roi_colour))
         else:
@@ -1116,7 +1172,10 @@ class MSI_Visualizer(QMainWindow):
         local_csv = self.projects[self.current_project]["full_csv"].copy()
         width = self.projects[self.current_project]["viewbox"][2]
         roi_idx = [x  + y * width for x, y  in roi_points]
-        local_csv.columns = range(len(local_csv.iloc[0, :]))
+        local_csv.columns = range(len(local_csv.columns))
+        if max(roi_idx) > len(local_csv.columns):
+            #TODO: Investigate why this part sometimes breaks
+            breakpoint()
         local_csv = local_csv.iloc[:, roi_idx]
 
         local_csv = local_csv.drop(self.projects[self.current_project]["data_list"], axis=0)

@@ -1,20 +1,7 @@
-import sys
-
-from coloraide import Color
-from copy import copy
-import numpy as np
-import pandas as pd
-from PIL import Image
-import scipy
-from PySide6.QtWidgets import (QApplication, QAbstractItemView, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QGraphicsScene,
-                               QGraphicsView, QGroupBox, QGridLayout, QHBoxLayout, QLabel, QLayout, QMainWindow, QMessageBox, QPushButton,
-                               QRadioButton, QSizePolicy, QSlider, QSplitter, QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
-from PySide6.QtCore import Qt, QByteArray, QMimeData, Signal
-from PySide6.QtGui import QDrag
-from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
-from PySide6.QtSvg import QSvgRenderer
+from PySide6.QtWidgets import (QGroupBox, QHBoxLayout, QLabel, QMainWindow, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon, QPixmap
 import pyqtgraph as pg
-from qtawesome import icon
 
 class GlobalRocDisplay(QMainWindow):
     def __init__(self, cluster_keys, roc_auc):
@@ -52,7 +39,7 @@ class GlobalRocDisplay(QMainWindow):
         self.roc_spectrum_widget = pg.PlotWidget()
         self.roc_spectrum_widget.setLabel('bottom', 'm/Z')
         self.roc_spectrum_widget.setLabel('left', 'Intensity (A.U.)')
-        self.roc_spectrum_widget.setLimits(xMin=0, yMin=-0.1, yMax=1.1)
+        self.roc_spectrum_widget.setLimits(xMin=0, yMin=-0.05, yMax=1.05)
 
         # Build the final layout
         main_layout.addWidget(self.roc_spectrum_widget)
@@ -75,5 +62,5 @@ class GlobalRocDisplay(QMainWindow):
 
         self.roc_spectrum_widget.addItem(plot)
         self.roc_spectrum_widget.setRange(xRange=(mz.min(), mz.max()), yRange=(0, 1), padding=0.1)
-        self.roc_spectrum_widget.setLimits(xMin=mz.min(), xMax=mz.max(), yMin=-0.1, yMax=1.1)
+        self.roc_spectrum_widget.setLimits(xMin=mz.min(), xMax=mz.max(), yMin=-0.05, yMax=1.05)
 

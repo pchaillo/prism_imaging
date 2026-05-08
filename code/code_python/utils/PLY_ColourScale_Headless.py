@@ -48,18 +48,27 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
         image.line([dot_pos, dest], width=5)
 
 
-def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale , save=False):
+def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale , save=False, **kwargs):
     bar_width = 1200
     bar_height = 100
     padding_x = 800
     padding_x_offset = 100 # Gives leeway for annotations to extend away from the image
     padding_y = 250
-    txt_y_padding = 100
+    txt_y_padding = 110
     alpha = 50
     font_size = 80
 
-    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4)) # That +10 is a workaround to fully
-    # retain the rightmost extremity if a higher threshold is applied
+    #kwargs central_mz and tolerance are needed to bake the mz of interest in the scale
+    if kwargs:
+        central_mz = kwargs.get("central_mz")
+        tolerance = kwargs.get("tolerance")
+        mask = [val is None for val in [central_mz, tolerance]]
+        if not any(mask):
+            offset = 100
+            padding_y += offset
+            txt_y_padding += offset/2
+
+    scale = np.zeros((bar_height + padding_y, bar_width + padding_x, 4))
 
     if min_cutoff != intensities_min:
         scale[int(padding_y / 2):int(bar_height + padding_y / 2), padding_x_offset:int(padding_x / 2), 0] = 200
@@ -165,8 +174,14 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
         xy=[(bar_width + padding_x / 2, bar_height + padding_y / 2), (bar_width + padding_x / 2, (padding_y / 2) - 5)],
         width=5)
 
+    if not any(mask):
+        # Draw the mz and tolerance
+        scale_legend.text((bar_width + padding_x - padding_x_offset, 80),
+                          f"{round(central_mz, 3)} +/- {tolerance} m/Z", font_size=font_size, anchor="rs")
+
     scale_qt = ImageQt(scale_save)
     if save:
         scale_save.save(f"{export_path_scale}{name}-legend.png", mode="SRGB")
-    return scale_qt
     # scale_save.show()
+    return scale_qt
+

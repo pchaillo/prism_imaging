@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (QApplication, QAbstractItemView, QCheckBox, QComb
                                QGraphicsView, QGroupBox, QGridLayout, QHBoxLayout, QLabel, QLayout, QMainWindow, QMessageBox, QPushButton,
                                QRadioButton, QSizePolicy, QSlider, QSplitter, QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
 from PySide6.QtCore import Qt, QByteArray, QMimeData, Signal
-from PySide6.QtGui import QDrag
+from PySide6.QtGui import QDrag, QIcon, QPixmap
 from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
 import pyqtgraph as pg
