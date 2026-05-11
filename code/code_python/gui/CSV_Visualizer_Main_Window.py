@@ -600,9 +600,9 @@ class MSI_Visualizer(QMainWindow):
 
     def plot_average_spectrum(self, data_list):
         full_spectrum = self.projects[self.current_project]["full_csv"].drop(data_list, axis=0)
-        xvals = full_spectrum.index.values.to_numpy().astype("float64")
-        yvals = full_spectrum.mean(axis=1).astype("float64")
-        full_vals = pd.DataFrame([xvals, yvals]).T
+        xvals = full_spectrum.index.values.to_numpy().astype(float)
+        yvals = full_spectrum.mean(axis=1).astype(float)
+        full_vals = np.array([xvals, yvals])
         self.plot_spectrum("Global_Avg", full_vals[0], full_vals[1], pg.mkPen(color="b", width=1), True)
 
         self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max(), yMin=0, yMax=1.05)
@@ -653,14 +653,14 @@ class MSI_Visualizer(QMainWindow):
                                               minimumDuration=5)
         self.progressDialog.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
         self.progressDialog.setWindowTitle("Reconstruction In Progress...")
-        self.worker = Worker(self.render_msi, origin)
+        self.worker = Worker(self.process_msi, origin)
         self.worker.updateProgress.connect(lambda signal:[self.progressDialog.setLabelText(signal),
                                                      self.progressDialog.setValue(self.progressDialog.value()+1)])
         self.worker.updateProgressMax.connect(lambda signal:self.progressDialog.setMaximum(signal))
-        self.worker.finished.connect(lambda:[self.progressDialog.destroy(), self.worker.deleteLater()])
+        self.worker.finished.connect(self.render_msi)
         self.worker.start()
 
-    def render_msi(self, origin, **kwargs):
+    def process_msi(self, origin, **kwargs):
         if kwargs.get("origin") is not None:
             origin = kwargs.get("origin")
 
@@ -694,11 +694,17 @@ class MSI_Visualizer(QMainWindow):
                             gradient, cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag,
                             self.cluster_nb, self.main_cluster, roc_flag, roi_mask, self.thresholding, thresholds))
 
-        # Renders the new colour scale
-        self.update_scale(scale)
-
         if thresholds is not None:
             self.projects[self.current_project]["thresholds"] = thresholds
+
+        return viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roi_mask, scale, origin
+
+    def render_msi(self, result):
+        self.progressDialog.destroy()
+        viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roi_mask, scale, origin = result
+
+        # Renders the new colour scale
+        self.update_scale(scale)
 
         if origin == "ROC_Analysis":
             self.projects[self.current_project]["clusters"] = clustering_lbls
@@ -716,6 +722,8 @@ class MSI_Visualizer(QMainWindow):
                     self.projects[self.current_project]["clusters"] = clustering_lbls
                 # Display average spectra found from clustering
                 self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, False)
+
+        self.worker.deleteLater()
 
     def update_svg(self, picture, viewbox):
         self.topological_img = QByteArray(picture)

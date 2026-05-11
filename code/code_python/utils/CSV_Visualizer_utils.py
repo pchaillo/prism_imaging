@@ -11,7 +11,7 @@ import re
 from scipy import interpolate
 from scipy.ndimage import gaussian_filter
 from PLY_ColourScale_Headless import generate_scale
-from snr_compute import noise_estimation_ms
+from snr_compute import noise_estimation_np
 
 def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
                 cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, main_cluster,
@@ -38,7 +38,7 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
     """
     worker.updateProgress.emit("Recovering File Dimensions")
 
-    full_csv = full_csv.transpose().astype(float)
+    full_csv = full_csv.transpose().astype("float32")
 
     # Dimensions recovery, necessary for CSV files
     yvals = full_csv.iloc[:, 0].drop_duplicates()
@@ -59,11 +59,11 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
             # Smoothing - Data Cube Creation - 1 per pixel / Gaussian Filtering - 1
             total_steps += (xvals * yvals) + 1
         if noise_thresholding:
-            if not thresholds:
+            if thresholds is None:
                 # Per-pixel thresholding
-                total_steps += xvals * yvals
-            # DataFrame rebuilding
-            total_steps += 1
+                total_steps += (xvals * yvals)//10 # Takes into account the reduction in updates
+            # DataFrame rebuilding and masking
+            total_steps += 2
         if roi_mask:
             # ROI masking
             total_steps += 1
@@ -125,33 +125,50 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
         # ensure that clustering is performed only based on spectral profile rather than intensity, but intensity
         # should already be accounted for by normalization, so maybe this is redundant? Ponder this.
         full_length = len(input_data)
+        input_data_np = input_data.to_numpy(dtype=np.float32, copy=True) #TODO: Convert to numpy arrays for the entire workflow if possible
 
         # Perform noise thresholding if enabled
         if noise_thresholding:
-            if not thresholds:
+            if thresholds is None:
                 thresholds = np.zeros(len(input_data.index))
-                pool = Pool()
-
                 indices = input_data.index.values
+                # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
+                #worker.updateProgress.emit(f"Computing Signal Thresholds...")
+                for idx, row in enumerate(input_data_np):
+                    if idx % 10 == 0:
+                        worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
+                    threshold = noise_estimation_np(row)
+                    thresholds[idx - 1] = threshold
 
-                partial_func = partial(noise_estimation_wrapper, input_data=input_data)
-                for result in pool.imap_unordered(partial_func, indices, chunksize=20):
-                    worker.updateProgress.emit(f"Computing Signal Thresholds: {result[1]}/{vertices}")
-                    thresholds[result[1]-1] = result[0]
+                #partial_func = partial(noise_estimation_wrapper, input_data=input_data)
 
-            threshold_mask = input_data.T >= thresholds
-            input_data[threshold_mask.T] = 0
+                #with Pool() as pool:
+                #    tasks = (
+                #        (idx, input_data_np[idx])
+                #        for idx in range(len(input_data_np))
+                #    )
+                    #worker.updateProgress.emit("Computing Signal Thresholds")
+                #    for idx, threshold in pool.imap_unordered(noise_estimation_wrapper, tasks, chunksize=100):
+                #        worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
+                #        thresholds[idx-1] = threshold
+
+            worker.updateProgress.emit(f"Thresholds Recovered. Applying the mask...")
+            mask = input_data_np >= thresholds[:, None]
+            input_data_np[mask] = 0
+
+            #threshold_mask = input_data.T >= thresholds
+            #input_data[threshold_mask.T] = 0
 
         if roi_mask:
             worker.updateProgress.emit("Parsing ROI")
             # Second round of trimming if an ROI was specified
-            input_data = input_data[roi_mask]
+            input_data_np = input_data_np[roi_mask]
 
         worker.updateProgress.emit("Performing Clustering")
         kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
 
         # Fit the full dataset
-        kmeans.fit(input_data)
+        kmeans.fit(input_data_np)
         clustering_labels = kmeans.labels_
 
         # Now accomodates masking properly
@@ -159,16 +176,17 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
         # Those -1 entries will be transparent on the final SVG
         coordsfinal["data"] = -1
         coordsfinal.loc[input_data.index, "data"] = clustering_labels
+        del input_data
 
         # ROC analysis
         if roc_flag:
             from sklearn.metrics import roc_auc_score
             roc_aucs = []
             y_true = clustering_labels[clustering_labels == main_cluster]
-            total_length = len(input_data)
-            for idx, _ in enumerate(input_data):
+            total_length = len(input_data_np)
+            for idx, _ in range(total_length):
                 worker.updateProgress.emit(f"Computing ROC Scores: {idx}/{total_length}")
-                auc = roc_auc_score(y_true, input_data.iloc[:, idx], average="weighted")
+                auc = roc_auc_score(y_true, input_data_np[idx], average="weighted")
                 roc_aucs.append(auc)
 
     elif data_type != "m/Z":
@@ -345,10 +363,11 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
     else:
         return msi_svg, viewbox, None, None, None, scale, thresholds
 
-def noise_estimation_wrapper(spectrum_idx, input_data):
-    local_spectrum = input_data.loc[spectrum_idx, :]
-    threshold = noise_estimation_ms(local_spectrum, False)
-    return [threshold, spectrum_idx]
+def noise_estimation_wrapper(args):
+    spectrum_idx, local_spectrum = args
+    #local_spectrum = input_data.loc[spectrum_idx, :]
+    threshold = noise_estimation_np(local_spectrum, False)
+    return spectrum_idx, threshold
 
 def cross_project_roc(cluster_data_dict):
     from sklearn.metrics import roc_auc_score
