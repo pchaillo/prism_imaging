@@ -142,6 +142,7 @@ class MSI_Visualizer(QMainWindow):
         self.cutoff_percentiles = None
         self.gradient_name = None
         self.global_roc_display = None
+        self.global_thresholding = False # Determines whether signal thresholding is applied during cross-project ROC
         self.itp_type = None
         self.main_cluster = None
         self.progressDialog = None # Used for progress updates during reconstruction
@@ -152,8 +153,6 @@ class MSI_Visualizer(QMainWindow):
         self.smoothing_sigma = None  # Standard deviation of smoothed values, higher increases the smoothing
         self.thresholding = False
         self.tolerance = None
-
-        #TODO: Add clipping here
 
         # Dictionaries
         self.colours_dict = {
@@ -349,8 +348,6 @@ class MSI_Visualizer(QMainWindow):
         # Populate the settings widget
         settings_layout.addWidget(load_widget)
         settings_layout.addWidget(tolerance_widget)
-        #settings_layout.addWidget(self.interp_lbl)
-        #settings_layout.addWidget(self.interp_widget)
         settings_layout.addWidget(clustering_widget)
         settings_layout.addWidget(smoothing_widget)
         settings_layout.addWidget(self.min_max_threshold_widget)
@@ -370,7 +367,7 @@ class MSI_Visualizer(QMainWindow):
         roc_analysis_btn = QPushButton("ROC")
         roc_analysis_btn.setFixedWidth(70)
         roc_analysis_btn.setIcon(icon("ei.cog"))
-        roc_analysis_btn.clicked.connect(self.plot_roc_analysis)
+        roc_analysis_btn.clicked.connect(lambda:self.render_msi_wrapper(origin="ROC_Analysis"))
         self.roc_main_cluster_spnbx = QDoubleSpinBox(prefix= "Main Cluster: ", decimals=0, minimum=0,
                                                      maximum=self.cluster_nb_spnbx.value()-1, singleStep=1)
         roc_export_btn = QPushButton()
@@ -443,12 +440,22 @@ class MSI_Visualizer(QMainWindow):
         self.file_tree.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.file_tree.currentItemChanged.connect(self.project_changed)
 
+        cross_project_roc_widget = QWidget()
+        cross_project_roc_layout = QHBoxLayout(cross_project_roc_widget)
+
         cross_project_roc_btn = QPushButton("Cross-Project Analysis")
         cross_project_roc_btn.setIcon(icon("ei.cogs"))
-        cross_project_roc_btn.clicked.connect(self.preprocess_cross_project_roc)
+        cross_project_roc_btn.clicked.connect(lambda:self.preprocess_cross_project_roc(self.global_thresholding))
+
+        self.cross_project_roc_noise_btn = QPushButton()
+        self.cross_project_roc_noise_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_off.svg")))
+        self.cross_project_roc_noise_btn.setFixedWidth(32)
+        self.cross_project_roc_noise_btn.clicked.connect(self.toggle_global_thresholding)
+        cross_project_roc_layout.addWidget(self.cross_project_roc_noise_btn)
+        cross_project_roc_layout.addWidget(cross_project_roc_btn)
 
         file_tree_layout.addWidget(self.file_tree)
-        file_tree_layout.addWidget(cross_project_roc_btn)
+        file_tree_layout.addWidget(cross_project_roc_widget)
 
         # Create and populate a widget to handle settings and MSI data
         settings_msi_widget = QSplitter(Qt.Horizontal)
@@ -498,6 +505,14 @@ class MSI_Visualizer(QMainWindow):
         else:
             self.thresholding = True
             self.thresholding_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_on.svg")))
+
+    def toggle_global_thresholding(self):
+        if self.global_thresholding:
+            self.global_thresholding = False
+            self.cross_project_roc_noise_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_off.svg")))
+        else:
+            self.global_thresholding = True
+            self.cross_project_roc_noise_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_on.svg")))
 
     def upload_action(self, *args):
         if args:
@@ -677,6 +692,13 @@ class MSI_Visualizer(QMainWindow):
         roi_mask = None
         thresholds = self.projects[self.current_project]["thresholds"]
 
+        if self.selected_dtype != "m/Z":
+            tolerance = None
+            central_mz = None
+        else:
+            tolerance = self.tolerance
+            central_mz = self.central_mz
+
         if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
             # Perform segmentation and/or ROC on the cluster region alone
             roi = self.selected_dtype
@@ -690,39 +712,55 @@ class MSI_Visualizer(QMainWindow):
 
         self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale, thresholds = (
             cvu.process_csv(self.worker, self.projects[self.current_project]["current_filename"], csv,
-                            self.selected_dtype, self.central_mz, self.tolerance, self.itp_factor, self.itp_type,
+                            self.selected_dtype, central_mz, tolerance, self.itp_factor, self.itp_type,
                             gradient, cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag,
                             self.cluster_nb, self.main_cluster, roc_flag, roi_mask, self.thresholding, thresholds))
 
         if thresholds is not None:
             self.projects[self.current_project]["thresholds"] = thresholds
 
-        return viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roi_mask, scale, origin
+        return viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roc_flag, roi_mask, scale, origin
 
     def render_msi(self, result):
-        self.progressDialog.destroy()
-        viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roi_mask, scale, origin = result
+
+        if result is None:
+            return
+        else:
+            viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roc_flag, roi_mask, scale, origin = result
+
+        # Update maximum progress
+        update_total = self.progressDialog.maximum()
+        # Updating Scale, SVG and Viewbox - 3
+        update_total += 3
+        if roc_flag:
+            # Render ROC analysis
+            update_total += 1
+        if clustering_flag:
+            # Render each cluster
+            update_total += len(np.unique(clustering_lbls))
+        self.progressDialog.setMaximum(update_total)
 
         # Renders the new colour scale
+        self.worker.updateProgress.emit("Rendering Colour Scale")
         self.update_scale(scale)
+        self.worker.updateProgress.emit("Updating Image")
+        self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
+        self.worker.updateProgress.emit("Updating Viewbox")
+        self.projects[self.current_project]["viewbox"] = viewbox
 
         if origin == "ROC_Analysis":
             self.projects[self.current_project]["clusters"] = clustering_lbls
-            self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
-            return roc_aucs, clustering_lbls, cluster_colours
-
+            self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, roc_flag)
+        elif clustering_flag:
+            if roi_mask is not None:
+                roi = self.selected_dtype
+                self.projects[self.current_project]["plots"][roi]["clusters"] = clustering_lbls
+            else:
+                self.projects[self.current_project]["clusters"] = clustering_lbls
+            # Display average spectra found from clustering
+            self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, roc_flag)
         else:
-            self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
-            self.projects[self.current_project]["viewbox"] = viewbox
-            if clustering_flag:
-                if roi_mask is not None:
-
-                    self.projects[self.current_project]["plots"][roi]["clusters"] = clustering_lbls
-                else:
-                    self.projects[self.current_project]["clusters"] = clustering_lbls
-                # Display average spectra found from clustering
-                self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, False)
-
+            self.progressDialog.destroy()
         self.worker.deleteLater()
 
     def update_svg(self, picture, viewbox):
@@ -746,11 +784,6 @@ class MSI_Visualizer(QMainWindow):
             return
         else:
             self.render_msi_wrapper("Forced_Update")
-            #self.render_msi("Forced_Update")
-
-    def plot_roc_analysis(self):
-        roc_aucs, clustering_lbls, cluster_colours = self.render_msi_wrapper(origin="ROC_Analysis")
-        self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, True)
 
     def plot_clustering(self, roc_aucs, clustering_lbls, cluster_colours, roc_flag):
         indices = list(self.projects[self.current_project]["plots"]["Global_Avg"].get("plot").xData)
@@ -759,6 +792,7 @@ class MSI_Visualizer(QMainWindow):
         self.clear_spectra("Current", "ROC", True)
 
         if roc_flag:
+            self.worker.updateProgress.emit("Plotting ROC Analysis")
             if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
                 prefix = f"{self.selected_dtype}-"
             else:
@@ -779,14 +813,17 @@ class MSI_Visualizer(QMainWindow):
             plot_name_prefix = f"{self.selected_dtype}-Cluster"
         else:
             plot_name_prefix = "Cluster"
+
         # Plot the average spectrum of each cluster
         for idx, label in enumerate(np.unique(clustering_lbls)):
+            cluster_name = f"{plot_name_prefix}_{label}"
+            self.worker.updateProgress.emit(f"Plotting {cluster_name}")
             parsed_data = global_data[label]
             if type(parsed_data) == pd.Series:
                 # In cases where clusters are made of a single pixel
-                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data]).T.astype("float64")
+                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data]).T.astype(np.float32)
             else:
-                avg_spectrum = parsed_data.mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype("float64")
+                avg_spectrum = parsed_data.mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype(np.float32)
             self.plot_spectrum(f"{plot_name_prefix}_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
             # Add children to the file tree for later cluster analysis
             child = QTreeWidgetItem({f"{plot_name_prefix}_{label}":[]})
@@ -795,6 +832,8 @@ class MSI_Visualizer(QMainWindow):
             self.projects[self.current_project]["tree_entry"].addChild(child)
 
         self.projects[self.current_project]["tree_entry"].setExpanded(True)
+
+        self.progressDialog.destroy()
 
     def plot_spectrum(self, name:str, spectrum_x, spectrum_y, pen:pg.mkPen, normalize=True, *args):
         # Helper function that can normalize spectra before rendering them, helpful for ROC visualization
