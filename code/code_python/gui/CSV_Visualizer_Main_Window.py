@@ -181,8 +181,9 @@ class MSI_Visualizer(QMainWindow):
                              "set": "limegreen",
                              "error": "orangered"}
 
-        # Worker
-        self.worker = None
+        # Workers
+        self.workers = {"msi":None,
+                        "roc":None}
 
         # Initialize the central widget and layout
         central_widget = QSplitter(Qt.Vertical)
@@ -445,7 +446,7 @@ class MSI_Visualizer(QMainWindow):
 
         cross_project_roc_btn = QPushButton("Cross-Project Analysis")
         cross_project_roc_btn.setIcon(icon("ei.cogs"))
-        cross_project_roc_btn.clicked.connect(lambda:self.preprocess_cross_project_roc(self.global_thresholding))
+        cross_project_roc_btn.clicked.connect(self.cross_project_roc_wrapper)
 
         self.cross_project_roc_noise_btn = QPushButton()
         self.cross_project_roc_noise_btn.setIcon(QIcon(QPixmap("resources\\noise_level_detection_off.svg")))
@@ -668,12 +669,12 @@ class MSI_Visualizer(QMainWindow):
                                               minimumDuration=5)
         self.progressDialog.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
         self.progressDialog.setWindowTitle("Reconstruction In Progress...")
-        self.worker = Worker(self.process_msi, origin)
-        self.worker.updateProgress.connect(lambda signal:[self.progressDialog.setLabelText(signal),
+        self.workers["msi"] = Worker(self.process_msi, origin)
+        self.workers["msi"].updateProgress.connect(lambda signal:[self.progressDialog.setLabelText(signal),
                                                      self.progressDialog.setValue(self.progressDialog.value()+1)])
-        self.worker.updateProgressMax.connect(lambda signal:self.progressDialog.setMaximum(signal))
-        self.worker.finished.connect(self.render_msi)
-        self.worker.start()
+        self.workers["msi"].updateProgressMax.connect(lambda signal:self.progressDialog.setMaximum(signal))
+        self.workers["msi"].finished.connect(self.render_msi)
+        self.workers["msi"].start()
 
     def process_msi(self, origin, **kwargs):
         if kwargs.get("origin") is not None:
@@ -711,7 +712,7 @@ class MSI_Visualizer(QMainWindow):
             roc_flag = True
 
         self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale, thresholds = (
-            cvu.process_csv(self.worker, self.projects[self.current_project]["current_filename"], csv,
+            cvu.process_csv(self.workers["msi"], self.projects[self.current_project]["current_filename"], csv,
                             self.selected_dtype, central_mz, tolerance, self.itp_factor, self.itp_type,
                             gradient, cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag,
                             self.cluster_nb, self.main_cluster, roc_flag, roi_mask, self.thresholding, thresholds))
@@ -722,7 +723,6 @@ class MSI_Visualizer(QMainWindow):
         return viewbox, roc_aucs, clustering_lbls, clustering_flag, cluster_colours, roc_flag, roi_mask, scale, origin
 
     def render_msi(self, result):
-
         if result is None:
             return
         else:
@@ -741,11 +741,11 @@ class MSI_Visualizer(QMainWindow):
         self.progressDialog.setMaximum(update_total)
 
         # Renders the new colour scale
-        self.worker.updateProgress.emit("Rendering Colour Scale")
+        self.workers["msi"].updateProgress.emit("Rendering Colour Scale")
         self.update_scale(scale)
-        self.worker.updateProgress.emit("Updating Image")
+        self.workers["msi"].updateProgress.emit("Updating Image")
         self.update_svg(self.projects[self.current_project]["svg"].encode("utf-8"), viewbox)
-        self.worker.updateProgress.emit("Updating Viewbox")
+        self.workers["msi"].updateProgress.emit("Updating Viewbox")
         self.projects[self.current_project]["viewbox"] = viewbox
 
         if origin == "ROC_Analysis":
@@ -761,7 +761,7 @@ class MSI_Visualizer(QMainWindow):
             self.plot_clustering(roc_aucs, clustering_lbls, cluster_colours, roc_flag)
         else:
             self.progressDialog.destroy()
-        self.worker.deleteLater()
+        self.workers["msi"].deleteLater()
 
     def update_svg(self, picture, viewbox):
         self.topological_img = QByteArray(picture)
@@ -792,7 +792,7 @@ class MSI_Visualizer(QMainWindow):
         self.clear_spectra("Current", "ROC", True)
 
         if roc_flag:
-            self.worker.updateProgress.emit("Plotting ROC Analysis")
+            self.workers["msi"].updateProgress.emit("Plotting ROC Analysis")
             if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
                 prefix = f"{self.selected_dtype}-"
             else:
@@ -817,7 +817,7 @@ class MSI_Visualizer(QMainWindow):
         # Plot the average spectrum of each cluster
         for idx, label in enumerate(np.unique(clustering_lbls)):
             cluster_name = f"{plot_name_prefix}_{label}"
-            self.worker.updateProgress.emit(f"Plotting {cluster_name}")
+            self.workers["msi"].updateProgress.emit(f"Plotting {cluster_name}")
             parsed_data = global_data[label]
             if type(parsed_data) == pd.Series:
                 # In cases where clusters are made of a single pixel
@@ -1052,41 +1052,70 @@ class MSI_Visualizer(QMainWindow):
             if self.projects[self.current_project]["svg"] is not None:
                 self.update_svg(self.projects[self.current_project]["svg"], self.projects[self.current_project]["viewbox"])
 
-    def preprocess_cross_project_roc(self):
-        # Find out what elements are in the tree
+    def cross_project_roc_wrapper(self):
+        # Security check in case nothing is in the tree
         if self.file_tree.topLevelItemCount() == 0:
             QMessageBox.warning(self, "Error", "Open one or more projects first, create ROIs through\n"
                                                "ROC analysis or custom region selection (TBD), and try again.")
             return
+        self.progressDialog = QProgressDialog(autoClose=True,
+                                              labelText="Recovering Target Clusters...",
+                                              minimumDuration=1)
+        self.progressDialog.setWindowIcon(QIcon(QPixmap("resources\\STORM-MSI_Visualizer-roc.svg")))
+        self.progressDialog.setWindowTitle("Global ROC Analysis")
+        #TODO: Using one progressDialog for both workers is not best practice, might be worth instancing them at some point
+
+        self.workers["roc"] = Worker(self.preprocess_cross_project_roc)
+        self.workers["roc"].updateProgress.connect(lambda signal: [self.progressDialog.setLabelText(signal),
+                                                                   self.progressDialog.setValue(
+                                                                       self.progressDialog.value() + 1)])
+        self.workers["roc"].updateProgressMax.connect(lambda signal: self.progressDialog.setMaximum(signal))
+
+        self.workers["roc"].runFunc.connect(lambda myfunc, args, kwargs: myfunc(*args, **kwargs))
+        self.workers["roc"].start()
+
+    def preprocess_cross_project_roc(self):
+        # Find out what elements are in the tree
+        # Retrieve all indices currently in use
+        indices = self.projects.keys()
+
+        # Loops through each parent, each child, and find the state of each checkbox
+        checked_rois = {}
+        for idx in indices:
+            project = self.file_tree.topLevelItem(idx)
+            if project.childCount() != 0:
+               local_checked_rois = {}
+               for child_idx in range(project.childCount()):
+                   child = project.child(child_idx)
+                   if child.checkState(1) == Qt.Checked:
+                       # Add to list
+                       label = child.text(0)
+                       roi_name = f"{project.text(0)}/{label}"
+                       cluster_idx = None
+                       if "Cluster" in label:
+                           # Clusters derived from k-means
+                           # roi_cluster = self.projects[idx]["clusters"]
+                           cluster_idx = int(label.split("_")[-1])
+                       local_checked_rois[child_idx] = {"name":roi_name,
+                                                        "idx":cluster_idx}
+               checked_rois[idx] = local_checked_rois
+
+        self.workers["roc"].updateProgressMax.emit(len(checked_rois)+2) # n for processing, 1 for cluster assignment, 1 for saving
+        self.workers["roc"].updateProgress.emit("Assigning Clusters...")
+        self.workers["roc"].runFunc.emit(self.launch_roc_panel, (), {"checked_rois":checked_rois})
+
+    def launch_roc_panel(self, *args, **kwargs):
+        if kwargs:
+            for kwarg in kwargs.keys():
+                if kwarg == "checked_rois":
+                    checked_rois = kwargs["checked_rois"]
         else:
-            # Retrieve all indices currently in use
-            indices = self.projects.keys()
+            print("Missing kwarg: 'checked_rois' in self.launch_roc_panel")
 
-            # Loops through each parent, each child, and find the state of each checkbox
-            checked_rois = {}
-            for idx in indices:
-                project = self.file_tree.topLevelItem(idx)
-                if project.childCount() != 0:
-                    local_checked_rois = {}
-                    for child_idx in range(project.childCount()):
-                        child = project.child(child_idx)
-                        if child.checkState(1) == Qt.Checked:
-                            # Add to list
-                            label = child.text(0)
-                            roi_name = f"{project.text(0)}/{label}"
-                            cluster_idx = None
-                            if "Cluster" in label:
-                                # Clusters derived from k-means
-                                # roi_cluster = self.projects[idx]["clusters"]
-                                cluster_idx = int(label.split("_")[-1])
-                            local_checked_rois[child_idx] = {"name":roi_name,
-                                                             "idx":cluster_idx}
-                    checked_rois[idx] = local_checked_rois
-
-            self.roc_panel = GlobalRocPanel(checked_rois)
-            self.roc_panel.export_ready.connect(self.start_cross_project_roc)
-            self.roc_panel.show()
-            self.roc_panel.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.roc_panel = GlobalRocPanel(checked_rois)
+        self.roc_panel.export_ready.connect(self.start_cross_project_roc)
+        self.roc_panel.show()
+        self.roc_panel.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
     def start_cross_project_roc(self):
         # Retrieve clusters and run a simplified ROC export
@@ -1144,10 +1173,11 @@ class MSI_Visualizer(QMainWindow):
                 cluster_data_dict[len(cluster_data_dict)] = {"data":sorted_data,
                                                             "cluster":clusters[key]}
 
-        roc_aucs, mz = cvu.cross_project_roc(cluster_data_dict)
+        roc_aucs, mz = cvu.cross_project_roc(self.workers["roc"], cluster_data_dict, self.global_thresholding)
         roc_aucs_df = pd.DataFrame([mz, roc_aucs], index=["m/Z", "ROC Score"]).T
 
         # Save the ROC analysis
+        self.workers["roc"].updateProgress.emit("Writing ROC CSV")
         filename = self.projects[self.current_project]["current_filename"]
         export_name = f"{os.path.split(filename)[0]}\\ROC\\Global-ROC.csv"
 
@@ -1176,6 +1206,7 @@ class MSI_Visualizer(QMainWindow):
                              f"#Cluster 2 ROIs: {',\n#'.join(alternative_cluster_keys)},\n")
 
             roc_aucs_df.to_csv(roc_export, index=None, header=None, columns=["m/Z", "ROC Score"], sep=",")
+        self.progressDialog.destroy()
         QMessageBox.information(self, "Sucess", f"ROC exported in {os.path.split(export_name)[0]}.")
 
         # Destroy the popup window
@@ -1183,6 +1214,20 @@ class MSI_Visualizer(QMainWindow):
         self.roc_panel = None
 
         cluster_keys = [main_cluster_keys, alternative_cluster_keys]
+        #TODO: Run create_roc_display from the main thread somehow
+        self.workers["roc"].runFunc.emit(self.create_roc_display, (), {"cluster_keys":cluster_keys, "roc_aucs_df":roc_aucs_df})
+
+    def create_roc_display(self, **kwargs):
+        if kwargs:
+            for kwarg in kwargs.keys():
+                if kwarg == "cluster_keys":
+                    cluster_keys = kwargs["cluster_keys"]
+                elif kwarg == "roc_aucs_df":
+                    roc_aucs_df = kwargs["roc_aucs_df"]
+        else:
+            print("Missing kwargs for create_roc_display")
+            return
+
         self.global_roc_display = GlobalRocDisplay(cluster_keys, roc_aucs_df)
         self.global_roc_display.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.global_roc_display.show()

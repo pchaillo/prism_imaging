@@ -365,43 +365,97 @@ def noise_estimation_wrapper(args):
     threshold = noise_estimation_np(local_spectrum, False)
     return spectrum_idx, threshold
 
-def cross_project_roc(cluster_data_dict, noise_thresholding):
+def cross_project_roc(worker, cluster_data_dict, noise_thresholding):
     from sklearn.metrics import roc_auc_score
     # TODO: Fully convert to numpy
     roc_aucs = []
     full_labels = []
     full_data_list = []
-    for key in cluster_data_dict:
-        # Concatenate labels
-        cluster_data = cluster_data_dict[key]["data"]
-        intensity_max = cluster_data.max().max()
-        # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
-        cluster_data = (cluster_data/intensity_max)*100000
+    data_indices_list = []
+    pool = Pool()
 
-        # Perform noise thresholding if enabled
-        if noise_thresholding:
-            thresholds = np.zeros(len(cluster_data.index))
-            # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
-            for idx, row in enumerate(input_data_np):
-                if idx % 10 == 0:
-                    worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
-                threshold = noise_estimation_np(row)
-                thresholds[idx - 1] = threshold
+    tasks = [(cluster_data_dict[key], noise_thresholding) for key in cluster_data_dict]
 
-            mask = cluster_data.to_numpy() >= thresholds[:, None]
-            cluster_data = cluster_data.to_numpy()
-            cluster_data[mask] = 0
-
-        full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.columns))
+    for idx, (cluster_labels, cluster_data, data_indices) in enumerate(pool.imap_unordered(process_clusters, tasks)):
+        full_labels.append(cluster_labels)
         full_data_list.append(cluster_data)
-    full_data = pd.concat(full_data_list, axis=1, join='inner', ignore_index=True).T
+        data_indices_list.append(data_indices)
+        worker.updateProgress.emit(f"Processed Clusters: {idx+1}/{len(cluster_data_dict)}")
+
+    #for key in cluster_data_dict:
+    #    # Concatenate labels
+    #    cluster_data = cluster_data_dict[key]["data"]
+    #    intensity_max = cluster_data.max().max()
+    #    # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
+    #    cluster_data = (cluster_data/intensity_max)*100000
+
+    #    # Perform noise thresholding if enabled
+    #    if noise_thresholding:
+    #        thresholds = np.zeros(len(cluster_data.index))
+    #        # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
+    #        for idx, row in enumerate(input_data_np):
+    #            if idx % 10 == 0:
+    #                worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
+    #            threshold = noise_estimation_np(row)
+    #            thresholds[idx - 1] = threshold
+
+    #        mask = cluster_data.to_numpy() >= thresholds[:, None]
+    #        cluster_data = cluster_data.to_numpy()
+    #        cluster_data[mask] = 0
+
+    #    full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.columns))
+    #    full_data_list.append(cluster_data)
+    #TODO: Clean up everything numpy-related
+    #full_data = pd.concat(full_data_list, axis=1, join='inner', ignore_index=True).T
+
+    # Assume that there are at list two elements, and perform an inner join on the index list
+    full_indices = np.intersect1d(data_indices_list[0], data_indices_list[1])
+    if len(data_indices_list) > 2:
+        for idx in range(2, len(data_indices_list)):
+            full_indices = np.intersect1d(full_indices, data_indices_list[idx])
+
+    # Find out which rows haves indices found in full_indices, so that the eventual array only contains m/Z found across all ROIs
+    index_masks = []
+    for idx in range(len(data_indices_list)):
+        mask = np.isin(data_indices_list[idx], full_indices)
+        index_masks.append(mask)
+
+    joined_data_list = [full_data_list[idx][index_masks[idx]] for idx in range(len(data_indices_list))]
+    full_data = np.concatenate(joined_data_list, axis=1)
     full_labels = [label for sublist in full_labels for label in sublist]
-    for mz in full_data:
-        auc = roc_auc_score(full_labels, full_data.loc[:, mz], average="weighted")
+
+    for mz in range(len(full_data)):
+        auc = roc_auc_score(full_labels, full_data[mz], average="weighted")
         roc_aucs.append(auc)
 
     # Exports the aucs and the mz array so that the file may be saved
-    return roc_aucs, full_data.columns.array
+    return roc_aucs, full_indices
+
+def process_clusters(arguments):
+    # Note: cluster is cluster_data_dict[key]
+    cluster, noise_thresholding = arguments
+    # Concatenate labels
+    cluster_data = cluster["data"]
+    intensity_max = cluster_data.max().max()
+    # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
+    cluster_data = (cluster_data/intensity_max)*100000
+    data_indices = cluster_data.index
+    cluster_data = cluster_data.to_numpy(copy=True)
+
+    # Perform noise thresholding if enabled
+    if noise_thresholding:
+        thresholds = np.zeros(len(data_indices))
+        # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
+        for idx, row in enumerate(cluster_data):
+            threshold = noise_estimation_np(row)
+            thresholds[idx - 1] = threshold
+
+        mask = cluster_data >= thresholds[:, None]
+        cluster_data[mask] = 0
+
+    cluster_labels = [cluster["cluster"]] * len(cluster_data[0])
+
+    return cluster_labels, cluster_data, data_indices
 
 def save_project(app:PySide6.QtWidgets.QMainWindow):
     import json
