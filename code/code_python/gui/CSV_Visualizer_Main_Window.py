@@ -427,6 +427,10 @@ class MSI_Visualizer(QMainWindow):
         self.spectrum_widget.setLabel('bottom', 'm/Z')
         self.spectrum_widget.setLabel('left', 'Intensity (A.U.)')
         self.spectrum_widget.setLimits(xMin=0, yMin=0)
+        viewbox = self.spectrum_widget.getViewBox()
+        viewbox.enableAutoRange(viewbox.YAxis, True)
+        viewbox.setAutoVisible(x=False, y=True)
+        viewbox.setMouseEnabled(x=True, y=False)
 
         # Create a file tree widget
         file_tree_widget = QGroupBox("Files in Project")
@@ -526,7 +530,6 @@ class MSI_Visualizer(QMainWindow):
             filename = QFileDialog.getOpenFileName(self, "CSV File Selection", initial_dir,
                                                    "STORM-MSI File (*.csv *.parquet)")[0]
             if not filename:
-                print("error")
                 return
             filename = filename.replace("/", "\\")
 
@@ -621,8 +624,8 @@ class MSI_Visualizer(QMainWindow):
         full_vals = np.array([xvals, yvals])
         self.plot_spectrum("Global_Avg", full_vals[0], full_vals[1], pg.mkPen(color="b", width=1), True)
 
-        self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max(), yMin=0, yMax=1.05)
-        self.spectrum_widget.setRange(xRange=(xvals.min(), xvals.max()), yRange =(0, yvals.max()), padding=0.1)
+        self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max())#, yMin=0, yMax=1.05)
+        self.spectrum_widget.setRange(xRange=(xvals.min(), xvals.max()))#, yRange =(0, yvals.max()), padding=0.1)
 
         self.projects[self.current_project]["mass_range"] = [xvals.min(),xvals.max()]
 
@@ -823,7 +826,7 @@ class MSI_Visualizer(QMainWindow):
                 # In cases where clusters are made of a single pixel
                 avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data]).T.astype(np.float32)
             else:
-                avg_spectrum = parsed_data.mean(axis=1).reset_index().set_axis([0, 1], axis=1).astype(np.float32)
+                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data.mean(axis=1)]).T.astype(np.float32)
             self.plot_spectrum(f"{plot_name_prefix}_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
             # Add children to the file tree for later cluster analysis
             child = QTreeWidgetItem({f"{plot_name_prefix}_{label}":[]})
@@ -839,7 +842,9 @@ class MSI_Visualizer(QMainWindow):
         # Helper function that can normalize spectra before rendering them, helpful for ROC visualization
         if normalize:
             spectrum_y = spectrum_y/spectrum_y.max()
+
         plot = pg.PlotDataItem(spectrum_x, spectrum_y, pen=pen)
+
         plot.setZValue(len(self.projects[self.current_project]["plots"]) + 1)
         self.spectrum_widget.addItem(plot)
 
@@ -1122,6 +1127,10 @@ class MSI_Visualizer(QMainWindow):
         clusters = self.roc_panel.cluster_dict
         cluster_data_dict = {}
 
+        # Destroy the popup window
+        self.roc_panel.close()
+        self.roc_panel = None
+
         for key in clusters.keys():
             project_filename = key.split(".")[0]
             project_roi = key.split("/")[-1]
@@ -1208,10 +1217,6 @@ class MSI_Visualizer(QMainWindow):
             roc_aucs_df.to_csv(roc_export, index=None, header=None, columns=["m/Z", "ROC Score"], sep=",")
         self.progressDialog.destroy()
         QMessageBox.information(self, "Sucess", f"ROC exported in {os.path.split(export_name)[0]}.")
-
-        # Destroy the popup window
-        self.roc_panel.close()
-        self.roc_panel = None
 
         cluster_keys = [main_cluster_keys, alternative_cluster_keys]
         #TODO: Run create_roc_display from the main thread somehow

@@ -47,4 +47,3 @@ elif ext == "parquet":
     file_norm.to_parquet(path=(f"files\\{project}\\csv_files\\{out_name}"))
 
 print(f"{out_name} was properly saved in files/{project}/csv_files/")
-
