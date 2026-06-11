@@ -48,7 +48,21 @@ def draw_dotted_line(image, origin=[int, int], dest=[int, int], tick_length=30, 
         image.line([dot_pos, dest], width=5)
 
 
-def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale , save=False, **kwargs):
+def generate_scale(name:str, gradient, intensities_min:int, intensities_max:int, min_cutoff:int, max_cutoff:int,
+                   export_path_scale , save=False, **kwargs):
+    """
+    Generates a colour scale to complement MSI reconstructions
+    :param name:
+    :param gradient:
+    :param intensities_min:
+    :param intensities_max:
+    :param min_cutoff:
+    :param max_cutoff:
+    :param export_path_scale:
+    :param save:
+    :param kwargs:
+    :return:
+    """
     bar_width = 1200
     bar_height = 100
     padding_x = 800
@@ -59,7 +73,7 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
     font_size = 80
 
     #kwargs central_mz and tolerance are needed to bake the mz of interest in the scale
-    if kwargs:
+    if len(kwargs) != 0:
         central_mz = kwargs.get("central_mz")
         tolerance = kwargs.get("tolerance")
         mask = [val is None for val in [central_mz, tolerance]]
@@ -174,7 +188,7 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
         xy=[(bar_width + padding_x / 2, bar_height + padding_y / 2), (bar_width + padding_x / 2, (padding_y / 2) - 5)],
         width=5)
 
-    if not any(mask):
+    if len(kwargs) !=0 and not any(mask):
         # Draw the mz and tolerance
         scale_legend.text((bar_width + padding_x - padding_x_offset, 80),
                           f"{round(central_mz, 3)} +/- {tolerance} m/Z", font_size=font_size, anchor="rs")
@@ -185,3 +199,29 @@ def generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff,
     # scale_save.show()
     return scale_qt
 
+if __name__ == "__main__":
+    from coloraide import Color
+
+    colours_dict = {
+        "Viridian": [Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0.7, 0]), Color("srgb", [0, 1, 0]), "linear"],
+        "Fusion": [Color("srgb", [1, 1, 0]), Color("srgb", [0, 0.25, 1]), Color("srgb", [1, 0, 0]), "linear"],
+        "Halloween": [Color("srgb", [1, 0.4, 0]), Color("srgb", [0.2, 0.1, 0.8]), Color("srgb", [0.3, 1, 0.2]),
+                      "linear"],
+        "Easter": [Color("srgb", [0, 0, 1]), Color("srgb", [1, 0.6, 0.8]), Color("srgb", [1, 0.6, 0]), "linear"],
+        "Magic": [Color("srgb", [0.2, 0.1, 0.66]), Color("srgb", [0, 1, 0]), Color("srgb", [1, 0.8, 0]),
+                  "continuous"],
+        "Viridis": [Color("srgb", [0.267, 0.004, 0.329]), Color("srgb", [0.213, 0.322, 0.545]),
+                    Color("srgb", [0.129, 0.569, 0.549]), Color("srgb", [0.369, 0.788, 0.384]),
+                    Color("srgb", [0.992, 0.906, 0.145]), "linear"]
+    }
+
+    name = "TestScale"
+    intensities_min = 0
+    intensities_max = 100
+    min_cutoff = 0
+    max_cutoff = 95
+    gradient_base = colours_dict.get("Viridis")
+    gradient= Color.interpolate(gradient_base[:-1], space="oklab", method=gradient_base[-1])
+    export_path_scale = ""
+
+    generate_scale(name, gradient, intensities_min, intensities_max, min_cutoff, max_cutoff, export_path_scale, True)

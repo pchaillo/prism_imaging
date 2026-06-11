@@ -16,9 +16,16 @@ def file_name_recovery(filepath):
 
     return in_filename, in_filename_ext, project
 
-def parse_imaging_file(filename):
+def parse_imaging_file(filename, sparse=False, high_precision=True):
+    """
+    :param filename: Full path of the parquet or CSV file to load
+    :param sparse: Converts the data to a sparse Dataframe to save lots of memory at the cost of increased loading and processing times
+    :param high_precision: If False, converts the data to 32 bits for lower memory requirements and processing times at the cost of precision
+    :return:
+    """
     import os
     import pandas as pd
+    import numpy as np
 
     supported_ext = ["csv", "parquet"]
     extension = os.path.split(filename)[1].split(".")[1]
@@ -52,5 +59,15 @@ def parse_imaging_file(filename):
             # Sometimes an empty column is created at the end of the file. This deals with it.
             if file.loc["x"].iloc[-1] == 0:
                 file.drop(file.columns[-1], axis=1, inplace=True)
+
+            if sparse or not high_precision:
+                if high_precision:
+                    file = file.astype(pd.SparseDtype("float", 0))
+                elif not sparse:
+                    # Diminished precision but memory use is halved
+                    file = file.astype(np.float32)
+                else:
+                    # Greatly diminishes memory requirements, but significantly increases processing time
+                    file = file.astype(pd.SparseDtype(np.float32, 0))
 
         return file, extension

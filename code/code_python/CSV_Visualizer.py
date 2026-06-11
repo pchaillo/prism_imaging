@@ -7,7 +7,6 @@
 # _Verify that the Matlab version is compatible with Python 3.14
 # _Verify that Matlab is using the proper Python environment (i.e: Python 3.14). If not, set it up.
 # This code being newer, the interface will be run on PySide instead of Tkinter
-
 import os
 import sys
 
@@ -21,6 +20,7 @@ from CSV_Visualizer_Main_Window import MSI_Visualizer
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
     gui = MSI_Visualizer()
     gui.show()
 

@@ -424,7 +424,7 @@ class MSI_Visualizer(QMainWindow):
         pg.setConfigOption('foreground', 'k')  # Black axes/grid
 
         self.spectrum_widget = pg.PlotWidget()
-        self.spectrum_widget.setLabel('bottom', 'm/Z')
+        self.spectrum_widget.setLabel('bottom', 'm/z')
         self.spectrum_widget.setLabel('left', 'Intensity (A.U.)')
         self.spectrum_widget.setLimits(xMin=0, yMin=0)
         viewbox = self.spectrum_widget.getViewBox()
@@ -1033,13 +1033,16 @@ class MSI_Visualizer(QMainWindow):
             for roi in self.projects[self.current_project]["roi_names"]:
                 local_list.append(roi)
 
-            # Set TIC as default value, as it is more expressive than XYZ
-            if "TIC" in local_list:
+            # Set TIC as default value, as it is more expressive than XYZ. Otherwise, remember previous value
+            if "TIC" in local_list or "m/Z" in local_list:
                 self.data_cbbx.currentIndexChanged.disconnect()
                 self.data_cbbx.addItems(local_list)
                 self.data_cbbx.currentIndexChanged.connect(self.on_dtype_selection)
-                tic_idx = local_list.index("TIC")
-                self.data_cbbx.setCurrentIndex(tic_idx)
+                if self.selected_dtype:
+                    dtype_idx = local_list.index(self.selected_dtype)
+                else:
+                    dtype_idx = local_list.index("TIC")
+                self.data_cbbx.setCurrentIndex(dtype_idx)
             else:
                 self.data_cbbx.addItems(local_list)
 
@@ -1105,7 +1108,7 @@ class MSI_Visualizer(QMainWindow):
                                                         "idx":cluster_idx}
                checked_rois[idx] = local_checked_rois
 
-        self.workers["roc"].updateProgressMax.emit(len(checked_rois)+2) # n for processing, 1 for cluster assignment, 1 for saving
+        self.workers["roc"].updateProgressMax.emit(len(checked_rois)+3) # n for processing, 1 for cluster assignment, 1 for ROC analysis, 1 for saving
         self.workers["roc"].updateProgress.emit("Assigning Clusters...")
         self.workers["roc"].runFunc.emit(self.launch_roc_panel, (), {"checked_rois":checked_rois})
 

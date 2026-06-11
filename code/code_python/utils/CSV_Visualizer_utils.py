@@ -382,48 +382,25 @@ def cross_project_roc(worker, cluster_data_dict, noise_thresholding):
         data_indices_list.append(data_indices)
         worker.updateProgress.emit(f"Processed Clusters: {idx+1}/{len(cluster_data_dict)}")
 
-    #for key in cluster_data_dict:
-    #    # Concatenate labels
-    #    cluster_data = cluster_data_dict[key]["data"]
-    #    intensity_max = cluster_data.max().max()
-    #    # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
-    #    cluster_data = (cluster_data/intensity_max)*100000
-
-    #    # Perform noise thresholding if enabled
-    #    if noise_thresholding:
-    #        thresholds = np.zeros(len(cluster_data.index))
-    #        # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
-    #        for idx, row in enumerate(input_data_np):
-    #            if idx % 10 == 0:
-    #                worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
-    #            threshold = noise_estimation_np(row)
-    #            thresholds[idx - 1] = threshold
-
-    #        mask = cluster_data.to_numpy() >= thresholds[:, None]
-    #        cluster_data = cluster_data.to_numpy()
-    #        cluster_data[mask] = 0
-
-    #    full_labels.append([cluster_data_dict[key]["cluster"]] * len(cluster_data.columns))
-    #    full_data_list.append(cluster_data)
-    #TODO: Clean up everything numpy-related
-    #full_data = pd.concat(full_data_list, axis=1, join='inner', ignore_index=True).T
-
     # Assume that there are at list two elements, and perform an inner join on the index list
-    full_indices = np.intersect1d(data_indices_list[0], data_indices_list[1])
+    full_indices = np.intersect1d(data_indices_list[0], data_indices_list[1]).astype(float)
     if len(data_indices_list) > 2:
         for idx in range(2, len(data_indices_list)):
             full_indices = np.intersect1d(full_indices, data_indices_list[idx])
+    full_indices = full_indices.astype(float)
+    full_indices = np.sort(full_indices)
 
-    # Find out which rows haves indices found in full_indices, so that the eventual array only contains m/Z found across all ROIs
+    # Find out which rows haves indices found in full_indices, so that the eventual array only contains m/z found across all ROIs
     index_masks = []
     for idx in range(len(data_indices_list)):
-        mask = np.isin(data_indices_list[idx], full_indices)
+        mask = np.isin(data_indices_list[idx].astype(float), full_indices)
         index_masks.append(mask)
 
     joined_data_list = [full_data_list[idx][index_masks[idx]] for idx in range(len(data_indices_list))]
     full_data = np.concatenate(joined_data_list, axis=1)
     full_labels = [label for sublist in full_labels for label in sublist]
 
+    worker.updateProgress.emit("Computing ROC-AUCs")
     for mz in range(len(full_data)):
         auc = roc_auc_score(full_labels, full_data[mz], average="weighted")
         roc_aucs.append(auc)

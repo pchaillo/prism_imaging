@@ -3,10 +3,9 @@ function csv = csv_extractor(app, csv_map, csv_mat, band, win, compression_flag)
 % Band = [M/z_min, M/z_max] 
 % Win = Binning window in M/z
 % One of those names needs to change, too unclear #TODO
-
 map = load(csv_map);
 
-m = load(csv_mat); % Without loading the pixel scans as an object, MatLab throws a hissy fit and refuses to use in inside the loop
+m = load(csv_mat); 
 m = m.pixels_scans;
 
 disp("Files loaded. Starting preprocessing.")
@@ -22,9 +21,7 @@ l = length(mz_list);
 %%%%%%%%%%%%%%%%%%%%%%%%%% performance
 
 pixels_number = length(m);
- 
 dimX = map(1,2);
- 
 num_order = zeros(1, pixels_number);
 countdown = dimX;
 for position = 1:pixels_number
@@ -52,7 +49,7 @@ x = map(2:end, 1);
 y = map(2:end, 2);
 z = map(2:end, 3);
 time = map(2:end, 4);
-tic = [];
+tic_ms = [];
 rt = [];
 deisotoped = {};
 bp = [];
@@ -62,7 +59,7 @@ mz = {};
 disp('Deconstructing the mat file...')
 for i = 1:total_pixels
     pixel_id = num_order(i);
-    tic(i) = m(pixel_id).totIonCurrent;
+    tic_ms(i) = m(pixel_id).totIonCurrent;
     rt(i) = m(pixel_id).retentionTime;
     deisotoped{i} = m(pixel_id).deisotoped;
 
@@ -90,50 +87,6 @@ disp('Done. Starting data processing.')
 
 % Always modify accordingly when adding/subtracting information from pixels_scans
 header = ["x", "y", "z", "Time", "Cluster index", "TIC", "Retention Time", "Scan Start", "Scan End", "Base Peak m/Z", "Base Peak Intensity", string(mz_list)];
-
-% csv_cell = cell(total_pixels + 1, 1);
-% csv_cell{1,1} = header;
-% 
-% % It is important that the parfor loop only writes to a single cell per
-% % iteration to avoid overhead
-% parfor ind = 1:total_pixels
-%     % update_log(app, ind)
-%     if mod(ind, 100) == 0
-%         disp(ind) % #TODO : Replace with percentage of completion
-%     end
-% 
-%     % Use a temporary variable to store the data
-%     temp = zeros(1, 12 + l - 1);
-%     temp(1) = x(ind); % Y
-%     temp(2) = y(ind); % X
-%     temp(3) = z(ind); % Z
-%     temp(4) = time(ind); % Time
-%     temp(6) = tic(ind);
-%     temp(7) = rt(ind);
-% 
-%     fusion_list = deisotoped{ind};
-%     l2 = length(fusion_list);
-% 
-%     if l2 == 1
-%         temp(8) = fusion_list;
-%         temp(9) = fusion_list;
-%     else
-%         sorted_fusion_list = sort(fusion_list);
-%         temp(8) = sorted_fusion_list(1);
-%         temp(9) = sorted_fusion_list(l2);
-%     end
-% 
-%     temp(10) = bp(ind);
-%     temp(11) = bpi(ind);
-% 
-%     peak_array_fixed = binning_fixed_size(mz{ind}, win, band);
-%     temp(12:12+l-1) = peak_array_fixed(:, 2);
-% 
-%     % Store the temporary variable in the cell array
-%     csv_cell{ind+1} = temp;
-% end
-
-% Experimental variant
 ncols = length(header);
 csv_data = zeros(total_pixels + 1, ncols);
 
@@ -149,7 +102,7 @@ parfor ind = 1:total_pixels
     temp(2) = y(ind); % X
     temp(3) = z(ind); % Z
     temp(4) = time(ind); % Time
-    temp(6) = tic(ind);
+    temp(6) = tic_ms(ind);
     temp(7) = rt(ind);
 
     fusion_list = deisotoped{ind};
@@ -175,16 +128,6 @@ parfor ind = 1:total_pixels
 end
 
 csv_table = array2table(csv_data', "RowNames", header);
-
-% Concatenate the results from the cell array into the final array
-% header_row = num2cell(zeros(1, total_pixels + 1));
-
-% for i = 1:total_pixels + 1
-%     header_row{1, i} = i - 1;
-% end
-% 
-% header_row{1,1} = "Data Type";
-% csv_export = vertcat(header_row, csv_export);
 
 if compression_flag == 1
     % For now, go from CSV export. Something might be manageable at an
