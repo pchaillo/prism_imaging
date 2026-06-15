@@ -41,6 +41,7 @@ def parse_imaging_file(filename, sparse=False, high_precision=True):
                 file.drop("Data Type", inplace=True)
         elif extension == "parquet":
             file = pd.read_parquet(filename)
+            #TODO: Avoid transposing
             if "x" in file.columns:
                 file = file.T
 

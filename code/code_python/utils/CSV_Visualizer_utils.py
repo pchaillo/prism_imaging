@@ -5,20 +5,17 @@ from coloraide import Color
 from functools import partial
 from multiprocessing import Pool
 import numpy as np
-import pandas as pd
-from PIL import Image
 import re
-from scipy import interpolate
 from scipy.ndimage import gaussian_filter
+from scipy.sparse import hstack
 from PLY_ColourScale_Headless import generate_scale
 from snr_compute import noise_estimation_np
 
-def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_factor, itp_type, gradient_base,
+def process_csv(worker, full_csv, data_type, main_mz, tolerance, gradient_base,
                 cutoff_percentiles, smoothing_flag, smoothing_sigma, clustering_flag, cluster_nb, main_cluster,
                 roc_flag, roi_mask, noise_thresholding, thresholds=None):
     """
     Converts selected parts of the CSV file into an images
-    :param filename: Full path (including name and extension) to the CSV file
     :param full_csv: Preloaded CSV file to improve performance
     :param data_type: Data type selected to be displayed
     :param main_mz: Central m/Z selected on the average spectrum, used only if m/Z selected as data_type
@@ -39,26 +36,31 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
     worker.updateProgress.emit("Recovering File Dimensions")
 
     # Parse the file to limit unneeded cells in memory
-    full_csv = full_csv.transpose().astype("float32")
+    # TODO: Finalize the conversion to numpy for increased efficiency with sparse files
+    
     pattern = "[0-9]"
-    data_head = [key for key in full_csv.columns if not re.search(pattern, key)] # Contains everything but m/Z
-    data_head = full_csv[data_head]
-    data_mz = [key for key in full_csv.columns if re.search(pattern, key)]
-    data_mz = full_csv[data_mz]
-
-    del full_csv
+    data_head_names = np.array([key for key in full_csv.index if not re.search(pattern, key)]) # Contains everything but m/z values
+    data_head_mask = full_csv.index.isin(data_head_names)
+    data_mz_mask = ~data_head_mask
+    data_mz_names = full_csv.index[data_mz_mask].to_numpy()
+    
+    full_csv_np = full_csv.to_numpy()
+    data_head = full_csv_np[data_head_mask]
+    data_mz = full_csv_np[data_mz_mask]
+    full_csv_idx = full_csv.index.to_numpy()
+    full_csv_cols = full_csv.columns.to_numpy()
+    
+    del full_csv, full_csv_np, data_mz_mask, data_head_mask
     if data_type != "m/Z" and not clustering_flag:
         del data_mz
 
     # Dimensions recovery, necessary for CSV files
-    yvals = data_head.iloc[:, 0].drop_duplicates()
-    res = yvals.iloc[1] - yvals.iloc[0]  # Determines the resolution of the map
-    yvals = yvals.shape[0]  # Number of acquired pixels in the Y axis
+    yvals = np.unique(data_head[0])
+    yvals = len(yvals)  # Number of acquired pixels in the Y axis
 
-    xvals = data_head.iloc[:, 1].drop_duplicates()
-    xvals = xvals.shape[0]  # Number of acquired pixels in the X axis
+    xvals = np.unique(data_head[1])
+    xvals = len(xvals)  # Number of acquired pixels in the X axis
     
-    #TODO: Make more concise
     # Estimate the number of steps for each workflow
     # Dimensions recovery - 1
     total_steps = 1
@@ -67,18 +69,18 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
         total_steps += 2
         if smoothing_flag:
             # Smoothing - Data Cube Creation - 1 per pixel / Gaussian Filtering - 1
-            total_steps += len(data_mz.columns) + 1
+            total_steps += data_mz.shape[1] + 1
         if noise_thresholding:
             if thresholds is None:
                 # Per-pixel thresholding
-                total_steps += len(data_mz.columns) // 10 # Takes into account the reduction in updates
+                total_steps += data_mz.shape[1] // 10 # Takes into account the reduction in updates
             # DataFrame rebuilding and masking
             total_steps += 2
         if roi_mask:
             # ROI masking
             total_steps += 1
         if roc_flag:
-            total_steps += len(data_mz.columns)
+            total_steps += data_mz.shape[1]
     else:
         # Recovery of the portion of interest
         total_steps += 1
@@ -89,57 +91,46 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
     total_steps += 4
     worker.updateProgressMax.emit(total_steps)
 
-    if itp_factor == 1:
-        dimX = xvals
-        dimY = yvals
-    else:
-        dimX = (xvals * itp_factor) - (itp_factor - 1)
-        dimY = (yvals * itp_factor) - (itp_factor - 1)
-    oldimX = xvals
-    oldimY = yvals
+    dimX = xvals
+    dimY = yvals
+    
     vertices = int(dimX * dimY)
-    old_vertices = int(oldimX * oldimY)
-    edges = itp_factor * dimX * dimY - dimX - dimY  # See Grid Graphs properties, seems wrong
     faces = (dimX - 1) * (dimY - 1)
     faces = int(faces)
 
-    coordsfinal = data_head[["x", "y", "z"]]
-    coordsfinal[np.isnan(coordsfinal)] = 0  # Probably redundant for CSV, but it doesn't hurt
+    coordsfinal = np.transpose(data_head[np.where(np.isin(data_head_names, ["x", "y", "z"]))[0]])
 
     # Recover the data of interest
     # Catch the edge case where data is X, Y or Z
-
+    #TODO: Check if clustering works as expected in this format 
     if clustering_flag:
         from sklearn.cluster import KMeans
         worker.updateProgress.emit("Preprocessing for Clustering")
 
         if smoothing_flag:
             # Try smoothing the data before clustering
-            w, h, d = [len(data_head["x"].unique()), len(data_head["y"].unique()), len(data_mz.columns)]
+            w, h, d = [yvals, xvals, len(data_mz[0])]
             total = w*h
             input_cube = np.zeros((w, h, d))
             for width in range(w):
                 for height in range(h):
                     idx = width * height + height
-                    input_cube[width, height, :] = data_mz.iloc[idx, :].values
+                    input_cube[width, height, :] = data_mz[idx, :].values
                     worker.updateProgress.emit(f"Preparing Full-File Smoothing: {idx}/{total}")
             worker.updateProgress.emit("Gaussian Filtering")
             smoothed_cube = gaussian_filter(input_cube, sigma=(smoothing_sigma, smoothing_sigma, 0))
-            data_mz = pd.DataFrame(smoothed_cube.reshape(-1, d), columns=data_mz.columns, index=data_mz.index)
+            data_mz = smoothed_cube.reshape(-1, d)
 
         #TODO: Do we normalize internally before clustering? Note that we already normalize on TIC. If so, we would
         # ensure that clustering is performed only based on spectral profile rather than intensity, but intensity
         # should already be accounted for by normalization, so maybe this is redundant? Ponder this.
-        full_length = len(data_mz)
-        input_data_np = data_mz.to_numpy(dtype=np.float32, copy=True) #TODO: Convert to numpy arrays for the entire workflow if possible
 
         # Perform noise thresholding if enabled
         if noise_thresholding:
             if thresholds is None:
-                thresholds = np.zeros(len(data_mz.index))
-                indices = data_mz.index.values
+                thresholds = np.zeros(xvals*yvals)
                 # Multiprocessing no longer seems useful for this, as it creates more problems than it solves
-                for idx, row in enumerate(input_data_np):
+                for idx, row in enumerate(np.transpose(data_mz)):
                     if idx % 10 == 0:
                         worker.updateProgress.emit(f"Computing Signal Thresholds: {idx}/{vertices}")
                     threshold = noise_estimation_np(row)
@@ -147,8 +138,8 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
 
                 #with Pool() as pool:
                 #    tasks = (
-                #        (idx, input_data_np[idx])
-                #        for idx in range(len(input_data_np))
+                #        (idx, data_mz[idx])
+                #        for idx in range(len(data_mz))
                 #    )
                     #worker.updateProgress.emit("Computing Signal Thresholds")
                 #    for idx, threshold in pool.imap_unordered(noise_estimation_wrapper, tasks, chunksize=100):
@@ -156,48 +147,44 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
                 #        thresholds[idx-1] = threshold
 
             worker.updateProgress.emit(f"Thresholds Recovered. Applying the mask...")
-            mask = input_data_np >= thresholds[:, None]
-            input_data_np[mask] = 0
-
-            #threshold_mask = input_data.T >= thresholds
-            #input_data[threshold_mask.T] = 0
+            mask = data_mz >= thresholds
+            data_mz[mask] = 0
 
         if roi_mask:
             worker.updateProgress.emit("Parsing ROI")
             # Second round of trimming if an ROI was specified
-            input_data_np = input_data_np[roi_mask]
-            data_idx = data_mz.index[roi_mask]
+            data_mz = data_mz[:, roi_mask]
+            data_idx = np.where(np.array(roi_mask)==True)
         else:
-            data_idx = data_mz.index
+            data_idx = range(len(data_mz[0]))
 
-        del data_mz
         worker.updateProgress.emit("Performing Clustering")
         kmeans = KMeans(n_clusters=cluster_nb, init='k-means++', random_state=42)
 
         # Fit the full dataset
-        kmeans.fit(input_data_np)
+        kmeans.fit(np.transpose(data_mz))
         clustering_labels = kmeans.labels_
 
         # Now accomodates masking properly
         # Modify the clustering to include -1 values for proper padding
         # Those -1 entries will be transparent on the final SVG
-        coordsfinal["data"] = -1
-        coordsfinal.loc[data_idx, "data"] = clustering_labels
+        coordsfinal = np.column_stack((coordsfinal, np.full(xvals*yvals,-1)))
+        coordsfinal[data_idx, 3] = clustering_labels
 
         # ROC analysis
         if roc_flag:
             from sklearn.metrics import roc_auc_score
             roc_aucs = []
-            y_true = clustering_labels[clustering_labels == main_cluster]
-            total_length = len(input_data_np)
-            for idx, _ in range(total_length):
+            y_true = clustering_labels == main_cluster
+            total_length = len(data_mz)
+            for idx in range(total_length):
                 worker.updateProgress.emit(f"Computing ROC Scores: {idx}/{total_length}")
-                auc = roc_auc_score(y_true, input_data_np[idx], average="weighted")
+                auc = roc_auc_score(y_true, data_mz[idx], average="weighted")
                 roc_aucs.append(auc)
 
     elif data_type != "m/Z":
         worker.updateProgress.emit("Grabbing Data")
-        coordsfinal["data"] = data_head[data_type]
+        coordsfinal = np.append(coordsfinal, np.transpose(data_head[np.where(data_head_names == data_type)[0]]), axis=1)
 
     else:
         #Greatly simplified this logic
@@ -206,78 +193,25 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
         mz_max = main_mz + tolerance
 
         # Find columns of interest, choosing bins closest to the specified edges
-        pattern = "[0-9]"
-        mz_vals = data_mz.columns.astype("float64").to_numpy()
-        bin_min = mz_vals[mz_vals - mz_min > 0].min()
-        bin_max = mz_vals[mz_vals - mz_max > 0].min()
+        mz_vals = data_mz_names.astype(np.float64)
+        bin_min = mz_vals[mz_vals - mz_min >= 0].min()
+        bin_max = mz_vals[mz_vals - mz_max >= 0].min()
         bin_min_idx = np.where(mz_vals == bin_min)[0][0]
         bin_max_idx = np.where(mz_vals == bin_max)[0][0]
-
-        coordsfinal["data"] = data_mz.iloc[:, bin_min_idx:bin_max_idx+1].sum(1)
-
+        coordsfinal = np.column_stack((coordsfinal, np.sum(data_mz[bin_min_idx:bin_max_idx+1], axis=0)))
+    
     # Gaussian Smoothing
     if smoothing_flag and not clustering_flag:
-        worker.updateProgress.emit("Smoothing Selected Data")
-        preprocessed_coords = coordsfinal.pivot_table(index="x", columns="y", values="data")
+        worker.updateProgress.emit("Smoothing Selected Data")    
+        preprocessed_coords = np.reshape(coordsfinal[:,3], (yvals, xvals))  
         coordinates_smoothed = gaussian_filter(preprocessed_coords, sigma=smoothing_sigma)
-        coordsfinal["data"] = coordinates_smoothed.ravel()
+        coordsfinal[:,3] = coordinates_smoothed.ravel()
+        del preprocessed_coords, coordinates_smoothed
 
-    if itp_factor != 1:
-        # Data must be mapped in a grid for 2D interpolation. For 2D, we can only implement one dataset at a time. Z heights
-        # and intensities therefore get their individual arrays
-        full_csv_z = coordsfinal.pivot_table(index="x", columns="y", values="z")
-        full_csv_z_np = full_csv_z.to_numpy(dtype=float)  # Conversion to numpy arrays is mandatory for proper indexing
-        full_csv_int = coordsfinal.pivot_table(index="x", columns="y", values="data")
-        full_csv_int_np = full_csv_int.to_numpy(dtype=float)
-
-        # Computes all positions in X and Y to feed the 2D interpolator
-        orderX = data_head["x"].drop_duplicates()
-        res = orderX.iloc[1] - orderX.iloc[0]  # Determines the resolution of the map
-
-        orderY = data_head["y"].drop_duplicates()
-
-        # Methods for 2D interpolation (str): linear, nearest, slinear, cubic, quintic, pchip
-        # z is kept, but interpolated as nearest neighbour for now as it is unused. This also makes the usual
-        # segmentation flag pointless, and it was thus removed
-        interp_grid_z = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_z_np, method="nearest")
-        if clustering_flag:
-            itp_type = "nearest"
-        interp_grid_int = interpolate.RegularGridInterpolator((orderX, orderY), full_csv_int_np, method=itp_type)
-
-        # Computes every position in X and Y for which we want interpolated data
-        neworderX = np.arange(min(orderX), max(orderX) + res/itp_factor, res/itp_factor)
-        neworderX = neworderX.round(5)
-        neworderX = neworderX[neworderX <= max(orderX)]
-
-        neworderY = np.arange(min(orderY), max(orderY) + res/itp_factor, res/itp_factor)  # Should work in theory, but floats are garbage
-        neworderY = neworderY.round(5)
-        neworderY = neworderY[neworderY <= max(orderY)]
-        yy2, xx2 = np.meshgrid(neworderY, neworderX)
-
-        # Creates a flattened array of X and Y couples, akin to an interpolated version of columns 1 and 2 of the full csv
-        target_pts = np.vstack([xx2.ravel(), yy2.ravel()])
-        target_pts = target_pts.transpose()
-
-        # Returns the interpolated data
-        z_interpol = interp_grid_z(target_pts)
-        int_interpol = interp_grid_int(target_pts)
-
-        # All data is then compiled into a single array for further analysis
-        ovspcoords = np.vstack([z_interpol, int_interpol])
-        ovspcoords = ovspcoords.transpose()
-        ovspcoords = np.hstack([target_pts, ovspcoords])
-        intensities = ovspcoords[:, 3]
-        ovspcoords = ovspcoords[:, :3]
-
-    # MS intensities extraction
-    else:
-        intensities = coordsfinal.iloc[:, 3]
-        ovspcoords = coordsfinal.iloc[:, :3]
-        ovspcoords = ovspcoords.to_numpy()
+    #In the current iteration, interpolation has been removed as it is mostly used for 3D files 
+    intensities = coordsfinal[:, 3]
 
     worker.updateProgress.emit("Interpolating Colour Values")
-    imax = max(intensities)
-    itstlst = [i for i in intensities]
 
     col = Color.interpolate(gradient_base[:-1],
                             space="oklab",
@@ -285,14 +219,14 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
     colours = np.zeros(shape=(vertices, 3))
     rank = 0
 
-    max_cutoff = np.percentile(itstlst, cutoff_percentiles[1])
+    max_cutoff = np.percentile(intensities, cutoff_percentiles[1])
     if roi_mask:
-        min_cutoff = max(np.percentile(itstlst, cutoff_percentiles[0]), 0)
+        min_cutoff = max(np.percentile(intensities, cutoff_percentiles[0]), 0)
     else:
-        min_cutoff = np.percentile(itstlst, cutoff_percentiles[0])
-    for i in itstlst:
+        min_cutoff = np.percentile(intensities, cutoff_percentiles[0])
+    for i in intensities:
         if clustering_flag:
-            scaled_value = (i - min(itstlst)) / (max(itstlst) - min(itstlst))
+            scaled_value = (i - min(intensities)) / (max(intensities) - min(intensities))
             hue = col(scaled_value)
         else:
             if i >= int(max_cutoff):
@@ -318,11 +252,9 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
 
     msi_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">\n'
     idx = 0
-    coordsfinal.reset_index(inplace=True, drop=True)
     for y in range(h):
         for x in range(w):
-            #TODO: Using coordsfinal breaks interpolation. A switch to ovspcoords must happen soon.
-            if coordsfinal.loc[idx, "data"] == -1 and roi_mask:
+            if intensities[idx] == -1 and roi_mask:
                 opacity = 0
             else:
                 opacity = 1
@@ -361,14 +293,10 @@ def process_csv(worker, filename, full_csv, data_type, main_mz, tolerance, itp_f
 
 def noise_estimation_wrapper(args):
     spectrum_idx, local_spectrum = args
-    #local_spectrum = input_data.loc[spectrum_idx, :]
     threshold = noise_estimation_np(local_spectrum, False)
     return spectrum_idx, threshold
 
 def cross_project_roc(worker, cluster_data_dict, noise_thresholding):
-    from sklearn.metrics import roc_auc_score
-    # TODO: Fully convert to numpy
-    roc_aucs = []
     full_labels = []
     full_data_list = []
     data_indices_list = []
@@ -397,13 +325,16 @@ def cross_project_roc(worker, cluster_data_dict, noise_thresholding):
         index_masks.append(mask)
 
     joined_data_list = [full_data_list[idx][index_masks[idx]] for idx in range(len(data_indices_list))]
-    full_data = np.concatenate(joined_data_list, axis=1)
+    full_data = hstack(joined_data_list)
+    full_data = full_data.toarray()
     full_labels = [label for sublist in full_labels for label in sublist]
-
+    
     worker.updateProgress.emit("Computing ROC-AUCs")
-    for mz in range(len(full_data)):
-        auc = roc_auc_score(full_labels, full_data[mz], average="weighted")
-        roc_aucs.append(auc)
+    tasks = [(full_data[mz], full_labels, mz) for mz in range(full_data.shape[0])]
+    roc_aucs = [None]*full_data.shape[0]
+
+    for _, (auc, mz) in enumerate(pool.imap_unordered(roc_wrapper, tasks)):
+        roc_aucs[mz] = auc
 
     # Exports the aucs and the mz array so that the file may be saved
     return roc_aucs, full_indices
@@ -411,13 +342,14 @@ def cross_project_roc(worker, cluster_data_dict, noise_thresholding):
 def process_clusters(arguments):
     # Note: cluster is cluster_data_dict[key]
     cluster, noise_thresholding = arguments
+    del arguments
+
     # Concatenate labels
     cluster_data = cluster["data"]
-    intensity_max = cluster_data.max().max()
+    intensity_max = cluster_data.max()
     # Normalize the data and multiply it by 100000 to limit the risk of floating point errors
     cluster_data = (cluster_data/intensity_max)*100000
-    data_indices = cluster_data.index
-    cluster_data = cluster_data.to_numpy(copy=True)
+    data_indices = cluster["mz_array"]
 
     # Perform noise thresholding if enabled
     if noise_thresholding:
@@ -430,9 +362,15 @@ def process_clusters(arguments):
         mask = cluster_data >= thresholds[:, None]
         cluster_data[mask] = 0
 
-    cluster_labels = [cluster["cluster"]] * len(cluster_data[0])
+    cluster_labels = [cluster["cluster"]] * cluster_data.shape[1]
 
     return cluster_labels, cluster_data, data_indices
+
+def roc_wrapper(arguments):
+    from sklearn.metrics import roc_auc_score
+    data, labels, mz = arguments
+    auc = roc_auc_score(labels, data, average="weighted")
+    return auc, mz
 
 def save_project(app:PySide6.QtWidgets.QMainWindow):
     import json

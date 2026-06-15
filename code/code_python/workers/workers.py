@@ -22,9 +22,10 @@ def loading_finished(self, widget, *args):
     widget.setIcon(old_icon)
 
 class Worker(QThread):
-    finished = Signal(QObject)  # emit a result when done
+    finished = Signal(object)  # emit a result when done
     updateProgress = Signal(str)
     updateProgressMax = Signal(int)
+    runFunc = Signal(object, tuple, dict) # function, args, kwargs, Forces the main thread to run a function (i.e. instancing a class in this case)
 
     def __init__(self, func, *args, **kwargs):
         super().__init__()
@@ -40,4 +41,3 @@ class Worker(QThread):
             # Emit the exception if needed
             print(e)
             self.finished.emit(e)
-

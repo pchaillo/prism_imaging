@@ -8,19 +8,19 @@ from coloraide import Color
 from copy import copy
 import numpy as np
 import pandas as pd
-from PIL import Image
-import scipy
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
-                               QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsView,
-                               QGroupBox, QGridLayout, QHeaderView, QInputDialog, QHBoxLayout, QLabel, QLayout, QMainWindow,
-                               QMessageBox, QProgressBar, QProgressDialog, QPushButton, QScrollArea, QSizePolicy,
-                               QSlider, QSplitter, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
-from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, QThread, QTimer, Signal, Slot
-from PySide6.QtGui import QIcon, QPainter, QPainterPath, QPen, QPixmap, QPolygonF
-from PySide6.QtSvgWidgets import QSvgWidget, QGraphicsSvgItem
+from scipy.sparse import csc_matrix
+from PySide6.QtWidgets import (QButtonGroup, QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox,
+                               QFileDialog, QGraphicsScene, QGraphicsLineItem, QGraphicsView,
+                               QGroupBox, QGridLayout, QInputDialog, QHBoxLayout, QLabel, QMainWindow,
+                               QMessageBox, QProgressBar, QProgressDialog, QPushButton, QScrollArea,
+                               QSplitter, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt, QByteArray, QLineF, QPointF, QRect, Signal
+from PySide6.QtGui import QIcon, QPainterPath, QPen, QPixmap, QPolygonF
+from PySide6.QtSvgWidgets import QGraphicsSvgItem
 from PySide6.QtSvg import QSvgRenderer
 import pyqtgraph as pg
 from qtawesome import icon
+
 from superqt import QLabeledDoubleRangeSlider
 
 from CSV_Visualizer_ROC_Window import GlobalRocPanel
@@ -143,7 +143,6 @@ class MSI_Visualizer(QMainWindow):
         self.gradient_name = None
         self.global_roc_display = None
         self.global_thresholding = False # Determines whether signal thresholding is applied during cross-project ROC
-        self.itp_type = None
         self.main_cluster = None
         self.progressDialog = None # Used for progress updates during reconstruction
         self.projects= {} # Stores project values
@@ -167,14 +166,6 @@ class MSI_Visualizer(QMainWindow):
                         Color("srgb", [0.129, 0.569, 0.549]), Color("srgb", [0.369, 0.788, 0.384]),
                         Color("srgb", [0.992, 0.906, 0.145]), "linear"]
             }
-
-        self.interp_dict = {
-            "Linear": "linear",
-            "Nearest": "nearest",
-            "SLinear": "slinear",
-            "Cubic": "cubic",
-            "Quintic": "quintic",
-            "PChip": "pchip"}
 
         # Default Icon Colours
         self.icon_colours = {"rest": "darkblue",
@@ -242,26 +233,6 @@ class MSI_Visualizer(QMainWindow):
         tolerance_layout.addWidget(self.tolerance_spnbx)
         ##
 
-        #TODO: Phase-out interpolation, as it is not really useful since smoothing has been implemented
-        self.interp_lbl = QLabel("Interpolation: x1")
-
-        self.interp_widget = QWidget()
-        self.interp_layout = QHBoxLayout(self.interp_widget)
-        self.interp_slider = QSlider(Qt.Horizontal)
-        self.interp_slider.setMinimum(1)
-        self.interp_slider.setMaximum(10)
-        self.interp_slider.setValue(1)
-        self.interp_slider.setTickInterval(1)
-        self.interp_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.interp_slider.valueChanged.connect(self.update_interp)
-
-        self.interp_cbbx = QComboBox()
-        self.interp_cbbx.setEditable(False)
-        self.interp_cbbx.addItems(list(self.interp_dict.keys()))
-
-        self.interp_layout.addWidget(self.interp_slider)
-        self.interp_layout.addWidget(self.interp_cbbx)
-
         # Create a subwidget for clustering
         clustering_widget = QWidget()
         clustering_layout = QHBoxLayout(clustering_widget)
@@ -270,7 +241,6 @@ class MSI_Visualizer(QMainWindow):
         self.clustering_chkbx.setIcon(QIcon(QPixmap("resources\\clustering-off.svg")))
         self.clustering_chkbx.setFixedWidth(32)
         self.clustering_chkbx.clicked.connect(self.toggle_clustering)
-        #self.clustering_chkbx = QCheckBox("Clustering")
         self.clustering_chkbx.setToolTip("Performs clustering on the entire image")
 
         self.thresholding_btn = QPushButton()
@@ -546,10 +516,9 @@ class MSI_Visualizer(QMainWindow):
         self.create_project(idx)
 
         self.projects[idx]["current_filename"] = filename
-        self.projects[idx]["full_csv"], _ = parse_imaging_file(filename)
+        self.projects[idx]["full_csv"], _ = parse_imaging_file(filename, sparse=True, high_precision=True)
         data_list = self.projects[idx]["full_csv"].index
         data_list = data_list.to_list()
-        binning_win = round((float(data_list[12]) - float(data_list[11])), 5)  # Recovers the CSV binning
 
         # Populate the file tree
         filename_tree = os.path.split(filename)[1]
@@ -570,7 +539,6 @@ class MSI_Visualizer(QMainWindow):
         data_list = [d for d in data_list if not re.search(pattern, d)]
         self.projects[idx]["data_list"] = copy(data_list) # Useful for later analyses
 
-        #self.clear_spectra("Former", "Total", False) # We cannot rely on the valueChanged callback for this one
         self.file_tree.setCurrentItem(tree_entry)
         self.plot_average_spectrum(data_list)
 
@@ -613,19 +581,17 @@ class MSI_Visualizer(QMainWindow):
         self.projects[self.current_project]["region"] = None
         self.spectrum_widget.removeItem(self.projects[self.current_project]["region"])
 
-    def update_interp(self):
-        value = self.interp_slider.value()
-        self.interp_lbl.setText(f"Interpolation: x{str(value)}")
-
     def plot_average_spectrum(self, data_list):
-        full_spectrum = self.projects[self.current_project]["full_csv"].drop(data_list, axis=0)
-        xvals = full_spectrum.index.values.to_numpy().astype(float)
-        yvals = full_spectrum.mean(axis=1).astype(float)
+        mask = ~self.projects[self.current_project]["full_csv"].index.isin(data_list)
+        full_spectrum = self.projects[self.current_project]["full_csv"].to_numpy()[mask]
+
+        xvals = self.projects[self.current_project]["full_csv"].index[mask].astype(np.float64)
+        yvals = np.mean(full_spectrum, axis=1)
         full_vals = np.array([xvals, yvals])
         self.plot_spectrum("Global_Avg", full_vals[0], full_vals[1], pg.mkPen(color="b", width=1), True)
 
-        self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max())#, yMin=0, yMax=1.05)
-        self.spectrum_widget.setRange(xRange=(xvals.min(), xvals.max()))#, yRange =(0, yvals.max()), padding=0.1)
+        self.spectrum_widget.setLimits(xMin=xvals.min(), xMax=xvals.max())
+        self.spectrum_widget.setRange(xRange=(xvals.min(), xvals.max()))
 
         self.projects[self.current_project]["mass_range"] = [xvals.min(),xvals.max()]
 
@@ -657,8 +623,6 @@ class MSI_Visualizer(QMainWindow):
 
     def get_settings(self):
         self.gradient_name = self.gradient_cbbx.currentText()
-        self.itp_factor = self.interp_slider.value()
-        self.itp_type = self.interp_dict.get(self.interp_cbbx.currentText())
         self.cluster_nb = int(self.cluster_nb_spnbx.value())
         self.main_cluster = int(self.roc_main_cluster_spnbx.value())
         self.selected_dtype = self.data_cbbx.currentText()
@@ -715,8 +679,7 @@ class MSI_Visualizer(QMainWindow):
             roc_flag = True
 
         self.projects[self.current_project]["svg"], viewbox, roc_aucs, clustering_lbls, cluster_colours, scale, thresholds = (
-            cvu.process_csv(self.workers["msi"], self.projects[self.current_project]["current_filename"], csv,
-                            self.selected_dtype, central_mz, tolerance, self.itp_factor, self.itp_type,
+            cvu.process_csv(self.workers["msi"], csv, self.selected_dtype, central_mz, tolerance,
                             gradient, cutoff_percentiles, self.smoothing, self.smoothing_sigma, clustering_flag,
                             self.cluster_nb, self.main_cluster, roc_flag, roi_mask, self.thresholding, thresholds))
 
@@ -802,14 +765,20 @@ class MSI_Visualizer(QMainWindow):
                 prefix = ""
             self.plot_spectrum(f"{prefix}ROC_Analysis", indices, roc_aucs, pg.mkPen(color="lightgrey", width=1), False)
 
-        global_data = self.projects[self.current_project]["full_csv"].copy()
-        global_data.drop(self.projects[self.current_project]["data_list"], axis=0, inplace=True)
+        #TODO: Finalize the numpy conversion 
+        global_data = self.projects[self.current_project]["full_csv"].to_numpy()
+        global_indices = np.array([key for key in self.projects[self.current_project]["full_csv"].index if re.search("[0-9]", key)])
+        mask = np.isin(self.projects[self.current_project]["full_csv"].index, 
+                          global_indices)
+        global_data = global_data[mask]
+
+        # Apply a mask if we have selected a custom ROI
         if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
             roi = self.selected_dtype
             mask = self.projects[self.current_project]["plots"][roi]["mask"]
-            global_data = global_data.loc[:,mask]
+            global_data = global_data[:, mask]
 
-        global_data.columns = clustering_lbls
+        #global_data.columns = clustering_lbls
 
         if self.selected_dtype in self.projects[self.current_project]["roi_names"]:
             # Perform segmentation and/or ROC on the cluster region alone
@@ -821,13 +790,17 @@ class MSI_Visualizer(QMainWindow):
         for idx, label in enumerate(np.unique(clustering_lbls)):
             cluster_name = f"{plot_name_prefix}_{label}"
             self.workers["msi"].updateProgress.emit(f"Plotting {cluster_name}")
-            parsed_data = global_data[label]
-            if type(parsed_data) == pd.Series:
-                # In cases where clusters are made of a single pixel
-                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data]).T.astype(np.float32)
+
+            cluster_mask = clustering_lbls == label
+            parsed_data = global_data[:, cluster_mask]
+
+            if len(parsed_data.shape) == 1:
+                # In cases where clusters are made of a single pixel, which in numpy tranlsates to a 1D array
+                avg_spectrum = parsed_data
             else:
-                avg_spectrum = pd.DataFrame([parsed_data.index, parsed_data.mean(axis=1)]).T.astype(np.float32)
-            self.plot_spectrum(f"{plot_name_prefix}_{label}", avg_spectrum[0], avg_spectrum[1], pg.mkPen(cluster_colours[idx], width=1))
+                avg_spectrum = np.mean(parsed_data, axis=1)
+            self.plot_spectrum(f"{plot_name_prefix}_{label}", indices, avg_spectrum, pg.mkPen(cluster_colours[idx], width=1))
+            
             # Add children to the file tree for later cluster analysis
             child = QTreeWidgetItem({f"{plot_name_prefix}_{label}":[]})
             child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
@@ -963,9 +936,10 @@ class MSI_Visualizer(QMainWindow):
             QMessageBox.warning(self, "Error", "Please perform a ROC analysis first, and try again." )
             return
         else:
+            #TODO: Avoid transposing if you can help it
             roc_aucs_df = pd.DataFrame([self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").xData,
                                 self.projects[self.current_project]["plots"]["ROC_Analysis"].get("plot").yData],
-                               index=["m/Z", "ROC Score"]).T
+                               index=["m/z", "ROC Score"]).T
             filename = self.projects[self.current_project]["current_filename"]
             export_name = f"{os.path.split(filename)[0]}\\ROC\\{os.path.split(filename)[1].split(".")[0]}-ROC.csv"
 
@@ -1112,7 +1086,7 @@ class MSI_Visualizer(QMainWindow):
         self.workers["roc"].updateProgress.emit("Assigning Clusters...")
         self.workers["roc"].runFunc.emit(self.launch_roc_panel, (), {"checked_rois":checked_rois})
 
-    def launch_roc_panel(self, *args, **kwargs):
+    def launch_roc_panel(self, **kwargs):
         if kwargs:
             for kwarg in kwargs.keys():
                 if kwarg == "checked_rois":
@@ -1162,6 +1136,7 @@ class MSI_Visualizer(QMainWindow):
                 name = self.projects[p]["current_filename"]
                 if project_filename in name:
                     project_idx = p
+                    continue
 
             if project_idx is None:
                 QMessageBox.warning(self, "Error", f"No matches found between any project filename and the cluster's filename.\n"
@@ -1175,17 +1150,23 @@ class MSI_Visualizer(QMainWindow):
                         data_clusters = self.projects[project_idx]["plots"][project_subregion]["clusters"]
                     else:
                         data_clusters = self.projects[project_idx]["clusters"]
-                    # Find indices of values of interest in the CSV
+                    # Find indices of values of interest in the data
                     data_indices = np.where(data_clusters == project_roi_idx)[0]
-                sorted_data = self.projects[project_idx]["full_csv"].iloc[:, data_indices]
-                sorted_data.columns = range(len(sorted_data.columns))
+                indices = np.array([key for key in self.projects[project_idx]["full_csv"].index if re.search("[0-9]", key)])
+                mask = np.isin(self.projects[project_idx]["full_csv"].index, indices)
+                
+                # Swapping to csc matrix to avoid memory issues with large datasets
+                sorted_data = csc_matrix(self.projects[project_idx]["full_csv"])[mask]
+                sorted_data = sorted_data[:, data_indices]
 
-                data_list_regex = '|'.join(self.projects[project_idx]["data_list"])
-                sorted_data = sorted_data[~sorted_data.index.str.contains(data_list_regex)]
-                cluster_data_dict[len(cluster_data_dict)] = {"data":sorted_data,
-                                                            "cluster":clusters[key]}
+                del mask, data_indices
+
+                cluster_data_dict[len(cluster_data_dict)] = {"cluster":clusters[key],
+                                                            "data":sorted_data,
+                                                            "mz_array":indices}
 
         roc_aucs, mz = cvu.cross_project_roc(self.workers["roc"], cluster_data_dict, self.global_thresholding)
+        
         roc_aucs_df = pd.DataFrame([mz, roc_aucs], index=["m/Z", "ROC Score"]).T
 
         # Save the ROC analysis
@@ -1222,7 +1203,6 @@ class MSI_Visualizer(QMainWindow):
         QMessageBox.information(self, "Sucess", f"ROC exported in {os.path.split(export_name)[0]}.")
 
         cluster_keys = [main_cluster_keys, alternative_cluster_keys]
-        #TODO: Run create_roc_display from the main thread somehow
         self.workers["roc"].runFunc.emit(self.create_roc_display, (), {"cluster_keys":cluster_keys, "roc_aucs_df":roc_aucs_df})
 
     def create_roc_display(self, **kwargs):
@@ -1269,21 +1249,22 @@ class MSI_Visualizer(QMainWindow):
         polygon = self.topo_frag_view.scene_polygon
 
         # Adapt the CSV locally
-        local_csv = self.projects[self.current_project]["full_csv"].copy()
+        local_csv = self.projects[self.current_project]["full_csv"].to_numpy()
         width = self.projects[self.current_project]["viewbox"][2]
         roi_idx = [x  + y * width for x, y  in roi_points]
-        local_csv.columns = range(len(local_csv.columns))
-        if max(roi_idx) > len(local_csv.columns):
+        
+        if max(roi_idx) > local_csv.shape[1]:
             #TODO: Investigate why this part sometimes breaks
-            breakpoint()
-        local_csv = local_csv.iloc[:, roi_idx]
+            raise ValueError("ROI points exceed the dimensions of the current image. Investigate why this happens.")
+         
+        mask = np.isin(self.projects[self.current_project]["full_csv"].index, 
+                          np.array([key for key in self.projects[self.current_project]["full_csv"].index if re.search("[0-9]", key)]))
+        local_csv = local_csv[mask]
+        
+        xvals = self.projects[self.current_project]["plots"]["Global_Avg"].get("plot").xData
+        yvals = np.mean(local_csv, axis=1)
 
-        local_csv = local_csv.drop(self.projects[self.current_project]["data_list"], axis=0)
-        xvals = local_csv.index.values.to_numpy().astype("float64")
-        yvals = local_csv.mean(axis=1).astype("float64")
-        avg_spectrum = pd.DataFrame([xvals, yvals]).T
-
-        self.plot_spectrum(roi_name, avg_spectrum[0], avg_spectrum[1], pg.mkPen(roi_colour, width=1), True, polygon)
+        self.plot_spectrum(roi_name, xvals, yvals, pg.mkPen(roi_colour, width=1), True, polygon)
 
         # Add children to the file tree for later cluster analysis
         child = QTreeWidgetItem({roi_name:[]})
@@ -1294,8 +1275,7 @@ class MSI_Visualizer(QMainWindow):
         self.projects[self.current_project]["tree_entry"].setExpanded(True)
         self.projects[self.current_project]["plots"][roi_name]["polygon"] = polygon
         self.projects[self.current_project]["plots"][roi_name]["colour"] = roi_colour
-        mask_range = range(len(self.projects[self.current_project]["full_csv"].columns))
-        self.projects[self.current_project]["plots"][roi_name]["mask"] = [i in roi_idx for i in mask_range]
+        self.projects[self.current_project]["plots"][roi_name]["mask"] = [i in roi_idx for i in range(local_csv.shape[1])]
         self.projects[self.current_project]["plots"][roi_name]["clusters"] = None # Stores clustering information for regions separately from global clustering
         self.projects[self.current_project]["roi_names"].append(roi_name)
         self.data_cbbx.addItem(roi_name)
@@ -1303,7 +1283,6 @@ class MSI_Visualizer(QMainWindow):
 
     def update_scale(self, scale):
         scale_item = QPixmap.fromImage(scale)
-        painter = QPainter(self.topo_frag_view.viewport())
 
         scale_dimensions = [scale_item.width(), scale_item.height()]
         scene_w = self.topo_frag_view.viewport().width()
