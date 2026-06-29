@@ -1,4 +1,4 @@
-# Validated on Python 3.8.10
+# Validated on Python 3.14.3
 # To run manually through MatLab:
 #   path(path, 'code/code_python')
 #   pyrunfile('#SCRIPT_NAME#.py')
@@ -7,7 +7,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.getcwd() + "\code\code_python") # Needed so that MatLab can actually find the dependency
+sys.path.insert(0, os.getcwd() + "\\code\\code_python") # Needed so that MatLab can actually find the dependency
 
 import pandas
 import numpy
@@ -22,6 +22,7 @@ filename = askopenfilename()
 filename = filename.replace("/", "\\")
 
 file, ext = parse_imaging_file(filename)
+#TODO: Make the head/tail split more clever, automatically retrieving the 
 head = file.iloc[:11, :]
 tail = file.iloc[11:, :]
 
@@ -29,13 +30,10 @@ tail_sum = tail.copy()
 tail_sum = tail_sum.sum(axis=0)  # This should equate to the TIC, but it is much larger.
 tail_mean = tail_sum.mean()
 tail_delta = tail_sum - tail_mean
-tail_rms = numpy.sqrt(tail_delta.apply(numpy.square))
+tail_rms = numpy.sqrt(tail.apply(numpy.square).mean())
 
-# The following line is a debug workaround, and WILL diminish RMS accuracy
-tail_rms = tail_rms.round()
 
 # Not too sure about this one. It looks like floats are messing up and creating values where there are none
-
 tail = tail/tail_rms
 
 file_norm = pandas.concat([head, tail])
