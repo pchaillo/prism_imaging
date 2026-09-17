@@ -26,8 +26,8 @@ calibration_band = sensor.calibration_band;
 % the calibration.
 
 % init_height = 71 - 0.75 ;% The surface offset must be recovered from the interface as an argument
-init_height = 71 + parameters.surface_offset - 0.75 ;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece 
-final_height = init_height + calibration_band + 3 ;%-5 to offset the aforementioned +5
+init_height = 71 + parameters.surface_offset - 0.75;% - 1.5 ; % + 5; % height of the beginnig of the calibration (71 cool) / +5 to avoid the tube 3d piece 
+final_height = init_height + calibration_band + 3;%-5 to offset the aforementioned +5
 
 current_height = init_height;
 

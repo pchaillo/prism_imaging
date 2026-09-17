@@ -25,8 +25,19 @@ classdef ILD_1320_25 < handle
         end
 
         function calibration_array = calibration(self, robot, parameters, app)
-            calibration_array = default_sensor_calibration(robot, self,parameters, app);
+            calibration_array = default_sensor_calibration(robot, self, parameters, app);
             self.calibration_array = calibration_array;
+            self.calibration_array = fix_calibration_array(app, calibration_array); % correction of the calibration ( delete false values )
+            
+            % Show the calibration graph
+            figure()
+            hold on
+            for i = 1 : length(self.calibration_array)
+                scatter(self.calibration_array(1,i), self.calibration_array(2,i))
+            end
+            xlabel('Height (mm)')
+            ylabel('Measured Voltage')
+            hold off
         end
 
         function sample_height = get_data(self, robot, sample_height, watchdog_flag, parameters, app) % Robot as input : could be useful to change th height of the robot in case the sensor that is in a impossible configuration (could be useful for triangulation software for exemple).
