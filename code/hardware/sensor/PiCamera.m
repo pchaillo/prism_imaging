@@ -7,7 +7,7 @@ classdef PiCamera < handle
         need_calibration = 1; % bool, 0 = no // 1 = yes   % if you set it to 0, no need to fill sensor_calibration funtcion (will not be called)
         host = "prism@192.168.0.5"; % Be sure to change this to the raspberry pi's name, and to assign it a static IP adress on the same subnet as the main computer's 
         filepath = "~/Documents/Depth_Sensor/camera_py.py"; % Location of the measurement script
-    
+         
         tcp_client = "";
         tcp_host = "192.168.0.5";
         tcp_port = 5000;
@@ -18,6 +18,8 @@ classdef PiCamera < handle
         calibration_band = 35; % in mm
         calibration_min_height = 115 % Minimum working height
         cal_samples = 10; % The calibration will take the average of 10 readouts as the value of interest
+        
+        sensor_offset = 5 % In mm, distance from the effector to the sensor. Can be deduced from a measurement
 
         previous_meas = [0.0 0.0 0.0 0.0];
     end
@@ -69,15 +71,14 @@ classdef PiCamera < handle
             pos_y = typecast(data(13:16), 'int32');
         end
         
-        function height = get_data(self, ~, ~, ~, ~, ~)
-            %TODO: Accumulate readings for enhanced precision
+        function sample_height = get_data(self, ~, sample_height, parameters, ~)
+            %TODO: Add an error connection routine like on the ILD 1750. 
             meas = nan(2, self.cal_samples);
             for j = 1:self.cal_samples
                 [spot_size, roundness, meas_x, meas_y] = self.get_value();
                     
                 while ismember(-1, [spot_size, roundness, meas_x, meas_y])
                     success = false;
-
                     for k = 1:10
                         [spot_size, roundness, meas_x, meas_y] = self.get_value();
                         if ~ismember(-1, [spot_size, roundness, meas_x, meas_y])
@@ -85,12 +86,10 @@ classdef PiCamera < handle
                             break;
                         end
                     end
+
                     if ~success
-                        disp("Warning: Could not get measure, reverting to previous value")
-                        spot_size = self.previous_meas(1);
-                        roundness = self.previous_meas(2);
-                        meas_x = self.previous_meas(3);
-                        meas_y = self.previous_meas(4);
+                        disp("Warning: Could not get a measure, reverting to previous value")
+                        return % Same trick used for the ILD 1750, returning the old sample_height fed in the function
                     end
                 end
                 meas(:, j) = [meas_x, meas_y];
@@ -135,11 +134,14 @@ classdef PiCamera < handle
                 
                 end
             end
-
-            height = best_height;
-            disp(height)
+            
+            % Convert the measurement into a proper sample height
+            sample_height = parameters.initial_height - best_height - self.sensor_offset + sample_height;
 
             distance_to_curve = best_distance; % Measures how far off of calibration we are
+            % TODO: Use this value as QA, which could lead to automatic
+            % computation of points flagged as outliers based on their
+            % distance to the calibration curve.
         end
         
         function calibration_array = calibration(self, robot, parameters, app)
