@@ -155,7 +155,7 @@ classdef PiCamera < handle
             final_height = init_height + self.calibration_band + 3;
             current_height = final_height; % Best practice would be to swap those values 
 
-            robot_x = parameters.x_offset - 10;
+            robot_x = parameters.x_offset;
             robot_y = parameters.y_offset;
 
             % Compute calibration positions
